@@ -36,6 +36,12 @@ public class Visualizer {
 	private PdfCanvas canvas;
 	private PdfDocument pdf;
 	private int measureCounter;
+	private int noteCounter; // count for distance for this note.
+
+	// Note: A4 size: 2048px * 2929px
+	private final int lineGap = 50; // px lineGap between staff.
+	private final int measureGap = 200; //px Gap between measure.
+
 	public Visualizer(Score score) throws TXMLException {
 		this.score = score.getModel();
 		this.measureCounter = 0;
@@ -91,6 +97,7 @@ public class Visualizer {
 
 		drawAttributes(measure.getAttributes());
 		// draw Notes
+		noteCounter = 0;//reset noteCounter
 		drawNotes(measure.getNotesBeforeBackup());
 		drawNotes(measure.getNotesAfterBackup());
 		// draw Barlines
@@ -124,7 +131,38 @@ public class Visualizer {
 	public void drawBarline(BarLine barLine){
 
 	}
+	/**
+	 what inside of note:
+	 Grace grace; // need to draw slash. if it appeared , have to be smaller
+	 Chord chord; // if this notation appear, don't move forward.
+
+	 group of elemens that only can show once.
+	 Rest rest;
+	 Pitch pitch;
+	 Unpitched unpitched;
+
+	 Integer duration;
+	 Integer voice;
+
+	 String type; // determine type of note. only 16th and eighth.
+	 List<Dot> dots;// need to handle
+
+	 TimeModification timemodification;
+
+	 String stem; // always up if there are one.
+	 Notehead notehead;// three type of Notehead: x diamond and normal
+	 // reference https://www.w3.org/2021/06/musicxml40/musicxml-reference/data-types/notehead-value/
+
+
+	 Beam beam; //useless, ignore. maybe need to use it in the future
+
+	 Notations notations; //need to handle
+	 * */
 	public void drawNote(Note note){
+
+		if (note.getChord()!=null){
+			this.noteCounter++;
+		}
 
 	}
 

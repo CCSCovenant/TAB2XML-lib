@@ -12,7 +12,7 @@ public class TimeModification {
 
 	public TimeModification(int an, int nn) {
         this.actualNotes = an;
-        this .normalNotes = nn;
+        this.normalNotes = nn;
     }
 	
 	@JacksonXmlProperty(localName = "actual-notes")
