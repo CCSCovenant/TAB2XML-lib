@@ -1,7 +1,9 @@
 package visualizer;
 
 
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.geom.PageSize;
+import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
@@ -13,6 +15,9 @@ import models.Part;
 import models.ScorePartwise;
 import models.measure.Measure;
 import models.measure.attributes.Attributes;
+import models.measure.attributes.Clef;
+import models.measure.attributes.Key;
+import models.measure.attributes.Time;
 import models.measure.barline.BarLine;
 import models.measure.note.Note;
 import models.part_list.PartList;
@@ -30,8 +35,10 @@ public class Visualizer {
 	private ScorePartwise score;
 	private PdfCanvas canvas;
 	private PdfDocument pdf;
+	private int measureCounter;
 	public Visualizer(Score score) throws TXMLException {
 		this.score = score.getModel();
+		this.measureCounter = 0;
 	}
 	/**
 	 * This method is going to init PDF file.
@@ -41,7 +48,7 @@ public class Visualizer {
 		File file = new File(temp_dest);
 		file.getParentFile().mkdir();
 		this.pdf = new PdfDocument(new PdfWriter(temp_dest));
-
+		// A4 size: 2048px * 2929px
 		PageSize pageSize = PageSize.A4.rotate();
 		PdfPage page = pdf.addNewPage(pageSize);
 
@@ -79,16 +86,30 @@ public class Visualizer {
 
 	public void drawMeasure(Measure measure){
 		// attribute contain metadatas for whole measure
+		// we need time information to determine how long should we draw for the single Measure.
+		drawMeasureBackground(measure.getAttributes().getTime());
+
 		drawAttributes(measure.getAttributes());
 		// draw Notes
 		drawNotes(measure.getNotesBeforeBackup());
 		drawNotes(measure.getNotesAfterBackup());
 		// draw Barlines
 		drawBarlines(measure.getBarlines());
+		measureCounter++;
+	}
+	public void drawMeasureBackground(Time time){
+		//current measure count:
+		// this.measureCounter;
+		int measureSize = time.getBeats();
+		int unitLength = time.getBeatType();
+
 	}
 
-	public void drawAttributes(Attributes attributes){
 
+	public void drawAttributes(Attributes attributes){
+		drawClef(attributes.getClef());
+		drawKeySignature(attributes.getKey());
+		drawTimeSignature(attributes.getTime());
 	}
 	public void drawNotes(List<Note> notes){
 		for (Note note:notes){
@@ -107,4 +128,41 @@ public class Visualizer {
 
 	}
 
+	/**
+	 * draw a line from start point to end point
+	 *
+	 * @param start start point
+	 * @param end end point
+	 * */
+	private void drawLine(Point start,Point end){
+		canvas.moveTo(start.x,start.y);
+		canvas.lineTo(end.x,end.y);
+	}
+
+	/**
+	 * draw the time signature.
+	 *
+	 * @param time the time signature of this measure.
+	 * */
+
+	private void drawTimeSignature(Time time){
+
+	}
+	/**
+	 * draw the key signature.
+	 *
+	 * @param key the key signature of this measure
+	 * */
+	private void drawKeySignature(Key key){
+
+	}
+	/**
+	 * draw the clef
+	 *
+	 * @param clef the key signature of this measure
+	 * */
+
+	private void drawClef(Clef clef){
+
+	}
 }
