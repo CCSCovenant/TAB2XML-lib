@@ -4,9 +4,9 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.layout.element.Image;
 
-import javax.imageio.ImageIO;
-import java.awt.*;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -40,8 +40,7 @@ public class ImageResourceHandler {
 	}
 
 	public Image getImage(String id) throws IOException {
-			File imageFile = new File(ImageResources.get(id).url);
-			Image image = ImageIO.read(imageFile);
+			Image image = new Image(ImageDataFactory.create(ImageResources.get(id).url));
 			return image;
 	}
 }

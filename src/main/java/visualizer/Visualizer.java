@@ -1,7 +1,6 @@
 package visualizer;
 
 
-import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -10,14 +9,12 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import converter.Score;
 import custom_exceptions.TXMLException;
-import javafx.scene.canvas.Canvas;
 import models.Part;
 import models.ScorePartwise;
 import models.measure.Measure;
 import models.measure.attributes.*;
 import models.measure.barline.BarLine;
 import models.measure.note.Note;
-import models.part_list.PartList;
 
 import java.io.File;
 import java.io.FileNotFoundException;
