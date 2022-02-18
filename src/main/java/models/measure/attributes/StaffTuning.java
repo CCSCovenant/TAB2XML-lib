@@ -4,7 +4,7 @@ import com.fasterxml.jackson.dataformat.xml.annotation.JacksonXmlProperty;
 
 public class StaffTuning {
     @JacksonXmlProperty(isAttribute = true)
-    public int line;
+    public int line; //Indicates the staff line for this tuning, numbered from bottom to top.
 
 
     @JacksonXmlProperty(localName = "tuning-step")

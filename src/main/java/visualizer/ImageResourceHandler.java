@@ -4,6 +4,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
+import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 import com.itextpdf.layout.element.Image;
 
@@ -39,8 +40,11 @@ public class ImageResourceHandler {
 		return imageResourceHandler;
 	}
 
-	public Image getImage(String id) throws IOException {
-			Image image = new Image(ImageDataFactory.create(ImageResources.get(id).url));
-			return image;
+	public ImageData getImage(String id) {
+		try {
+			return 		ImageDataFactory.create(ImageResources.get(id).url);
+		}catch (IOException e){
+			return null;
+		}
 	}
 }
