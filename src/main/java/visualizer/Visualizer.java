@@ -30,21 +30,21 @@ import java.util.Map;
  * @author Kuimou
  * */
 public class Visualizer {
-	// Note: A4 size: 2048px * 2929px
-	private final int measureGap = 200; //px Gap between measure.
-	private final int noteWidth = 50; //px, the width of a note element
-	private final int clefWidth = 50; //px, the width of a clef element
-	private final int timeWidth = 50; //px, the width of a time element
-	private final int keyWidth = 50; //px, the width of a key element;
-	private final int stepSize = 20; //px, the width between steps.
-	private final int marginX = 50; // px, the width of margin.
-	private final int marginY = 50; // px, the width of margin.
-	private final int titleSpace = 200; // px, for title and author
-	private final int A4Width = 2048;
-	private final int A4Height = 2929;
-	private final int eighthGap = 10;
-	private final int defaultShift = 50; // where we should put next note.
-	private final int bendShift = 50;
+	// Note: A4 size: 597.6 unit * 842.4 unit
+	private final int measureGap = 50; //px Gap between measure.
+	private final int noteWidth = 5; //px, the width of a note element
+	private final int clefWidth = 5; //px, the width of a clef element
+	private final int timeWidth = 5; //px, the width of a time element
+	private final int keyWidth = 5; //px, the width of a key element;
+	private final int stepSize = 2; //px, the width between steps.
+	private final int marginX = 5; // px, the width of margin.
+	private final int marginY = 5; // px, the width of margin.
+	private final int titleSpace = 20; // px, for title and author
+	private final int A4Width = 597;
+	private final int A4Height =  842;
+	private final int eighthGap = 1;
+	private final int defaultShift = 5; // where we should put next note.
+	private final int bendShift = 5;
 	private final String temp_dest = "tmp.pdf";
 
 	private ScorePartwise score;
@@ -88,7 +88,7 @@ public class Visualizer {
 
 		this.pdf = new PdfDocument(new PdfWriter(temp_dest));
 		// A4 size: 2048px * 2929px
-		PageSize pageSize = PageSize.A4.rotate();
+		PageSize pageSize = PageSize.A4;
 		PdfPage page = pdf.addNewPage(pageSize);
 		canvas = new PdfCanvas(page);
 	}
@@ -208,11 +208,12 @@ public class Visualizer {
 		if (note.getChord()!=null){
 
 		}else {
-			drawEighthFlag();
+			//drawEighthFlag();
 			currentX += planShift;
 			planShift = 0;
 			eighthFlag = new EighthFlag(currentX,currentY,currentY);
 		}
+
 		if (clef.getSign().equals("TAB")){
 			if (note.getNotations().getTechnical().getBend()!=null){
 				drawBackground(defaultShift+bendShift+noteWidth);
@@ -223,10 +224,13 @@ public class Visualizer {
 			// tab note only need draw technical.
 		}else if (clef.getSign().equals("percussion")){
 			drawBackground(defaultShift+noteWidth);
+			/*
 			drawNoteHead(note);
 			if (!note.getType().equals("whole")){
 				drawNoteStem(note);
 			}
+			*/
+
 			//TODO drawTechnical();
 		}
 	}
@@ -273,6 +277,7 @@ public class Visualizer {
 	private void drawLine(Point start,Point end){
 		canvas.moveTo(start.x,start.y);
 		canvas.lineTo(end.x,end.y);
+		canvas.closePathStroke();
 	}
 
 	/**
@@ -312,6 +317,7 @@ public class Visualizer {
 			Point end = new Point(currentX+length,currentY+stepSize*relative);
 
 			drawLine(start,end);
+			System.out.println("Y:"+(currentY+stepSize*relative));
 		}
 	}
 
@@ -324,7 +330,7 @@ public class Visualizer {
 		//center C is the baseline.
 		int centerOctave = 3;
 		String centerStep = "C";
-		return (step.charAt(0)-centerStep.charAt(0))+(9*(octave-centerOctave));
+		return (step.charAt(0)-centerStep.charAt(0))+(7*(octave-centerOctave));
 	}
 	private void switchLine(){
 		if (currentY+measureGap+marginY>A4Height){
@@ -374,9 +380,17 @@ public class Visualizer {
 	private int getMeasureLength(Measure measure){
 		int length = 0;
 		for (Note note:measure.getNotesBeforeBackup()){
-			if (note.getNotations().getTechnical().getBend()==null){
-				length += noteWidth+defaultShift;
-			}else {
+			if (note.getNotations()!=null) {
+				if (note.getNotations().getTechnical()!= null){
+					if (note.getNotations().getTechnical().getBend()!=null){
+						length += noteWidth + defaultShift;
+					}else {
+						length += noteWidth+defaultShift+bendShift;
+					}
+				}else {
+					length += noteWidth+defaultShift+bendShift;
+				}
+			} else {
 				length += noteWidth+defaultShift+bendShift;
 			}
 		}

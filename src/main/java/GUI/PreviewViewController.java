@@ -1,6 +1,7 @@
 package GUI;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.layout.Document;
 import custom_exceptions.TXMLException;
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -42,13 +43,15 @@ public class PreviewViewController extends Application {
 		this.player = new MXLPlayer(mvc.converter.getScore());
 		this.visualizer = new Visualizer(mvc.converter.getScore());
 		pdf = visualizer.draw();
-		pdf.close();
+		Document document1 = new Document(pdf);
+		document1.close();
 		try {
 			 document = PDDocument.load(new File(temp_dest));
 			 renderer = new PDFRenderer(document);
 		}catch (IOException e){
 
 		}
+		goToPage(0);
 	}
 	@FXML
 	private void exportPDFHandler(){
