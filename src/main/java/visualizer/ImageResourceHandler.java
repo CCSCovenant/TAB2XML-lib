@@ -6,7 +6,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
-import com.itextpdf.layout.element.Image;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -20,7 +19,8 @@ public class ImageResourceHandler {
 	private Gson gson = new Gson();
 	private File file;
 	public ImageResourceHandler(String filename){
-
+		this.file = new File(filename);
+		readResources();
 	}
 	private void readResources(){
 		try(InputStreamReader reader = new InputStreamReader(new FileInputStream(file))){
@@ -42,7 +42,7 @@ public class ImageResourceHandler {
 
 	public ImageData getImage(String id) {
 		try {
-			return 		ImageDataFactory.create(ImageResources.get(id).url);
+			return ImageDataFactory.create(ImageResources.get(id).url);
 		}catch (IOException e){
 			return null;
 		}

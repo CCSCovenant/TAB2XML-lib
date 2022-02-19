@@ -43,12 +43,11 @@ public class Visualizer {
 	private final int titleSpace = 200; // px, for title and author
 	private final int A4Width = 2048;
 	private final int A4Height = 2929;
-	private final int durationFactor = 5;//px,the width duration gap
 	private final int eighthGap = 10;
 	private final int defaultShift = 50; // where we should put next note.
 	private final int bendShift = 50;
+	private final String temp_dest = "resources/templeFile/tempSheet.pdf";
 
-	public String temp_dest = "resources/templeFile/tempSheet.pdf";
 	private ScorePartwise score;
 	private PdfCanvas canvas;
 	private PdfDocument pdf;
@@ -173,6 +172,7 @@ public class Visualizer {
 		}
 	}
 	// we only have two kind of barline left and right
+	// TODO draw it with measureStart and measureEnd
 	public void drawBarline(BarLine barLine){
 
 	}
@@ -331,6 +331,7 @@ public class Visualizer {
 			switchPage();
 		}else {
 			currentX = marginX;
+			currentY += measureGap;
 			lineCounter++;
 		}
 	}
