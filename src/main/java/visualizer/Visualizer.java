@@ -8,7 +8,6 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
-import com.itextpdf.layout.element.Image;
 import converter.Score;
 import custom_exceptions.TXMLException;
 import models.Part;
@@ -33,13 +32,12 @@ import java.util.Map;
  * */
 public class Visualizer {
 	// Note: A4 size: 2048px * 2929px
-	private final int stepGap = 50; // px lineGap between two step.
 	private final int measureGap = 200; //px Gap between measure.
 	private final int noteWidth = 50; //px, the width of a note element
 	private final int clefWidth = 50; //px, the width of a clef element
 	private final int timeWidth = 50; //px, the width of a time element
 	private final int keyWidth = 50; //px, the width of a key element;
-	private final int gapSize = 20; //px, the width between elements.
+	private final int stepSize = 20; //px, the width between steps.
 	private final int marginX = 50; // px, the width of margin.
 	private final int marginY = 50; // px, the width of margin.
 	private final int titleSpace = 200; // px, for title and author
@@ -47,18 +45,21 @@ public class Visualizer {
 	private final int A4Height = 2929;
 	private final int durationFactor = 5;//px,the width duration gap
 	private final int eighthGap = 10;
+	private final int defaultShift = 50; // where we should put next note.
+	private final int bendShift = 50;
 
 	public String temp_dest = "resources/templeFile/tempSheet.pdf";
 	private ScorePartwise score;
 	private PdfCanvas canvas;
 	private PdfDocument pdf;
 	private int measureCounter = 0;
-	private int durationCounter = 0; // count for distance for this note.
 	private int lineCounter = 0;//which measure are we currently printing
 	private int pageCounter = 0; // which page are we currently printing
 	private int currentY = marginY + titleSpace; // the position of center C in current line.
 	private int currentX = marginX;
-	private int planToShift = 0;
+	private  int planShift = 0; // where we should put next note.
+	private int measureStart = 0;
+	private int measureEnd = 0;
 
 	private Time time = new Time(4,4); // default time: 4/4
 	private boolean shouldDrawTime = false;
@@ -92,7 +93,6 @@ public class Visualizer {
 		// A4 size: 2048px * 2929px
 		PageSize pageSize = PageSize.A4.rotate();
 		PdfPage page = pdf.addNewPage(pageSize);
-
 		canvas = new PdfCanvas(page);
 	}
 	/**
@@ -133,12 +133,13 @@ public class Visualizer {
 		}
 		// attribute contain metadatas for whole measure
 		// we need time information to determine how long should we draw for the single Measure.
+		measureStart = currentX;
 		drawAttributes(measure.getAttributes());
 		// draw Notes
-		durationCounter = 0;//reset durationCounter
 		drawNotes(measure.getNotesBeforeBackup());
 		drawNotes(measure.getNotesAfterBackup());
 		// draw Barlines
+		measureEnd = currentX;
 		drawBarlines(measure.getBarlines());
 		measureCounter++;
 	}
@@ -171,6 +172,7 @@ public class Visualizer {
 			drawBarline(barLine);
 		}
 	}
+	// we only have two kind of barline left and right
 	public void drawBarline(BarLine barLine){
 
 	}
@@ -207,46 +209,56 @@ public class Visualizer {
 
 		}else {
 			drawEighthFlag();
-			currentX += planToShift;
-			eighthFlag = new EighthFlag(currentX,currentY);
+			currentX += planShift;
+			planShift = 0;
+			eighthFlag = new EighthFlag(currentX,currentY,currentY);
 		}
-		drawBackground(note.getDuration()*durationFactor+noteWidth);
 		if (clef.getSign().equals("TAB")){
-
+			if (note.getNotations().getTechnical().getBend()!=null){
+				drawBackground(defaultShift+bendShift+noteWidth);
+			}else {
+				drawBackground(defaultShift+noteWidth);
+			}
+			//TODO drawTechnical();
+			// tab note only need draw technical.
 		}else if (clef.getSign().equals("percussion")){
+			drawBackground(defaultShift+noteWidth);
 			drawNoteHead(note);
 			if (!note.getType().equals("whole")){
 				drawNoteStem(note);
 			}
-
-
+			//TODO drawTechnical();
 		}
 	}
 	private void drawNoteHead(Note note){
 		Notehead notehead = note.getNotehead();
 		ImageData image = ImageResourceHandler.getInstance().getImage(notehead.getParentheses());
 		if (image!=null){
-			canvas.addImageAt(image,currentX,currentY+gapSize*getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave()),false);
+			canvas.addImageAt(image,currentX,currentY+stepSize*getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave()),false);
 		}
 	}
 	private void drawNoteStem(Note note){
-		Point start = new Point(currentX+noteWidth,currentY+gapSize*getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave()));
-		Point end = new Point(currentX+noteWidth,currentY+gapSize*(getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave())+4));
-		eighthFlag.y = Math.max(currentY+gapSize*(getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave())+4),eighthFlag.y);
+		eighthFlag.miny = Math.min(currentY+stepSize*(getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave())),eighthFlag.miny);
+		eighthFlag.maxy = Math.max(currentY+stepSize*(getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave())+4),eighthFlag.maxy);
 		//we assume every stem is up currently.
-		drawLine(start,end);
 	}
 	private void drawEighthFlag(){
 		if (eighthFlag.type<8){
 			return;
 		}else {
+			Point start = new Point(eighthFlag.x,eighthFlag.miny);
+			Point end = new Point(eighthFlag.x,eighthFlag.maxy);
+
+			drawLine(start,end);
+
 			ImageData image = ImageResourceHandler.getInstance().getImage("eighthFlag");
 			int postCounter = 0;
 			for (int i = eighthFlag.type;i>=8;i/=2){
-				canvas.addImageAt(image,eighthFlag.x,eighthFlag.y-postCounter*eighthGap,false);
+				canvas.addImageAt(image,eighthFlag.x,eighthFlag.maxy-postCounter*eighthGap,false);
 			}
 		}
 	}
+	//TODO need to be finish before midterm submission
 	private void drawTechnical(){
 
 	}
@@ -268,7 +280,7 @@ public class Visualizer {
 	 *
 	 * @param time the time signature of this measure.
 	 * */
-
+	//TODO finish it before midterm submission
 	private void drawTimeSignature(Time time){
 
 	}
@@ -277,6 +289,7 @@ public class Visualizer {
 	 *
 	 * @param key the key signature of this measure
 	 * */
+	//TODO finish it before midterm submission
 	private void drawKeySignature(Key key){
 
 	}
@@ -291,11 +304,12 @@ public class Visualizer {
 	}
 
 	private void drawBackground(int length){
+		planShift = length;
 		for (StaffTuning staffTuning:staffDetails.staffTuning){
 			int relative = getRelative(staffTuning.tuningStep,staffTuning.tuningOctave);
 
-			Point start = new Point(currentX,currentY+gapSize*relative);
-			Point end = new Point(currentX+length,currentY+gapSize*relative);
+			Point start = new Point(currentX,currentY+stepSize*relative);
+			Point end = new Point(currentX+length,currentY+stepSize*relative);
 
 			drawLine(start,end);
 		}
@@ -313,13 +327,20 @@ public class Visualizer {
 		return (step.charAt(0)-centerStep.charAt(0))+(9*(octave-centerOctave));
 	}
 	private void switchLine(){
-		currentX = marginX;
-		lineCounter++;
+		if (currentY+measureGap+marginY>A4Height){
+			switchPage();
+		}else {
+			currentX = marginX;
+			lineCounter++;
+		}
 	}
 	private void switchPage(){
 		currentX = marginX;
 		lineCounter = 0;
-		currentY = 0;
+		currentY = marginY+titleSpace;
+		PageSize pageSize = PageSize.A4.rotate();
+		PdfPage page = pdf.addNewPage(pageSize);
+		canvas = new PdfCanvas(page);
 		pageCounter ++;
 	}
 	/**
@@ -344,45 +365,42 @@ public class Visualizer {
 		noteType2Int.put("16th",16);
 		noteType2Int.put("32nd",32);
 		noteType2Int.put("64th",64);
-		noteType2Int.put("64th",128);
+		noteType2Int.put("128th",128);
 		noteType2Int.put("256th",256);
 		noteType2Int.put("512th",512);
 		noteType2Int.put("1024th",1024);
 	}
-	private int getMaxNoteFraction(Measure measure){
-		int maxFraction = 1;
+	private int getMeasureLength(Measure measure){
+		int length = 0;
 		for (Note note:measure.getNotesBeforeBackup()){
-			maxFraction = Math.max(noteTypeToInt(note.getType()),maxFraction);
+			if (note.getNotations().getTechnical().getBend()==null){
+				length += noteWidth+defaultShift;
+			}else {
+				length += noteWidth+defaultShift+bendShift;
+			}
 		}
 		for (Note note:measure.getNotesAfterBackup()){
-			maxFraction = Math.max(noteTypeToInt(note.getType()),maxFraction);
-		}
-		return maxFraction;
-	}
-
-	private int getNoteCount(Measure measure){
-		return measure.getNotesAfterBackup().size()+measure.getNotesBeforeBackup().size();
+			if (note.getNotations().getTechnical().getBend()==null){
+				length += noteWidth+defaultShift;
+			}else {
+				length += noteWidth+defaultShift+bendShift;
+			}		}
+		return length;
 	}
 
 	private int getMeasureTotalLength(Measure measure){
-		//px length = time*minFraction*noteWidth+Notes*gapsize.
-
 		int totalLength = 0;
 
 		if (measure.getAttributes().getClef()!=null){
-			totalLength+=clefWidth+gapSize;
+			totalLength+=clefWidth+defaultShift;
 		}
 		if (shouldDrawTime){
-			totalLength+=timeWidth+gapSize;
+			totalLength+=timeWidth+defaultShift;
 		}
 		if (measure.getAttributes().getKey()!=null){
-			totalLength+=keyWidth*measure.getAttributes().getKey().fifths+gapSize;
+			totalLength+=keyWidth*measure.getAttributes().getKey().fifths+defaultShift;
 		}
 
-		return totalLength+getMaxNoteFraction(measure)*time.getBeats()*time.getBeatType()*noteWidth+getNoteCount(measure)*gapSize;
+		return totalLength+getMeasureLength(measure);
 	}
-
-
-
-
 }

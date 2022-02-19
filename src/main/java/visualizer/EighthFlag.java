@@ -3,11 +3,13 @@ package visualizer;
 public class EighthFlag {
 	int type;
 	int x;
-	int y;
+	int maxy;
+	int miny;
 
-	public EighthFlag(int x, int y){
+	public EighthFlag(int x, int min,int max){
 		this.x = x;
-		this.y = y;
+		this.maxy = max;
+		this.miny = min;
 		this.type =0;
 	}
 }
