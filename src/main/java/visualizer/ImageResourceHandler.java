@@ -1,36 +1,40 @@
 package visualizer;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.*;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 
 public class ImageResourceHandler {
-	private static ImageResourceHandler imageResourceHandler = new ImageResourceHandler("Resources.json");
-	private HashMap<String,ImageResource> ImageResources;
+	private static ImageResourceHandler imageResourceHandler = new ImageResourceHandler("graphic/imageList.json");
+	private HashMap<String,String> ImageResources;
 	private Gson gson = new Gson();
 	private File file;
-	public ImageResourceHandler(String filename){
-		this.file = new File(filename);
+	private ImageResourceHandler(String filename){
+
+		try {
+			this.file = new File(getClass().getClassLoader().getResource(filename).toURI());
+		}catch (URISyntaxException e){
+			System.out.println("wrong URL");
+		}
+		ImageResources = new HashMap<>();
 		readResources();
 	}
 	private void readResources(){
-		try(InputStreamReader reader = new InputStreamReader(new FileInputStream(file))){
-			JsonArray jsonElements = JsonParser.parseReader(reader).getAsJsonArray();
-			for (JsonElement imageResource:jsonElements){
-				ImageResource imageResource1 = gson.fromJson(imageResource,ImageResource.class);
-				ImageResources.put(imageResource1.id,imageResource1);
+		try {
+			InputStreamReader reader = new InputStreamReader(new FileInputStream(file));
+			ImageResource[] resources = gson.fromJson(reader, ImageResource[].class);
+			for (ImageResource imageResource:resources){
+				ImageResources.put(imageResource.getId(),imageResource.getUrl());
 			}
-		}catch (Exception e){
-
+			System.out.println("resources have been read");
+		}catch (FileNotFoundException e){
+			System.out.println("can not find resource");
+		}catch (IllegalStateException e){
+			System.out.println("wrong type of resource");
 		}
 	}
 	public static ImageResourceHandler getInstance(){
@@ -42,8 +46,9 @@ public class ImageResourceHandler {
 
 	public ImageData getImage(String id) {
 		try {
-			return ImageDataFactory.create(ImageResources.get(id).url);
+			return ImageDataFactory.create(ImageResources.get(id));
 		}catch (IOException e){
+			System.out.println("fail to read asset");
 			return null;
 		}
 	}

@@ -4,6 +4,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import custom_exceptions.TXMLException;
 import javafx.application.Application;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -22,9 +23,9 @@ import java.io.IOException;
 
 public class PreviewViewController extends Application {
 	@FXML ImageView pdfViewer;
-	@FXML TextField playMeasureField;
+	@FXML TextField gotoPageField;
 
-	private final String temp_dest = "resources/templeFile/tempSheet.pdf";
+	private final String temp_dest = "tmp.pdf";
 	private final int scale = 1;
 
 	private MainViewController mvc;
@@ -48,12 +49,6 @@ public class PreviewViewController extends Application {
 		}catch (IOException e){
 
 		}
-
-
-	}
-	@FXML
-	private void gotoMeasureHandler(){
-
 	}
 	@FXML
 	private void exportPDFHandler(){
@@ -62,30 +57,35 @@ public class PreviewViewController extends Application {
 	@FXML
 	private void LastPageHandler(){
 		goToPage(pageNumber-1);
-		pageNumber++;
+
 	}
 	@FXML
 	private void NextPageHandler(){
 		goToPage(pageNumber+1);
-		pageNumber++;
 	}
 	@FXML
 	private void goToPageHandler(){
-
+		int pageNumber = Integer.parseInt(gotoPageField.getText() );
+		goToPage(pageNumber);
 	}
 	@FXML
 	private void playHandler(){
-		int measureNumber = Integer.parseInt(playMeasureField.getText() );
-		player.play(-1,measureNumber,-1);
+		player.play(-1,-1,-1);
 	}
 	private void goToPage(int page)  {
 		if (page<document.getNumberOfPages()&&page>=0){
 			try {
-				BufferedImage img = renderer.renderImage(pageNumber+1,scale);
+				BufferedImage img = renderer.renderImage(page,scale);
 				pdfViewer.setImage(convertToFxImage(img));
+				pageNumber = page;
+				gotoPageField.setText(pageNumber+"");
 			}catch (IOException e){
 
 			}
+		}else {
+			Alert alert = new Alert(Alert.AlertType.WARNING);
+			alert.setContentText("This page number is out of range");
+			alert.show();
 		}
 	}
 	@Override

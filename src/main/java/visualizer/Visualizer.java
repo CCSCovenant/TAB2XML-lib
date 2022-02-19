@@ -18,7 +18,6 @@ import models.measure.barline.BarLine;
 import models.measure.note.Note;
 import models.measure.note.Notehead;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +45,7 @@ public class Visualizer {
 	private final int eighthGap = 10;
 	private final int defaultShift = 50; // where we should put next note.
 	private final int bendShift = 50;
-	private final String temp_dest = "resources/templeFile/tempSheet.pdf";
+	private final String temp_dest = "tmp.pdf";
 
 	private ScorePartwise score;
 	private PdfCanvas canvas;
@@ -64,8 +63,8 @@ public class Visualizer {
 	private boolean shouldDrawTime = false;
 	private StaffDetails staffDetails;
 	private Clef clef;
-	private EighthFlag eighthFlag;
-
+	private EighthFlag eighthFlag = new EighthFlag(currentX,currentY,currentY);
+	private ImageResourceHandler imageResourceHandler = ImageResourceHandler.getInstance();
 	private Map<String,Integer> noteType2Int = new HashMap<>();
 
  	public Visualizer(Score score) throws TXMLException {
@@ -86,8 +85,7 @@ public class Visualizer {
 	 *
 	 * */
 	public void initPDF() throws FileNotFoundException {
-		File file = new File(temp_dest);
-		file.getParentFile().mkdir();
+
 		this.pdf = new PdfDocument(new PdfWriter(temp_dest));
 		// A4 size: 2048px * 2929px
 		PageSize pageSize = PageSize.A4.rotate();
@@ -136,7 +134,7 @@ public class Visualizer {
 		drawAttributes(measure.getAttributes());
 		// draw Notes
 		drawNotes(measure.getNotesBeforeBackup());
-		drawNotes(measure.getNotesAfterBackup());
+		//drawNotes(measure.getNotesAfterBackup());
 		// draw Barlines
 		measureEnd = currentX;
 		drawBarlines(measure.getBarlines());
@@ -167,8 +165,10 @@ public class Visualizer {
 		}
 	}
 	public void drawBarlines(List<BarLine> barLines){
-		for (BarLine barLine:barLines){
-			drawBarline(barLine);
+		if (barLines!=null){
+			for (BarLine barLine:barLines){
+				drawBarline(barLine);
+			}
 		}
 	}
 	// we only have two kind of barline left and right
@@ -232,7 +232,7 @@ public class Visualizer {
 	}
 	private void drawNoteHead(Note note){
 		Notehead notehead = note.getNotehead();
-		ImageData image = ImageResourceHandler.getInstance().getImage(notehead.getParentheses());
+		ImageData image = imageResourceHandler.getInstance().getImage(notehead.getParentheses());
 		if (image!=null){
 			canvas.addImageAt(image,currentX,currentY+stepSize*getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave()),false);
 		}
@@ -251,7 +251,7 @@ public class Visualizer {
 
 			drawLine(start,end);
 
-			ImageData image = ImageResourceHandler.getInstance().getImage("eighthFlag");
+			ImageData image = imageResourceHandler.getInstance().getImage("eighthFlag");
 			int postCounter = 0;
 			for (int i = eighthFlag.type;i>=8;i/=2){
 				canvas.addImageAt(image,eighthFlag.x,eighthFlag.maxy-postCounter*eighthGap,false);
@@ -380,12 +380,16 @@ public class Visualizer {
 				length += noteWidth+defaultShift+bendShift;
 			}
 		}
+		//we don't need noteafter backup now
+		/*
 		for (Note note:measure.getNotesAfterBackup()){
 			if (note.getNotations().getTechnical().getBend()==null){
 				length += noteWidth+defaultShift;
 			}else {
 				length += noteWidth+defaultShift+bendShift;
 			}		}
+
+		*/
 		return length;
 	}
 
