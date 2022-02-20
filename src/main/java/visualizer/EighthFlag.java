@@ -6,10 +6,10 @@ public class EighthFlag {
 	int maxy;
 	int miny;
 
-	public EighthFlag(int x, int min,int max){
+	public EighthFlag(int x){
 		this.x = x;
-		this.maxy = max;
-		this.miny = min;
+		this.maxy = Integer.MIN_VALUE;
+		this.miny = Integer.MAX_VALUE;
 		this.type =0;
 	}
 }

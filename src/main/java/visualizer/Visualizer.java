@@ -2,6 +2,7 @@ package visualizer;
 
 
 import com.itextpdf.io.image.ImageData;
+import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Point;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -32,14 +33,14 @@ import java.util.Map;
 public class Visualizer {
 	// Note: A4 size: 597.6 unit * 842.4 unit
 	private final int measureGap = 50; //px Gap between measure.
-	private final int noteWidth = 10; //px, the width of a note element
+	private final int noteWidth = 7; //px, the width of a note element
 	private final int clefWidth = 10; //px, the width of a clef element
 	private final int timeWidth = 10; //px, the width of a time element
 	private final int keyWidth = 10; //px, the width of a key element;
 	private final int stepSize = 4; //px, the width between steps.
 	private final int marginX = 10; // px, the width of margin.
 	private final int marginY = 10; // px, the width of margin.
-	private final int titleSpace = 40; // px, for title and author
+	private final int titleSpace = 100; // px, for title and author
 	private final int A4Width = 597;
 	private final int A4Height =  842;
 	private final int eighthGap = 2;
@@ -63,7 +64,7 @@ public class Visualizer {
 	private boolean shouldDrawTime = false;
 	private StaffDetails staffDetails;
 	private Clef clef;
-	private EighthFlag eighthFlag = new EighthFlag(currentX,currentY,currentY);
+	private EighthFlag eighthFlag = new EighthFlag(currentX);
 	private ImageResourceHandler imageResourceHandler = ImageResourceHandler.getInstance();
 	private Map<String,Integer> noteType2Int = new HashMap<>();
 
@@ -72,11 +73,11 @@ public class Visualizer {
 		this.score = score.getModel();
 		this.measureCounter = 0;
 		List<StaffTuning> staffs = new ArrayList<>();
-		staffs.add(new StaffTuning(1,"E",3));
-		staffs.add(new StaffTuning(1,"G",3));
+		staffs.add(new StaffTuning(1,"E",4));
+		staffs.add(new StaffTuning(1,"G",4));
 		staffs.add(new StaffTuning(1,"B",4));
-		staffs.add(new StaffTuning(1,"D",4));
-		staffs.add(new StaffTuning(1,"F",4));
+		staffs.add(new StaffTuning(1,"D",5));
+		staffs.add(new StaffTuning(1,"F",5));
 
 		this.staffDetails = new StaffDetails(5,staffs);
 	}
@@ -135,14 +136,23 @@ public class Visualizer {
 		// draw Notes
 		drawNotes(measure.getNotesBeforeBackup());
 		//drawNotes(measure.getNotesAfterBackup());
-		// draw Barlines
+
+		drawEighthFlag();
+		currentX += planShift;
+		planShift = 0;
+		eighthFlag = new EighthFlag(currentX+noteWidth);
+
 		measureEnd = currentX;
+
+		// draw Barlines
+
 		drawBarlines(measure.getBarlines());
 		measureCounter++;
 	}
 
 
 	public void drawAttributes(Attributes attributes){
+		drawBackground(noteWidth);//empty space at begin
 		if (attributes.getClef()!=null){
 			drawClef(attributes.getClef());
 			clef = attributes.getClef();
@@ -225,12 +235,12 @@ public class Visualizer {
 
 	public void drawNote(Note note){
 		if (note.getChord()==null){
-
-		}else {
 			drawEighthFlag();
 			currentX += planShift;
 			planShift = 0;
-			eighthFlag = new EighthFlag(currentX,currentY,currentY);
+			eighthFlag = new EighthFlag(currentX+noteWidth);
+		}else {
+
 		}
 
 		if (clef.getSign().equals("TAB")){
@@ -253,12 +263,12 @@ public class Visualizer {
 		}
 	}
 	private void drawNoteHead(Note note){
-		System.out.println("drawing");
+		//System.out.println("drawing");
 		Notehead notehead = note.getNotehead();
 		ImageData image;
 		if (notehead!=null){
-			if (notehead.getParentheses()!=null){
-				image = imageResourceHandler.getImage(notehead.getParentheses());
+			if (notehead.getType()!=null){
+				image = imageResourceHandler.getImage(notehead.getType());
 			}else {
 				image = imageResourceHandler.getImage("normal");
 			}
@@ -267,22 +277,42 @@ public class Visualizer {
 		}
 
 		if (image!=null){
-			image.setXYRatio(0.2f);
-			canvas.addImageAt(image,currentX,A4Height-(currentY+stepSize*getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave())),false);
+			int relative = getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave());
+
+			int x = currentX;
+			//offset by one because of image height
+			int y = A4Height-(currentY+stepSize*(relative+1));
+			AffineTransform at = AffineTransform.getTranslateInstance(x,y);
+			at.concatenate(AffineTransform.getScaleInstance(noteWidth,noteWidth));
+			float[] m = new float[6];
+			at.getMatrix(m);
+			canvas.addImageWithTransformationMatrix(image,m[0],m[1],m[2],m[3],m[4],m[5]);
+
 			//System.out.println("drawing at"+ currentX);
 		}else {
 			//System.out.println("fail to draw");
 		}
 	}
 	private void drawNoteStem(Note note){
-		eighthFlag.miny = Math.min(currentY+stepSize*(getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave())),eighthFlag.miny);
-		eighthFlag.maxy = Math.max(currentY+stepSize*(getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave())+4),eighthFlag.maxy);
+		int xOffset = 0;
+		if (note.getNotehead()!=null){
+			if (note.getNotehead().getType()!=null){
+				if (note.getNotehead().getType().equals("x")){
+					xOffset = 1;
+					System.out.println("offseted");
+				}
+			}
+		}
+		eighthFlag.miny = Math.min(currentY+stepSize*(getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave())-4-xOffset),eighthFlag.miny);
+		eighthFlag.maxy = Math.max(currentY+stepSize*(getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave())-xOffset),eighthFlag.maxy);
+		eighthFlag.type = noteTypeToInt(note.getType());
 		//we assume every stem is up currently.
 	}
 	private void drawEighthFlag(){
-		if (eighthFlag.type<8){
+		if (eighthFlag.type<2){
 			return;
 		}else {
+			System.out.println("Drawing");
 			Point start = new Point(eighthFlag.x,A4Height-eighthFlag.miny);
 			Point end = new Point(eighthFlag.x,A4Height-eighthFlag.maxy);
 
@@ -291,7 +321,15 @@ public class Visualizer {
 			ImageData image = imageResourceHandler.getImage("eighthFlag");
 			int postCounter = 0;
 			for (int i = eighthFlag.type;i>=8;i/=2){
-				canvas.addImageAt(image,eighthFlag.x,eighthFlag.maxy-postCounter*eighthGap,false);
+				int x = eighthFlag.x;
+				//offset by one because of image height
+				int y = A4Height-(eighthFlag.miny+postCounter*eighthGap+noteWidth*2);
+				AffineTransform at = AffineTransform.getTranslateInstance(x,y);
+				at.concatenate(AffineTransform.getScaleInstance(noteWidth,noteWidth*3));
+				float[] m = new float[6];
+				at.getMatrix(m);
+				canvas.addImageWithTransformationMatrix(image,m[0],m[1],m[2],m[3],m[4],m[5]);
+				postCounter++;
 			}
 		}
 	}
@@ -348,7 +386,6 @@ public class Visualizer {
 
 			Point start = new Point(currentX,A4Height-(currentY+stepSize*relative));
 			Point end = new Point(currentX+length,A4Height-(currentY+stepSize*relative));
-
 			drawLine(start,end);
 		}
 	}
@@ -361,8 +398,16 @@ public class Visualizer {
 	private int getRelative(String step,int octave){
 		//center C is the baseline.
 		int centerOctave = 3;
-		String centerStep = "C";
-		return (step.charAt(0)-centerStep.charAt(0))+(7*(octave-centerOctave));
+		char stepAdjusted = step.charAt(0);
+		char centerStep = 'C';
+		if (stepAdjusted<'C'){
+			if (stepAdjusted=='A'){
+				stepAdjusted = 'H';
+			}else if (stepAdjusted=='B'){
+				stepAdjusted = 'I';
+			}
+		}
+		return (centerStep-stepAdjusted)-(7*(octave-centerOctave));
 	}
 	private void switchLine(){
 		if (currentY+measureGap+marginY>A4Height){

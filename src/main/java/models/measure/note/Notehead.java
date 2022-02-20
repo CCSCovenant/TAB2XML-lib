@@ -16,6 +16,10 @@ public class Notehead {
         this.type = t;
     }
 
+    public String getType() {
+        return type;
+    }
+
     public String getParentheses() {
         return parentheses;
     }

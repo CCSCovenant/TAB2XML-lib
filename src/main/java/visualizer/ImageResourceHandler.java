@@ -48,7 +48,6 @@ public class ImageResourceHandler {
 
 	public ImageData getImage(String id) {
 		String s = ImageResources.get(id);
-		System.out.println(s);
 		ImageData imageData = ImageDataFactory.create(getClass().getClassLoader().getResource(ImageResources.get(id)));
 		return imageData;
 	}
