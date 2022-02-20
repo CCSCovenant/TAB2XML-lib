@@ -44,7 +44,7 @@ Ensure that the master branch is the one that is pulled.
 
 
 
-#Guide to Importing Project
+# Guide to Importing Project
 Open the Eclipse application. To import this project from GitHub, select File → Import → Git → Projects from Git (with smart import). Then, press the ‘Next’ option.
 
 ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/e91f52340c1c3f436670270a0098bcd28fb0831f/src/main/resources/readme/g1.png)
@@ -66,7 +66,7 @@ In order to avoid any issues, first refresh the Gradle project. Right-click the 
 
 ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/e91f52340c1c3f436670270a0098bcd28fb0831f/src/main/resources/readme/g4.png)
 
-#Setting up Gradle Views
+# Setting up Gradle Views
 Open the Gradle Tasks and Gradle Executions views on Eclipse. Select Window → Show View → Other.
 
 ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/e91f52340c1c3f436670270a0098bcd28fb0831f/src/main/resources/readme/g5.png)
@@ -77,7 +77,7 @@ In the new window, select Gradle from the drop-down menu and select both the Gra
 ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/e91f52340c1c3f436670270a0098bcd28fb0831f/src/main/resources/readme/g6.png)
 
 
-#Running Application
+# Running Application
 Under the ‘Gradle Tasks’ view, find the project and expand on it from the drop down option. Select and expand on the ‘application.’ Double-click the ‘run’ option under ‘application’ to execute the program.
 
 ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/e91f52340c1c3f436670270a0098bcd28fb0831f/src/main/resources/readme/g7.png)
