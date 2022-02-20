@@ -329,7 +329,7 @@ public class Visualizer {
 			if (note.getNotehead().getType()!=null){
 				if (note.getNotehead().getType().equals("x")){
 					xOffset = 1;
-					System.out.println("offseted");
+					//System.out.println("offseted");
 				}
 			}
 		}
@@ -348,7 +348,7 @@ public class Visualizer {
 		if (eighthFlag.type<2){
 			return;
 		}else {
-			System.out.println("Drawing");
+			//System.out.println("Drawing");
 			Point start = new Point(eighthFlag.x,A4Height-eighthFlag.miny);
 			Point end = new Point(eighthFlag.x,A4Height-eighthFlag.maxy);
 
