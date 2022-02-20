@@ -43,5 +43,65 @@
     "name": "whole_rest",
     "url": "graphic/whole_rest.png",
     "id": "whole_rest"
+  },
+  {
+    "name": "percussion clef",
+    "url": "graphic/percussion.png",
+    "id": "percussion"
+  },
+  {
+    "name": "tab clef",
+    "url": "graphic/TAB.png",
+    "id": "TAB"
+  },
+  {
+    "name": "0",
+    "url": "graphic/0.png",
+    "id": "0"
+  },
+  {
+    "name": "1",
+    "url": "graphic/1.png",
+    "id": "1"
+  },
+  {
+    "name": "2",
+    "url": "graphic/2.png",
+    "id": "2"
+  },
+  {
+    "name": "3",
+    "url": "graphic/3.png",
+    "id": "3"
+  },
+  {
+    "name": "4",
+    "url": "graphic/4.png",
+    "id": "4"
+  },
+  {
+    "name": "5",
+    "url": "graphic/5.png",
+    "id": "5"
+  },
+  {
+    "name": "6",
+    "url": "graphic/6.png",
+    "id": "6"
+  },
+  {
+    "name": "7",
+    "url": "graphic/7.png",
+    "id": "7"
+  },
+  {
+    "name": "8",
+    "url": "graphic/8.png",
+    "id": "8"
+  },
+  {
+    "name": "9",
+    "url": "graphic/9.png",
+    "id": "9"
   }
 ]

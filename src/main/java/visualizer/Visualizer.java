@@ -154,20 +154,28 @@ public class Visualizer {
 
 	public void drawAttributes(Attributes attributes){
 		drawBackground(noteWidth);//empty space at begin
+		currentX += planShift;
+		planShift = 0;
 		if (attributes.getClef()!=null){
 			drawClef(attributes.getClef());
 			clef = attributes.getClef();
+			currentX += planShift;
+			planShift = 0;
 		}
 		drawKeySignature(attributes.getKey());
 
 		if (attributes.getTime()!=null){
 			time = attributes.getTime();
 			shouldDrawTime = true;
+			currentX += planShift;
+			planShift = 0;
 		}
 
 		if (shouldDrawTime){
 			drawTimeSignature(time);
 			shouldDrawTime = false;
+			currentX += planShift;
+			planShift = 0;
 		}
 	}
 	public void drawNotes(List<Note> notes){
@@ -382,10 +390,40 @@ public class Visualizer {
 	/**
 	 * draw the time signature.
 	 *
-	 * @param time the time signature of this measure.
+	 * @param t the time signature of this measure.
 	 * */
-	//TODO finish it before midterm submission
-	private void drawTimeSignature(Time time){
+	//TODO finish it before midterm submission need support beats and beattype that greater than 9
+	private void drawTimeSignature(Time t){
+		if (t.getBeatType()>9||t.getBeats()>9){
+
+		}else {
+			ImageData N = imageResourceHandler.getImage(t.getBeats()+"");
+			ImageData D = imageResourceHandler.getImage(t.getBeatType()+"");
+
+			StaffTuning staffTuning = staffDetails.staffTuning.get(0);
+
+			int relative = getRelative(staffTuning.tuningStep,staffTuning.tuningOctave);
+
+			int x = currentX;
+			int y = A4Height-(currentY+stepSize*relative);
+			int y2 = A4Height-(currentY+stepSize*(relative-4));
+			AffineTransform atN = AffineTransform.getTranslateInstance(x,y2);
+			atN.concatenate(AffineTransform.getScaleInstance(noteWidth*1.8,stepSize*3.8));
+
+			AffineTransform atD = AffineTransform.getTranslateInstance(x,y);
+			atD.concatenate(AffineTransform.getScaleInstance(noteWidth*1.8,stepSize*3.8));
+
+			float[] m1 = new float[6];
+			float[] m2 = new float[6];
+
+			atN.getMatrix(m1);
+			atD.getMatrix(m2);
+
+			canvas.addImageWithTransformationMatrix(N,m1[0],m1[1],m1[2],m1[3],m1[4],m1[5]);
+			canvas.addImageWithTransformationMatrix(D,m2[0],m2[1],m2[2],m2[3],m2[4],m2[5]);
+
+			drawBackground(defaultShift+noteWidth*2);
+		}
 
 	}
 	/**
@@ -404,6 +442,23 @@ public class Visualizer {
 	 * */
 
 	private void drawClef(Clef clef){
+		ImageData imageData = imageResourceHandler.getImage(clef.getSign());
+		StaffTuning staffTuning = staffDetails.staffTuning.get(0);
+
+		int relative = getRelative(staffTuning.tuningStep,staffTuning.tuningOctave);
+
+		int x = currentX;
+		int y = A4Height-(currentY+stepSize*relative);
+
+		AffineTransform at = AffineTransform.getTranslateInstance(x,y);
+		at.concatenate(AffineTransform.getScaleInstance(noteWidth*2,stepSize*8));
+
+		float[] m = new float[6];
+		at.getMatrix(m);
+		canvas.addImageWithTransformationMatrix(imageData,m[0],m[1],m[2],m[3],m[4],m[5]);
+
+		drawBackground(defaultShift+noteWidth*2);
+
 
 	}
 
