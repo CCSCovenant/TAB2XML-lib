@@ -33,7 +33,7 @@ import java.util.Map;
 public class Visualizer {
 	// Note: A4 size: 597.6 unit * 842.4 unit
 	private final int measureGap = 50; //px Gap between measure.
-	private final int noteWidth = 7; //px, the width of a note element
+	private final int noteWidth = 8; //px, the width of a note element
 	private final int clefWidth = 10; //px, the width of a clef element
 	private final int timeWidth = 10; //px, the width of a time element
 	private final int keyWidth = 10; //px, the width of a key element;
@@ -323,7 +323,7 @@ public class Visualizer {
 			for (int i = eighthFlag.type;i>=8;i/=2){
 				int x = eighthFlag.x;
 				//offset by one because of image height
-				int y = A4Height-(eighthFlag.miny+postCounter*eighthGap+noteWidth*2);
+				int y = A4Height-(eighthFlag.miny+postCounter*eighthGap+noteWidth*3);
 				AffineTransform at = AffineTransform.getTranslateInstance(x,y);
 				at.concatenate(AffineTransform.getScaleInstance(noteWidth,noteWidth*3));
 				float[] m = new float[6];
