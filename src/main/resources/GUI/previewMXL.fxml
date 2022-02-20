@@ -2,9 +2,8 @@
 
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.image.*?>
+<?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.*?>
-
 <BorderPane fx:id="borderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="450.0" minWidth="640.0" prefHeight="700.0" prefWidth="1000.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.PreviewViewController">
     <center>
         <AnchorPane prefHeight="200.0" prefWidth="666.0" BorderPane.alignment="CENTER">
@@ -16,7 +15,7 @@
                 <AnchorPane layoutX="13.0" prefHeight="32.0" prefWidth="974.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="0.0" />
                 <AnchorPane layoutX="12.0" layoutY="614.0" prefHeight="52.0" prefWidth="977.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0">
                     <children>
-                        <HBox layoutY="11.0" spacing="5.0" AnchorPane.rightAnchor="0.0">
+                        <HBox layoutY="11.0" spacing="5.0" AnchorPane.leftAnchor="870.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="8.0">
                             <children>
                                 <Button fx:id="saveMXLButton" disable="false" layoutX="15.0" layoutY="15.0" mnemonicParsing="false" onAction="#exportPDFHandler" text="Export PDF" />
                             </children>
@@ -26,23 +25,50 @@
                         </HBox>
                         <HBox layoutX="14.0" layoutY="8.0" spacing="5.0" AnchorPane.leftAnchor="14.0">
                             <children>
-                                <Label text="Go-to Measure">
+                                <Label text="Go-to-page">
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                 </Label>
-                                <TextField fx:id="gotoMeasureField" prefHeight="25.0" prefWidth="55.0" />
-                                <Button fx:id="gotoMeasureButton" mnemonicParsing="false" onAction="#gotoMeasureHandler" prefHeight="25.0" prefWidth="42.0" text="Go" />
+                                <TextField fx:id="gotoPageField" prefHeight="25.0" prefWidth="55.0" />
+                                <Button fx:id="gotoPageButton" mnemonicParsing="false" onAction="#goToPageHandler" prefHeight="25.0" prefWidth="42.0" text="Go" />
                             </children>
                             <padding>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </padding>
                         </HBox>
-                  <HBox layoutX="304.0" layoutY="8.0" prefHeight="40.0" prefWidth="369.0">
+                  <HBox AnchorPane.leftAnchor="250.0" AnchorPane.topAnchor="8.0">
                      <children>
-                        <Button mnemonicParsing="false" prefHeight="24.0" prefWidth="55.0" text="Button" />
-                        <Button mnemonicParsing="false" text="Button" />
-                        <Button mnemonicParsing="false" text="Button" />
+                        <Label text="Last page">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </Label>
+                        <Button fx:id="Last" mnemonicParsing="false" onAction="#LastPageHandler" prefHeight="25.0" prefWidth="42.0" text="go" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </HBox>
+                  <HBox AnchorPane.leftAnchor="400.0" AnchorPane.topAnchor="8.0">
+                     <children>
+                        <Label text="Next page">
+                           <padding>
+                              <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                           </padding>
+                        </Label>
+                        <Button fx:id="Next" mnemonicParsing="false" onAction="#NextPageHandler" prefHeight="25.0" prefWidth="42.0" text="go" />
+                     </children>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                  </HBox>
+                  <HBox AnchorPane.leftAnchor="800.0" AnchorPane.topAnchor="8.0">
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                     <children>
+                        <Button mnemonicParsing="false" text="play" />
                      </children>
                   </HBox>
                     </children>
