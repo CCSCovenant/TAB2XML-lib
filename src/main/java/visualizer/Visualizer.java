@@ -32,19 +32,19 @@ import java.util.Map;
 public class Visualizer {
 	// Note: A4 size: 597.6 unit * 842.4 unit
 	private final int measureGap = 50; //px Gap between measure.
-	private final int noteWidth = 5; //px, the width of a note element
-	private final int clefWidth = 5; //px, the width of a clef element
-	private final int timeWidth = 5; //px, the width of a time element
-	private final int keyWidth = 5; //px, the width of a key element;
-	private final int stepSize = 2; //px, the width between steps.
-	private final int marginX = 5; // px, the width of margin.
-	private final int marginY = 5; // px, the width of margin.
-	private final int titleSpace = 20; // px, for title and author
+	private final int noteWidth = 10; //px, the width of a note element
+	private final int clefWidth = 10; //px, the width of a clef element
+	private final int timeWidth = 10; //px, the width of a time element
+	private final int keyWidth = 10; //px, the width of a key element;
+	private final int stepSize = 4; //px, the width between steps.
+	private final int marginX = 10; // px, the width of margin.
+	private final int marginY = 10; // px, the width of margin.
+	private final int titleSpace = 40; // px, for title and author
 	private final int A4Width = 597;
 	private final int A4Height =  842;
-	private final int eighthGap = 1;
-	private final int defaultShift = 5; // where we should put next note.
-	private final int bendShift = 5;
+	private final int eighthGap = 2;
+	private final int defaultShift = 10; // where we should put next note.
+	private final int bendShift = 10;
 	private final String temp_dest = "tmp.pdf";
 
 	private ScorePartwise score;
@@ -165,6 +165,25 @@ public class Visualizer {
 		}
 	}
 	public void drawBarlines(List<BarLine> barLines){
+		//default measure barlines
+		int maxY = Integer.MIN_VALUE;
+		int minY = Integer.MAX_VALUE;
+		for (StaffTuning staffTuning:staffDetails.getStaffTuning()){
+			int relative = getRelative(staffTuning.tuningStep,staffTuning.tuningOctave);
+
+			maxY = Math.max(currentY+stepSize*relative,maxY);
+			minY = Math.min(currentY+stepSize*relative,minY);
+		}
+		//left
+		Point startL = new Point(measureStart,A4Height-maxY);
+		Point endL = new Point(measureStart,A4Height-minY);
+		drawLine(startL,endL);
+		//right
+		Point startR = new Point(measureEnd,A4Height-maxY);
+		Point endR = new Point(measureEnd,A4Height-minY);
+		drawLine(startR,endR);
+		drawLine(startR,endR);
+		//more barline
 		if (barLines!=null){
 			for (BarLine barLine:barLines){
 				drawBarline(barLine);
@@ -205,10 +224,10 @@ public class Visualizer {
 	 */
 
 	public void drawNote(Note note){
-		if (note.getChord()!=null){
+		if (note.getChord()==null){
 
 		}else {
-			//drawEighthFlag();
+			drawEighthFlag();
 			currentX += planShift;
 			planShift = 0;
 			eighthFlag = new EighthFlag(currentX,currentY,currentY);
@@ -224,21 +243,35 @@ public class Visualizer {
 			// tab note only need draw technical.
 		}else if (clef.getSign().equals("percussion")){
 			drawBackground(defaultShift+noteWidth);
-			/*
 			drawNoteHead(note);
 			if (!note.getType().equals("whole")){
 				drawNoteStem(note);
 			}
-			*/
+
 
 			//TODO drawTechnical();
 		}
 	}
 	private void drawNoteHead(Note note){
+		System.out.println("drawing");
 		Notehead notehead = note.getNotehead();
-		ImageData image = imageResourceHandler.getInstance().getImage(notehead.getParentheses());
+		ImageData image;
+		if (notehead!=null){
+			if (notehead.getParentheses()!=null){
+				image = imageResourceHandler.getImage(notehead.getParentheses());
+			}else {
+				image = imageResourceHandler.getImage("normal");
+			}
+		}else {
+			image = imageResourceHandler.getImage("normal");
+		}
+
 		if (image!=null){
-			canvas.addImageAt(image,currentX,currentY+stepSize*getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave()),false);
+			image.setXYRatio(0.2f);
+			canvas.addImageAt(image,currentX,A4Height-(currentY+stepSize*getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave())),false);
+			//System.out.println("drawing at"+ currentX);
+		}else {
+			//System.out.println("fail to draw");
 		}
 	}
 	private void drawNoteStem(Note note){
@@ -250,12 +283,12 @@ public class Visualizer {
 		if (eighthFlag.type<8){
 			return;
 		}else {
-			Point start = new Point(eighthFlag.x,eighthFlag.miny);
-			Point end = new Point(eighthFlag.x,eighthFlag.maxy);
+			Point start = new Point(eighthFlag.x,A4Height-eighthFlag.miny);
+			Point end = new Point(eighthFlag.x,A4Height-eighthFlag.maxy);
 
 			drawLine(start,end);
 
-			ImageData image = imageResourceHandler.getInstance().getImage("eighthFlag");
+			ImageData image = imageResourceHandler.getImage("eighthFlag");
 			int postCounter = 0;
 			for (int i = eighthFlag.type;i>=8;i/=2){
 				canvas.addImageAt(image,eighthFlag.x,eighthFlag.maxy-postCounter*eighthGap,false);
@@ -313,11 +346,10 @@ public class Visualizer {
 		for (StaffTuning staffTuning:staffDetails.staffTuning){
 			int relative = getRelative(staffTuning.tuningStep,staffTuning.tuningOctave);
 
-			Point start = new Point(currentX,currentY+stepSize*relative);
-			Point end = new Point(currentX+length,currentY+stepSize*relative);
+			Point start = new Point(currentX,A4Height-(currentY+stepSize*relative));
+			Point end = new Point(currentX+length,A4Height-(currentY+stepSize*relative));
 
 			drawLine(start,end);
-			System.out.println("Y:"+(currentY+stepSize*relative));
 		}
 	}
 

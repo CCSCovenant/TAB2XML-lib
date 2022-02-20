@@ -13,5 +13,10 @@
     "name": "x_note_head",
     "url": "graphic/x_note_head.png",
     "id": "x"
+  },
+  {
+    "name": "eighth_notation",
+    "url": "graphic/eighth_notation.png",
+    "id": "eighthFlag"
   }
 ]

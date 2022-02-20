@@ -4,7 +4,10 @@ import com.google.gson.Gson;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.io.image.ImageDataFactory;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 
@@ -14,7 +17,6 @@ public class ImageResourceHandler {
 	private Gson gson = new Gson();
 	private File file;
 	private ImageResourceHandler(String filename){
-
 		try {
 			this.file = new File(getClass().getClassLoader().getResource(filename).toURI());
 		}catch (URISyntaxException e){
@@ -45,11 +47,9 @@ public class ImageResourceHandler {
 	}
 
 	public ImageData getImage(String id) {
-		try {
-			return ImageDataFactory.create(ImageResources.get(id));
-		}catch (IOException e){
-			System.out.println("fail to read asset");
-			return null;
-		}
+		String s = ImageResources.get(id);
+		System.out.println(s);
+		ImageData imageData = ImageDataFactory.create(getClass().getClassLoader().getResource(ImageResources.get(id)));
+		return imageData;
 	}
 }
