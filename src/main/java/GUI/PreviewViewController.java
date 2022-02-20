@@ -27,8 +27,8 @@ public class PreviewViewController extends Application {
 	}
 	public void update() throws TXMLException, FileNotFoundException {
 		this.player = new MXLPlayer(mvc.converter.getScore());
-		this.visualizer = new Visualizer(mvc.converter.getScore());
-		pdf = visualizer.draw();
+		//play
+		player.play(0,0,0);
 	}
 	private void initPdf(PdfDocument pdf){
 		this.pdf = pdf;
