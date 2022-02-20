@@ -18,5 +18,30 @@
     "name": "eighth_notation",
     "url": "graphic/eighth_notation.png",
     "id": "eighthFlag"
+  },
+  {
+    "name": "eighth_rest",
+    "url": "graphic/eighth_rest.png",
+    "id": "eighth_rest"
+  },
+  {
+    "name": "16th_rest",
+    "url": "graphic/16th_rest.png",
+    "id": "16th_rest"
+  },
+  {
+    "name": "quarter_rest",
+    "url": "graphic/quarter_rest.png",
+    "id": "quarter_rest"
+  },
+  {
+    "name": "half_rest",
+    "url": "graphic/half_rest.png",
+    "id": "half_rest"
+  },
+  {
+    "name": "whole_rest",
+    "url": "graphic/whole_rest.png",
+    "id": "whole_rest"
   }
 ]

@@ -11,7 +11,9 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import player.MXLPlayer;
@@ -28,6 +30,7 @@ public class PreviewViewController extends Application {
 
 	private final String temp_dest = "tmp.pdf";
 	private final int scale = 1;
+	private static Window convertWindow = new Stage();
 
 	private MainViewController mvc;
 	private PdfDocument pdf;
@@ -36,17 +39,19 @@ public class PreviewViewController extends Application {
 	private MXLPlayer player;
 	private PDDocument document;
 	private PDFRenderer renderer;
+	private File tempFile;
 	public void setMainViewController(MainViewController mvcInput) {
 		mvc = mvcInput;
 	}
 	public void update() throws TXMLException, FileNotFoundException {
 		this.player = new MXLPlayer(mvc.converter.getScore());
 		this.visualizer = new Visualizer(mvc.converter.getScore());
-		pdf = visualizer.draw();
+		tempFile = new File(temp_dest);
+		pdf = visualizer.draw(tempFile);
 		Document document1 = new Document(pdf);
 		document1.close();
 		try {
-			 document = PDDocument.load(new File(temp_dest));
+			 document = PDDocument.load(tempFile);
 			 renderer = new PDFRenderer(document);
 		}catch (IOException e){
 
@@ -55,7 +60,20 @@ public class PreviewViewController extends Application {
 	}
 	@FXML
 	private void exportPDFHandler(){
+		FileChooser fileChooser = new FileChooser();
+		File file = fileChooser.showSaveDialog(convertWindow);
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("pdf files", "*.pdf");
+		fileChooser.getExtensionFilters().add(extFilter);
 
+		if (file!=null){
+			try {
+				pdf = visualizer.draw(file);
+				Document document1 = new Document(pdf);
+				document1.close();
+			}catch (Exception e){
+
+			}
+		}
 	}
 	@FXML
 	private void LastPageHandler(){

@@ -19,6 +19,7 @@ import models.measure.barline.BarLine;
 import models.measure.note.Note;
 import models.measure.note.Notehead;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -32,7 +33,7 @@ import java.util.Map;
  * */
 public class Visualizer {
 	// Note: A4 size: 597.6 unit * 842.4 unit
-	private final int measureGap = 50; //px Gap between measure.
+	private final int measureGap = 80; //px Gap between measure.
 	private final int noteWidth = 8; //px, the width of a note element
 	private final int clefWidth = 10; //px, the width of a clef element
 	private final int timeWidth = 10; //px, the width of a time element
@@ -40,10 +41,10 @@ public class Visualizer {
 	private final int stepSize = 4; //px, the width between steps.
 	private final int marginX = 10; // px, the width of margin.
 	private final int marginY = 10; // px, the width of margin.
-	private final int titleSpace = 100; // px, for title and author
+	private final int titleSpace = 150; // px, for title and author
 	private final int A4Width = 597;
 	private final int A4Height =  842;
-	private final int eighthGap = 2;
+	private final int eighthGap = noteWidth/2;
 	private final int defaultShift = 10; // where we should put next note.
 	private final int bendShift = 10;
 	private final String temp_dest = "tmp.pdf";
@@ -85,9 +86,9 @@ public class Visualizer {
 	 * This method is going to init PDF file.
 	 *
 	 * */
-	public void initPDF() throws FileNotFoundException {
+	public void initPDF(File file) throws FileNotFoundException {
 
-		this.pdf = new PdfDocument(new PdfWriter(temp_dest));
+		this.pdf = new PdfDocument(new PdfWriter(file));
 		// A4 size: 2048px * 2929px
 		PageSize pageSize = PageSize.A4;
 		PdfPage page = pdf.addNewPage(pageSize);
@@ -101,8 +102,8 @@ public class Visualizer {
 	 *
 	 * */
 
-	public PdfDocument draw() throws FileNotFoundException {
-		initPDF();
+	public PdfDocument draw(File file) throws FileNotFoundException {
+		initPDF(file);
 		// Parts is collection of part
 		drawParts(score.getParts());
 		return pdf;
@@ -170,8 +171,10 @@ public class Visualizer {
 		}
 	}
 	public void drawNotes(List<Note> notes){
-		for (Note note:notes){
-			drawNote(note);
+		if (notes!=null){
+			for (Note note:notes){
+				drawNote(note);
+			}
 		}
 	}
 	public void drawBarlines(List<BarLine> barLines){
@@ -253,9 +256,24 @@ public class Visualizer {
 			// tab note only need draw technical.
 		}else if (clef.getSign().equals("percussion")){
 			drawBackground(defaultShift+noteWidth);
-			drawNoteHead(note);
-			if (!note.getType().equals("whole")){
-				drawNoteStem(note);
+			if (note.getRest()==null){
+				drawNoteHead(note);
+				if (!note.getType().equals("whole")){
+					drawNoteStem(note);
+				}
+			}else {
+				if (note.getType()!=null) {
+					ImageData image = imageResourceHandler.getImage(note.getType() + "_rest");
+					int x = currentX;
+					//offset by one because of image height
+					int relative = getRelative("G", 4);
+					int y = A4Height - (currentY + stepSize * (relative + 1));
+					AffineTransform at = AffineTransform.getTranslateInstance(x, y);
+					at.concatenate(AffineTransform.getScaleInstance(noteWidth, noteWidth*3));
+					float[] m = new float[6];
+					at.getMatrix(m);
+					canvas.addImageWithTransformationMatrix(image, m[0], m[1], m[2], m[3], m[4], m[5]);
+				}
 			}
 
 
@@ -277,8 +295,12 @@ public class Visualizer {
 		}
 
 		if (image!=null){
-			int relative = getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave());
-
+			int relative = 0;
+			if (note.getUnpitched()!=null) {
+				relative = getRelative(note.getUnpitched().getDisplayStep(), note.getUnpitched().getDisplayOctave());
+			}else if (note.getPitch()!=null){
+				relative = getRelative(note.getPitch().getStep(), note.getPitch().getOctave());
+			}
 			int x = currentX;
 			//offset by one because of image height
 			int y = A4Height-(currentY+stepSize*(relative+1));
@@ -303,8 +325,14 @@ public class Visualizer {
 				}
 			}
 		}
-		eighthFlag.miny = Math.min(currentY+stepSize*(getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave())-4-xOffset),eighthFlag.miny);
-		eighthFlag.maxy = Math.max(currentY+stepSize*(getRelative(note.getUnpitched().getDisplayStep(),note.getUnpitched().getDisplayOctave())-xOffset),eighthFlag.maxy);
+		int relative = 0;
+		if (note.getUnpitched()!=null) {
+			relative = getRelative(note.getUnpitched().getDisplayStep(), note.getUnpitched().getDisplayOctave());
+		}else if (note.getPitch()!=null){
+			relative = getRelative(note.getPitch().getStep(), note.getPitch().getOctave());
+		}
+		eighthFlag.miny = Math.min(currentY+stepSize*(relative-6-xOffset),eighthFlag.miny);
+		eighthFlag.maxy = Math.max(currentY+stepSize*(relative-xOffset),eighthFlag.maxy);
 		eighthFlag.type = noteTypeToInt(note.getType());
 		//we assume every stem is up currently.
 	}
@@ -323,9 +351,9 @@ public class Visualizer {
 			for (int i = eighthFlag.type;i>=8;i/=2){
 				int x = eighthFlag.x;
 				//offset by one because of image height
-				int y = A4Height-(eighthFlag.miny+postCounter*eighthGap+noteWidth*3);
+				int y = A4Height-(eighthFlag.miny+postCounter*eighthGap+noteWidth*2);
 				AffineTransform at = AffineTransform.getTranslateInstance(x,y);
-				at.concatenate(AffineTransform.getScaleInstance(noteWidth,noteWidth*3));
+				at.concatenate(AffineTransform.getScaleInstance(noteWidth/1.5,noteWidth*2));
 				float[] m = new float[6];
 				at.getMatrix(m);
 				canvas.addImageWithTransformationMatrix(image,m[0],m[1],m[2],m[3],m[4],m[5]);
@@ -456,19 +484,21 @@ public class Visualizer {
 	}
 	private int getMeasureLength(Measure measure){
 		int length = 0;
-		for (Note note:measure.getNotesBeforeBackup()){
-			if (note.getNotations()!=null) {
-				if (note.getNotations().getTechnical()!= null){
-					if (note.getNotations().getTechnical().getBend()!=null){
-						length += noteWidth + defaultShift;
+		if (measure.getNotesBeforeBackup()!=null){
+			for (Note note:measure.getNotesBeforeBackup()){
+				if (note.getNotations()!=null) {
+					if (note.getNotations().getTechnical()!= null){
+						if (note.getNotations().getTechnical().getBend()!=null){
+							length += noteWidth + defaultShift;
+						}else {
+							length += noteWidth+defaultShift+bendShift;
+						}
 					}else {
 						length += noteWidth+defaultShift+bendShift;
 					}
-				}else {
+				} else {
 					length += noteWidth+defaultShift+bendShift;
 				}
-			} else {
-				length += noteWidth+defaultShift+bendShift;
 			}
 		}
 		//we don't need noteafter backup now
