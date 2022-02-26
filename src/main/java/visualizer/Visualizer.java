@@ -48,7 +48,7 @@ public class Visualizer {
 	private final int A4Width = 597;
 	private final int A4Height =  842;
 	private final int eighthGap = noteWidth/2;
-	private final int defaultShift = 15; // where we should put next note.
+	private final int defaultShift = 20; // where we should put next note.
 	private final int bendShift = 10;
 	private final String temp_dest = "tmp.pdf";
 
@@ -126,7 +126,6 @@ public class Visualizer {
 			drawMeasure(measure);
 		}
 	}
-
 	public void drawMeasure(Measure measure){
 
 		//new line check
@@ -176,7 +175,6 @@ public class Visualizer {
 		drawBarlines(measure.getBarlines());
 		measureCounter++;
 	}
-
 	public void drawAttributes(Attributes attributes){
 		drawBackground(noteWidth*2);//empty space at begin
 		currentX += planShift;
@@ -393,7 +391,6 @@ public class Visualizer {
 		canvas.fill();
 
 	}
-
 	private void drawNoteStem(Note note){
 		int xOffset = 0;
 		if (note.getNotehead()!=null){
@@ -451,6 +448,30 @@ public class Visualizer {
 			double y = A4Height-(currentY+stepSize*(relative)-1.5);
 
 			addTextAt(x,y,8,4,new Paragraph(fret+"").setBackgroundColor(new DeviceRgb(255,255,255)).setFontSize(9));
+			if (note.getNotations().getTechnical().getBend()!=null){
+				drawBend(x+10,y,note.getNotations().getTechnical().getBend().getBendAlter());
+			}
+		}
+	}
+	private void drawBend(double x,double y,double bendAlter){
+		StaffTuning staffTuning = staffDetails.staffTuning.get(staffDetails.staffTuning.size()-1);
+		int relative = getRelative(staffTuning.tuningStep,staffTuning.tuningOctave);
+
+		double topY = A4Height-(currentY+stepSize*(relative-1));
+
+		double x1 = x-bendShift;
+		double x2 = x+bendShift;
+		double y1 = y;
+		double y2 = y+2*(topY-y);
+		canvas.arc(x1,y1,x2,y2,-90,90);
+
+		ImageData imageData = imageResourceHandler.getImage("arrow");
+		drawImageAt(x2-2.5,y+(topY-y),5,5,imageData);
+
+		if (bendAlter==2.0){
+			addTextAt(x2-5,y+(topY-y)+10,15,8,new Paragraph("full").setFontSize(8));
+		}else {
+			addTextAt(x2-5,y+(topY-y)+10,15,8,new Paragraph((int)bendAlter+"/2").setFontSize(8));
 		}
 	}
 	private void addTextAt(double x,double y,double w,double h,Paragraph text){
@@ -463,8 +484,6 @@ public class Visualizer {
 		Canvas localCanvas = new Canvas(canvas,rectangle);
 		localCanvas.add(text);
 	}
-
-
 	/**
 	 * draw a line from start point to end point
 	 *

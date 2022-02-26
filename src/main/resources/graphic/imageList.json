@@ -123,5 +123,10 @@
     "name": "9",
     "url": "graphic/9.png",
     "id": "9"
+  },
+  {
+    "name": "arrow",
+    "url": "graphic/arrow.png",
+    "id": "arrow"
   }
 ]
