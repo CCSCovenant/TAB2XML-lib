@@ -5,6 +5,16 @@
     "id": "normal"
   },
   {
+    "name": "whole_normal_note_head",
+    "url": "graphic/whole_normal_note_head.png",
+    "id": "whole_normal"
+  },
+  {
+    "name": "half_normal_note_head",
+    "url": "graphic/half_normal_note_head.png",
+    "id": "half_normal"
+  },
+  {
     "name": "diamond_note_head",
     "url": "graphic/diamond_note_head.png",
     "id": "diamond"
@@ -13,6 +23,16 @@
     "name": "x_note_head",
     "url": "graphic/x_note_head.png",
     "id": "x"
+  },
+  {
+    "name": "whole_x_note_head",
+    "url": "graphic/x_note_head.png",
+    "id": "whole_x"
+  },
+  {
+    "name": "half_x_note_head",
+    "url": "graphic/x_note_head.png",
+    "id": "half_x"
   },
   {
     "name": "eighth_notation",

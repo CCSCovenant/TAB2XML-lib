@@ -20,16 +20,14 @@ import models.ScorePartwise;
 import models.measure.Measure;
 import models.measure.attributes.*;
 import models.measure.barline.BarLine;
+import models.measure.note.Dot;
 import models.measure.note.Note;
 import models.measure.note.Notehead;
 import models.measure.note.notations.technical.Technical;
 
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This Class is use for visualize musicXML file.
@@ -50,14 +48,14 @@ public class Visualizer {
 	private final int A4Width = 597;
 	private final int A4Height =  842;
 	private final int eighthGap = noteWidth/2;
-	private final int defaultShift = 10; // where we should put next note.
+	private final int defaultShift = 15; // where we should put next note.
 	private final int bendShift = 10;
 	private final String temp_dest = "tmp.pdf";
 
 	private ScorePartwise score;
 	private PdfCanvas canvas;
 	private PdfDocument pdf;
-	private int measureCounter = 0;
+	private int measureCounter = 1;
 	private int lineCounter = 0;//which measure are we currently printing
 	private int pageCounter = 0; // which page are we currently printing
 	private double currentY = marginY + titleSpace; // the position of center C in current line.
@@ -73,7 +71,7 @@ public class Visualizer {
 	private EighthFlag eighthFlag = new EighthFlag(currentX);
 	private ImageResourceHandler imageResourceHandler = ImageResourceHandler.getInstance();
 	private Map<String,Integer> noteType2Int = new HashMap<>();
-
+	private HashSet<Integer> relatives = new HashSet<>();
  	public Visualizer(Score score) throws TXMLException {
 		initConverter();
 		this.score = score.getModel();
@@ -180,7 +178,7 @@ public class Visualizer {
 	}
 
 	public void drawAttributes(Attributes attributes){
-		drawBackground(noteWidth);//empty space at begin
+		drawBackground(noteWidth*2);//empty space at begin
 		currentX += planShift;
 		planShift = 0;
 		if (attributes.getClef()!=null){
@@ -238,7 +236,7 @@ public class Visualizer {
 			}
 		}
 		int numberFix = 5;
-		addTextAt(startL.x,startL.y-numberFix,noteWidth,noteWidth,new Paragraph(measureCounter+""));
+		addTextAt(startL.x,startL.y-numberFix,noteWidth*4,noteWidth,new Paragraph(measureCounter+""));
 
 	}
 	// we only have two kind of barline left and right
@@ -279,6 +277,7 @@ public class Visualizer {
 		if (note.getChord()==null){
 			// if there is no chord. move the next note
 			drawEighthFlag();
+			relatives = new HashSet<>();
 			currentX += planShift;
 			planShift = 0;
 			eighthFlag = new EighthFlag(currentX+noteWidth);
@@ -312,43 +311,89 @@ public class Visualizer {
 					int relative = getRelative("G", 4);
 					double y = A4Height - (currentY + stepSize * (relative + 1));
 					drawImageAt(x,y,noteWidth,noteWidth*3,image);
+					drawDots(note,currentX,y+stepSize*2);
+
 				}
 			}
-
-
-			//TODO drawTechnical();
 		}
 	}
 	private void drawNoteHead(Note note){
 		//System.out.println("drawing");
 		Notehead notehead = note.getNotehead();
-		ImageData image;
-		if (notehead!=null){
-			if (notehead.getType()!=null){
-				image = imageResourceHandler.getImage(notehead.getType());
+		String type = "";
+		if (note.getType()!=null){
+			if (note.getType().equals("whole")){
+				type = "whole_";
+			}else if (note.getType().equals("half")){
+				type = "half_";
 			}else {
-				image = imageResourceHandler.getImage("normal");
+
 			}
+		}
+		ImageData image;
+		if (notehead!=null&&notehead.getType()!=null){
+			image = imageResourceHandler.getImage(type+notehead.getType());
 		}else {
-			image = imageResourceHandler.getImage("normal");
+			image = imageResourceHandler.getImage(type+"normal");
 		}
 
 		if (image!=null){
 			int relative = 0;
+			int referenceRelative = 0;
+
+				referenceRelative = getRelative(staffDetails.staffTuning.get(0).tuningStep,staffDetails.staffTuning.get(0).tuningOctave);
 			if (note.getUnpitched()!=null) {
 				relative = getRelative(note.getUnpitched().getDisplayStep(), note.getUnpitched().getDisplayOctave());
 			}else if (note.getPitch()!=null){
 				relative = getRelative(note.getPitch().getStep(), note.getPitch().getOctave());
 			}
+
+			boolean shouldFlip = false;
+			if (relatives.contains(relative + 1) || relatives.contains(relative - 1) || relatives.contains(relative)) {
+				shouldFlip = true;
+			}
+
+			relatives.add(relative);
 			double x = currentX;
 			//offset by one because of image height
 			double y = A4Height-(currentY+stepSize*(relative+1));
-			drawImageAt(x,y,noteWidth,noteWidth,image);
+			if (shouldFlip){
+				drawImageAt(x+noteWidth*2,y,-noteWidth,noteWidth,image);
+				if (referenceRelative%2==relative%2){
+					drawLine(new Point(x+noteWidth,y+stepSize),new Point(x+noteWidth,y+stepSize));
+				}
+				drawDots(note,currentX+noteWidth,y+stepSize);
+			}else {
+				drawImageAt(x,y,noteWidth,noteWidth,image);
+				if (referenceRelative%2==relative%2){
+					drawLine(new Point(x,y+stepSize),new Point(x+noteWidth,y+stepSize));
+				}
+				drawDots(note,currentX,y+stepSize);
+			}
+
 			//System.out.println("drawing at"+ currentX);
 		}else {
 			//System.out.println("fail to draw");
 		}
+
+
 	}
+	private void drawDots(Note note,double x,double y){
+		if (note.getDots()!=null){
+			double x_dot = x+noteWidth;
+			double dot_shift = 4;
+			for (Dot dot:note.getDots()){
+				x_dot += dot_shift;
+				drawDotAt(x_dot,y);
+			}
+		}
+	}
+	private void drawDotAt(double x,double y){
+		canvas.circle(x,y,1.5);
+		canvas.fill();
+
+	}
+
 	private void drawNoteStem(Note note){
 		int xOffset = 0;
 		if (note.getNotehead()!=null){
@@ -450,14 +495,17 @@ public class Visualizer {
 
 			int relative = getRelative(staffTuning.tuningStep,staffTuning.tuningOctave);
 
-		double x = currentX;
-		double y = A4Height-(currentY+stepSize*(relative-4));
-		double y2 = A4Height-(currentY+stepSize*(relative-8));
+			double x = currentX;
+			double y = A4Height-(currentY+stepSize*(relative-4));
+			double y2 = A4Height-(currentY+stepSize*(relative-8));
 
-			addTextAt(x,y,stepSize*4,stepSize*4,new Paragraph(t.getBeats()+"").setFontSize(21).setBold());
-			addTextAt(x,y2,stepSize*4,stepSize*4,new Paragraph(t.getBeatType()+"").setFontSize(21).setBold());
+			double w1 = stepSize*4*Math.max(1,(int)Math.log10(t.getBeats())+1);
+			double w2 = stepSize*4*Math.max(1,(int)Math.log10(t.getBeatType())+1);
+
+			addTextAt(x,y,w1,stepSize*4,new Paragraph(t.getBeats()+"").setFontSize(21).setBold());
+			addTextAt(x,y2,w2,stepSize*4,new Paragraph(t.getBeatType()+"").setFontSize(21).setBold());
 			System.out.println(t.getBeats()+" "+t.getBeatType());
-			drawBackground(defaultShift+noteWidth);
+			drawBackground(defaultShift+Math.max(w1,w2));
 
 	}
 	/**
@@ -537,7 +585,7 @@ public class Visualizer {
 		currentX = marginX;
 		lineCounter = 0;
 		currentY = marginY+titleSpace;
-		PageSize pageSize = PageSize.A4.rotate();
+		PageSize pageSize = PageSize.A4;
 		PdfPage page = pdf.addNewPage(pageSize);
 		canvas = new PdfCanvas(page);
 		pageCounter ++;
