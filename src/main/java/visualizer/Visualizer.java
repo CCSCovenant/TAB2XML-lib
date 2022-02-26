@@ -2,13 +2,17 @@ package visualizer;
 
 
 import com.itextpdf.io.image.ImageData;
+import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.AffineTransform;
 import com.itextpdf.kernel.geom.PageSize;
 import com.itextpdf.kernel.geom.Point;
+import com.itextpdf.kernel.geom.Rectangle;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.layout.Canvas;
+import com.itextpdf.layout.element.Paragraph;
 import converter.Score;
 import custom_exceptions.TXMLException;
 import models.Part;
@@ -18,6 +22,7 @@ import models.measure.attributes.*;
 import models.measure.barline.BarLine;
 import models.measure.note.Note;
 import models.measure.note.Notehead;
+import models.measure.note.notations.technical.Technical;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -55,11 +60,11 @@ public class Visualizer {
 	private int measureCounter = 0;
 	private int lineCounter = 0;//which measure are we currently printing
 	private int pageCounter = 0; // which page are we currently printing
-	private int currentY = marginY + titleSpace; // the position of center C in current line.
-	private int currentX = marginX;
-	private  int planShift = 0; // where we should put next note.
-	private int measureStart = 0;
-	private int measureEnd = 0;
+	private double currentY = marginY + titleSpace; // the position of center C in current line.
+	private double currentX = marginX;
+	private  double planShift = 0; // where we should put next note.
+	private double measureStart = 0;
+	private double measureEnd = 0;
 
 	private Time time = new Time(4,4); // default time: 4/4
 	private boolean shouldDrawTime = false;
@@ -130,6 +135,29 @@ public class Visualizer {
 		if (getMeasureTotalLength(measure)+currentX>A4Width-marginX){
 			switchLine();
 		}
+		if (measure.getAttributes().getStaffDetails()!=null){
+			List<StaffTuning> staffTunings = new ArrayList<>();
+			// CDEFGAB
+			char baseS = 'E';
+			int baseO = 4;
+			for (StaffTuning staffTuning:measure.getAttributes().staffDetails.getStaffTuning()){
+				staffTunings.add(new StaffTuning(staffTuning.line,baseS+"",baseO));
+				baseS += 3;
+				if (baseS=='H'){
+					baseS = 'A';
+				}
+				if (baseS=='I'){
+					baseS = 'B';
+				}
+				if (baseS=='J'){
+					baseS = 'C';
+				}
+				if (baseS == 'C'||baseS=='D'||baseS=='E'){
+					baseO++;
+				}
+			}
+			staffDetails = new StaffDetails(staffTunings.size(),staffTunings);
+		}
 		// attribute contain metadatas for whole measure
 		// we need time information to determine how long should we draw for the single Measure.
 		measureStart = currentX;
@@ -150,7 +178,6 @@ public class Visualizer {
 		drawBarlines(measure.getBarlines());
 		measureCounter++;
 	}
-
 
 	public void drawAttributes(Attributes attributes){
 		drawBackground(noteWidth);//empty space at begin
@@ -187,8 +214,8 @@ public class Visualizer {
 	}
 	public void drawBarlines(List<BarLine> barLines){
 		//default measure barlines
-		int maxY = Integer.MIN_VALUE;
-		int minY = Integer.MAX_VALUE;
+		double maxY = Integer.MIN_VALUE;
+		double minY = Integer.MAX_VALUE;
 		for (StaffTuning staffTuning:staffDetails.getStaffTuning()){
 			int relative = getRelative(staffTuning.tuningStep,staffTuning.tuningOctave);
 
@@ -210,6 +237,9 @@ public class Visualizer {
 				drawBarline(barLine);
 			}
 		}
+		int numberFix = 5;
+		addTextAt(startL.x,startL.y-numberFix,noteWidth,noteWidth,new Paragraph(measureCounter+""));
+
 	}
 	// we only have two kind of barline left and right
 	// TODO draw it with measureStart and measureEnd
@@ -244,8 +274,10 @@ public class Visualizer {
 	 Notations notations; //need to handle
 	 */
 
-	public void drawNote(Note note){
+	private void drawNote(Note note){
+		// handle chord
 		if (note.getChord()==null){
+			// if there is no chord. move the next note
 			drawEighthFlag();
 			currentX += planShift;
 			planShift = 0;
@@ -255,12 +287,15 @@ public class Visualizer {
 		}
 
 		if (clef.getSign().equals("TAB")){
-			if (note.getNotations().getTechnical().getBend()!=null){
-				drawBackground(defaultShift+bendShift+noteWidth);
-			}else {
-				drawBackground(defaultShift+noteWidth);
+			if (note.getChord()==null){
+				if (note.getNotations().getTechnical().getBend()!=null){
+					drawBackground(defaultShift+bendShift+noteWidth);
+				}else {
+					drawBackground(defaultShift+noteWidth);
+				}
 			}
-			//TODO drawTechnical();
+
+			drawTechnical(note);
 			// tab note only need draw technical.
 		}else if (clef.getSign().equals("percussion")){
 			drawBackground(defaultShift+noteWidth);
@@ -272,15 +307,11 @@ public class Visualizer {
 			}else {
 				if (note.getType()!=null) {
 					ImageData image = imageResourceHandler.getImage(note.getType() + "_rest");
-					int x = currentX;
+					double x = currentX;
 					//offset by one because of image height
 					int relative = getRelative("G", 4);
-					int y = A4Height - (currentY + stepSize * (relative + 1));
-					AffineTransform at = AffineTransform.getTranslateInstance(x, y);
-					at.concatenate(AffineTransform.getScaleInstance(noteWidth, noteWidth*3));
-					float[] m = new float[6];
-					at.getMatrix(m);
-					canvas.addImageWithTransformationMatrix(image, m[0], m[1], m[2], m[3], m[4], m[5]);
+					double y = A4Height - (currentY + stepSize * (relative + 1));
+					drawImageAt(x,y,noteWidth,noteWidth*3,image);
 				}
 			}
 
@@ -309,15 +340,10 @@ public class Visualizer {
 			}else if (note.getPitch()!=null){
 				relative = getRelative(note.getPitch().getStep(), note.getPitch().getOctave());
 			}
-			int x = currentX;
+			double x = currentX;
 			//offset by one because of image height
-			int y = A4Height-(currentY+stepSize*(relative+1));
-			AffineTransform at = AffineTransform.getTranslateInstance(x,y);
-			at.concatenate(AffineTransform.getScaleInstance(noteWidth,noteWidth));
-			float[] m = new float[6];
-			at.getMatrix(m);
-			canvas.addImageWithTransformationMatrix(image,m[0],m[1],m[2],m[3],m[4],m[5]);
-
+			double y = A4Height-(currentY+stepSize*(relative+1));
+			drawImageAt(x,y,noteWidth,noteWidth,image);
 			//System.out.println("drawing at"+ currentX);
 		}else {
 			//System.out.println("fail to draw");
@@ -357,21 +383,40 @@ public class Visualizer {
 			ImageData image = imageResourceHandler.getImage("eighthFlag");
 			int postCounter = 0;
 			for (int i = eighthFlag.type;i>=8;i/=2){
-				int x = eighthFlag.x;
+				double x = eighthFlag.x;
 				//offset by one because of image height
-				int y = A4Height-(eighthFlag.miny+postCounter*eighthGap+noteWidth*2);
-				AffineTransform at = AffineTransform.getTranslateInstance(x,y);
-				at.concatenate(AffineTransform.getScaleInstance(noteWidth/1.5,noteWidth*2));
-				float[] m = new float[6];
-				at.getMatrix(m);
-				canvas.addImageWithTransformationMatrix(image,m[0],m[1],m[2],m[3],m[4],m[5]);
+				double y = A4Height-(eighthFlag.miny+postCounter*eighthGap+noteWidth*2);
+				drawImageAt(x,y,noteWidth/1.5,noteWidth*2,image);
 				postCounter++;
 			}
 		}
 	}
 	//TODO need to be finish before midterm submission
-	private void drawTechnical(){
+	private void drawTechnical(Note note){
+		if (note.getNotations()!=null&&note.getNotations().getTechnical()!=null){
+			Technical technical = note.getNotations().getTechnical();
+			int string = technical.getString();
+			int fret = technical.getFret();
 
+			StaffTuning staffTuning = staffDetails.staffTuning.get(staffDetails.staffTuning.size()-string);
+			int relative = getRelative(staffTuning.tuningStep,staffTuning.tuningOctave);
+
+			double x = currentX;
+			//offset by one because of text height
+			double y = A4Height-(currentY+stepSize*(relative)-1.5);
+
+			addTextAt(x,y,8,4,new Paragraph(fret+"").setBackgroundColor(new DeviceRgb(255,255,255)).setFontSize(9));
+		}
+	}
+	private void addTextAt(double x,double y,double w,double h,Paragraph text){
+		int marginFix = 7;
+		Rectangle rectangle = new Rectangle((float) x,(float)(y-h+marginFix),(float) w,(float) h);
+		//debug
+		//canvas.rectangle(rectangle);
+		//canvas.stroke();
+		//
+		Canvas localCanvas = new Canvas(canvas,rectangle);
+		localCanvas.add(text);
 	}
 
 
@@ -386,44 +431,33 @@ public class Visualizer {
 		canvas.lineTo(end.x,end.y);
 		canvas.closePathStroke();
 	}
-
+	private void drawImageAt(double x,double y,double w,double h,ImageData imageData){
+		AffineTransform at = AffineTransform.getTranslateInstance(x, y);
+		at.concatenate(AffineTransform.getScaleInstance(w, h));
+		float[] m = new float[6];
+		at.getMatrix(m);
+		canvas.addImageWithTransformationMatrix(imageData,m[0], m[1], m[2], m[3], m[4], m[5]);
+	}
 	/**
 	 * draw the time signature.
 	 *
 	 * @param t the time signature of this measure.
 	 * */
-	//TODO finish it before midterm submission need support beats and beattype that greater than 9
 	private void drawTimeSignature(Time t){
-		if (t.getBeatType()>9||t.getBeats()>9){
 
-		}else {
-			ImageData N = imageResourceHandler.getImage(t.getBeats()+"");
-			ImageData D = imageResourceHandler.getImage(t.getBeatType()+"");
 
 			StaffTuning staffTuning = staffDetails.staffTuning.get(0);
 
 			int relative = getRelative(staffTuning.tuningStep,staffTuning.tuningOctave);
 
-			int x = currentX;
-			int y = A4Height-(currentY+stepSize*relative);
-			int y2 = A4Height-(currentY+stepSize*(relative-4));
-			AffineTransform atN = AffineTransform.getTranslateInstance(x,y2);
-			atN.concatenate(AffineTransform.getScaleInstance(noteWidth*1.8,stepSize*3.8));
+		double x = currentX;
+		double y = A4Height-(currentY+stepSize*(relative-4));
+		double y2 = A4Height-(currentY+stepSize*(relative-8));
 
-			AffineTransform atD = AffineTransform.getTranslateInstance(x,y);
-			atD.concatenate(AffineTransform.getScaleInstance(noteWidth*1.8,stepSize*3.8));
-
-			float[] m1 = new float[6];
-			float[] m2 = new float[6];
-
-			atN.getMatrix(m1);
-			atD.getMatrix(m2);
-
-			canvas.addImageWithTransformationMatrix(N,m1[0],m1[1],m1[2],m1[3],m1[4],m1[5]);
-			canvas.addImageWithTransformationMatrix(D,m2[0],m2[1],m2[2],m2[3],m2[4],m2[5]);
-
-			drawBackground(defaultShift+noteWidth*2);
-		}
+			addTextAt(x,y,stepSize*4,stepSize*4,new Paragraph(t.getBeats()+"").setFontSize(21).setBold());
+			addTextAt(x,y2,stepSize*4,stepSize*4,new Paragraph(t.getBeatType()+"").setFontSize(21).setBold());
+			System.out.println(t.getBeats()+" "+t.getBeatType());
+			drawBackground(defaultShift+noteWidth);
 
 	}
 	/**
@@ -444,25 +478,23 @@ public class Visualizer {
 	private void drawClef(Clef clef){
 		ImageData imageData = imageResourceHandler.getImage(clef.getSign());
 		StaffTuning staffTuning = staffDetails.staffTuning.get(0);
+		StaffTuning staffTuning2 = staffDetails.staffTuning.get(staffDetails.staffTuning.size()-1);
 
 		int relative = getRelative(staffTuning.tuningStep,staffTuning.tuningOctave);
+		int relative2 = getRelative(staffTuning2.tuningStep,staffTuning2.tuningOctave);
 
-		int x = currentX;
-		int y = A4Height-(currentY+stepSize*relative);
+		double x = currentX;
+		double y = A4Height-(currentY+stepSize*relative);
+		double h = stepSize*(relative-relative2);
+		double w = h/2;
 
-		AffineTransform at = AffineTransform.getTranslateInstance(x,y);
-		at.concatenate(AffineTransform.getScaleInstance(noteWidth*2,stepSize*8));
-
-		float[] m = new float[6];
-		at.getMatrix(m);
-		canvas.addImageWithTransformationMatrix(imageData,m[0],m[1],m[2],m[3],m[4],m[5]);
-
-		drawBackground(defaultShift+noteWidth*2);
+		drawImageAt(x,y,w,h,imageData);
+		drawBackground(defaultShift+w);
 
 
 	}
 
-	private void drawBackground(int length){
+	private void drawBackground(double length){
 		planShift = length;
 		for (StaffTuning staffTuning:staffDetails.staffTuning){
 			int relative = getRelative(staffTuning.tuningStep,staffTuning.tuningOctave);
