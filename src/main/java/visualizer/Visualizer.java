@@ -23,6 +23,7 @@ import models.measure.barline.BarLine;
 import models.measure.note.Dot;
 import models.measure.note.Note;
 import models.measure.note.Notehead;
+import models.measure.note.notations.Tied;
 import models.measure.note.notations.technical.Technical;
 
 import java.io.File;
@@ -72,6 +73,9 @@ public class Visualizer {
 	private ImageResourceHandler imageResourceHandler = ImageResourceHandler.getInstance();
 	private Map<String,Integer> noteType2Int = new HashMap<>();
 	private HashSet<Integer> relatives = new HashSet<>();
+
+	private Queue<TieElement> TieElements = new LinkedList<>() ;
+
  	public Visualizer(Score score) throws TXMLException {
 		initConverter();
 		this.score = score.getModel();
@@ -244,6 +248,7 @@ public class Visualizer {
 	}
 	/*
 	 what inside of note:
+
 	 Grace grace; // need to draw slash. if it appeared , have to be smaller
 	 Chord chord; // if this notation appear, don't move forward.
 
@@ -282,6 +287,8 @@ public class Visualizer {
 		}else {
 
 		}
+
+
 
 		if (clef.getSign().equals("TAB")){
 			if (note.getChord()==null){
@@ -355,25 +362,59 @@ public class Visualizer {
 			double x = currentX;
 			//offset by one because of image height
 			double y = A4Height-(currentY+stepSize*(relative+1));
+
+			double accW = noteWidth;
+
+			if (note.getGrace()!=null){
+				accW = noteWidth*0.6;
+				eighthFlag.x = currentX+accW;
+				eighthFlag.isGrace = true;
+			}
 			if (shouldFlip){
-				drawImageAt(x+noteWidth*2,y,-noteWidth,noteWidth,image);
+				drawImageAt(x+noteWidth*2,y,-accW,accW,image);
 				if (referenceRelative%2==relative%2){
 					drawLine(new Point(x+noteWidth,y+stepSize),new Point(x+noteWidth,y+stepSize));
 				}
 				drawDots(note,currentX+noteWidth,y+stepSize);
 			}else {
-				drawImageAt(x,y,noteWidth,noteWidth,image);
+				drawImageAt(x,y,accW,accW,image);
 				if (referenceRelative%2==relative%2){
 					drawLine(new Point(x,y+stepSize),new Point(x+noteWidth,y+stepSize));
 				}
 				drawDots(note,currentX,y+stepSize);
 			}
 
+
+			if (note.getNotations()!=null&&note.getNotations().getTieds()!=null){
+				List<Tied> tiedList = note.getNotations().getTieds();
+				for (Tied tied:tiedList){
+					if (tied.getType().equals("start")){
+						TieElements.add(new TieElement(x,y));
+					}else if (tied.getType().equals("stop")){
+						TieElement tieElement = TieElements.poll();
+						tieElement.x2 = x;
+						tieElement.y2 = y;
+						if (tieElement!=null){
+							drawTied(tieElement);
+						}
+					}
+				}
+			}
 			//System.out.println("drawing at"+ currentX);
 		}else {
 			//System.out.println("fail to draw");
 		}
 
+
+	}
+	private void drawTied(TieElement tieElement){
+
+		double shift = stepSize;
+		double x1 = tieElement.x1+noteWidth/2;
+		double x2 = tieElement.x2+noteWidth/2;
+		double y1 = tieElement.y1+stepSize;
+		double y2 = tieElement.y2-stepSize;
+		canvas.arc(x1,y1,x2,y2,200,140);
 
 	}
 	private void drawDots(Note note,double x,double y){
@@ -389,6 +430,7 @@ public class Visualizer {
 	private void drawDotAt(double x,double y){
 		canvas.circle(x,y,1.5);
 		canvas.fill();
+
 
 	}
 	private void drawNoteStem(Note note){
@@ -407,7 +449,11 @@ public class Visualizer {
 		}else if (note.getPitch()!=null){
 			relative = getRelative(note.getPitch().getStep(), note.getPitch().getOctave());
 		}
-		eighthFlag.miny = Math.min(currentY+stepSize*(relative-6-xOffset),eighthFlag.miny);
+		if (note.getGrace()!=null){
+			eighthFlag.miny = Math.min(currentY+stepSize*(relative-4-xOffset),eighthFlag.miny);
+		}else {
+			eighthFlag.miny = Math.min(currentY+stepSize*(relative-6-xOffset),eighthFlag.miny);
+		}
 		eighthFlag.maxy = Math.max(currentY+stepSize*(relative-xOffset),eighthFlag.maxy);
 		eighthFlag.type = noteTypeToInt(note.getType());
 		//we assume every stem is up currently.
@@ -425,10 +471,17 @@ public class Visualizer {
 			ImageData image = imageResourceHandler.getImage("eighthFlag");
 			int postCounter = 0;
 			for (int i = eighthFlag.type;i>=8;i/=2){
+
+				double accW = noteWidth;
+				if (eighthFlag.isGrace){
+					accW*=0.6;
+				}
+
 				double x = eighthFlag.x;
 				//offset by one because of image height
-				double y = A4Height-(eighthFlag.miny+postCounter*eighthGap+noteWidth*2);
-				drawImageAt(x,y,noteWidth/1.5,noteWidth*2,image);
+				double y = A4Height-(eighthFlag.miny+postCounter*eighthGap+accW*2);
+
+				drawImageAt(x,y,accW/1.5,accW*2,image);
 				postCounter++;
 			}
 		}
@@ -643,15 +696,15 @@ public class Visualizer {
 				if (note.getNotations()!=null) {
 					if (note.getNotations().getTechnical()!= null){
 						if (note.getNotations().getTechnical().getBend()!=null){
-							length += noteWidth + defaultShift;
+							length += noteWidth + defaultShift+bendShift;
 						}else {
-							length += noteWidth+defaultShift+bendShift;
+							length += noteWidth+defaultShift;
 						}
 					}else {
-						length += noteWidth+defaultShift+bendShift;
+						length += noteWidth+defaultShift;
 					}
 				} else {
-					length += noteWidth+defaultShift+bendShift;
+					length += noteWidth+defaultShift;
 				}
 			}
 		}
