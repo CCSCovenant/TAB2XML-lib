@@ -66,7 +66,7 @@ public class MXLPlayer{
 	public String getMeasure(Measure measure,String partID,int duration){
 		StringBuilder musicString = new StringBuilder();
 		int durationCount = 0;
-		
+	
 		for(Note note: measure.getNotesBeforeBackup()) {
 			
 			if(durationCount < duration) {
@@ -162,19 +162,19 @@ public class MXLPlayer{
 	}
 	
 	public String getInstrument(String InstrumentId) {
-		if(InstrumentId.equals("P1-I47")) { return "Open Hi-Hat"; }
-		else if(InstrumentId.equals("P1-I52")) { return "Ride Cymbal 1"; }
-		else if(InstrumentId.equals("P1-I53")) { return "Chinese Cymbal 1"; }
-		else if(InstrumentId.equals("P1-I43")) { return "Closed Hi-Hat"; }
-		else if(InstrumentId.equals("P1-I46")) { return "Low Tom"; }
-		else if(InstrumentId.equals("P1-I44")) { return "High Floor Tom"; }
-		else if(InstrumentId.equals("P1-I54")) { return "Ride Bell"; }
-		else if(InstrumentId.equals("P1-I36")) { return "Bass Drum 1"; }
-		else if(InstrumentId.equals("P1-I50")) { return "Crash Cymbal 1"; }
-		else if(InstrumentId.equals("P1-I39")) { return "Snare"; }
-		else if(InstrumentId.equals("P1-I42")) { return "Low Floor Tom"; }
-		else if(InstrumentId.equals("P1-I48")) { return "Low-Mid Tom"; }
-		else if(InstrumentId.equals("P1-I45")) { return "Pedal Hi-Hat"; }
+		if(InstrumentId.equals("P1-I47")) { return "OPEN_HI_HAT"; }
+		else if(InstrumentId.equals("P1-I52")) { return "RIDE_CYMBAL_1"; }
+		else if(InstrumentId.equals("P1-I53")) { return "CHINESE_CYMBAL"; }
+		else if(InstrumentId.equals("P1-I43")) { return "CLOSED_HI_HAT"; }
+		else if(InstrumentId.equals("P1-I46")) { return "LO_TOM"; }
+		else if(InstrumentId.equals("P1-I44")) { return "HIGH_FLOOR_TOM"; }
+		else if(InstrumentId.equals("P1-I54")) { return "RIDE_BELL"; }
+		else if(InstrumentId.equals("P1-I36")) { return "BASS_DRUM"; }
+		else if(InstrumentId.equals("P1-I50")) { return "CRASH_CYMBAL_1"; }
+		else if(InstrumentId.equals("P1-I39")) { return "ACOUSTIC_SNARE"; }
+		else if(InstrumentId.equals("P1-I42")) { return "LO_FLOOR_TOM"; }
+		else if(InstrumentId.equals("P1-I48")) { return "LO_MID_TOM"; }
+		else if(InstrumentId.equals("P1-I45")) { return "PEDAL_HI_HAT"; }
 		/*More could be added later on*/
 		else { return "GUNSHOT"; }//default for now
 	}
