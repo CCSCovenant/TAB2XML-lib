@@ -80,6 +80,7 @@ public class Visualizer {
 		initConverter();
 		this.score = score.getModel();
 		this.measureCounter = 0;
+		// create init staff for the drum
 		List<StaffTuning> staffs = new ArrayList<>();
 		staffs.add(new StaffTuning(1,"E",4));
 		staffs.add(new StaffTuning(1,"G",4));
@@ -106,7 +107,7 @@ public class Visualizer {
 	 * visualizer will create a PDF file.
 	 * after drawing is finished, it will project PDF file into preview canvas
 	 *
-	 *
+	 * @param file the temple file that used to draw and preview.
 	 * */
 
 	public PdfDocument draw(File file) throws FileNotFoundException {
@@ -115,12 +116,20 @@ public class Visualizer {
 		drawParts(score.getParts());
 		return pdf;
 	}
+	/**
+	 * This method is going to draw "Parts" element in the musicXML
+	 * each musicXML file is made with different parts.
+	 * */
 	public void drawParts(List<Part> parts){
 		//draw each part
 		for (Part part:parts){
 			drawPart(part);
 		}
 	}
+	/**
+	 * This method is going to draw "Part" element in the musicXML
+	 * a Part contain measures
+	 * */
 	public void drawPart(Part part){
 		//draw each measures
 		// there will be additional metadata in the Part that we have to draw
@@ -130,6 +139,12 @@ public class Visualizer {
 			drawMeasure(measure);
 		}
 	}
+
+	/**
+	 * This method is going to draw "Measure" element in the musicXML
+	 * a Measure is collection of notes
+	 * */
+
 	public void drawMeasure(Measure measure){
 
 		//new line check
@@ -179,6 +194,11 @@ public class Visualizer {
 		drawBarlines(measure.getBarlines());
 		measureCounter++;
 	}
+	/**
+	 * This method is going to draw "Attributes"  in the measure
+	 * include clef, key and time
+	 * */
+
 	public void drawAttributes(Attributes attributes){
 		drawBackground(noteWidth*2);//empty space at begin
 		currentX += planShift;
@@ -205,6 +225,11 @@ public class Visualizer {
 			planShift = 0;
 		}
 	}
+
+	/**
+	 * This method is going to draw Notes
+	 * */
+
 	public void drawNotes(List<Note> notes){
 		if (notes!=null){
 			for (Note note:notes){
@@ -212,6 +237,11 @@ public class Visualizer {
 			}
 		}
 	}
+
+	/**
+	 * This method is going to draw barlines
+	 * */
+
 	public void drawBarlines(List<BarLine> barLines){
 		//default measure barlines
 		double maxY = Integer.MIN_VALUE;
@@ -242,7 +272,6 @@ public class Visualizer {
 
 	}
 	// we only have two kind of barline left and right
-	// TODO draw it with measureStart and measureEnd
 	public void drawBarline(BarLine barLine){
 
 	}
@@ -288,8 +317,6 @@ public class Visualizer {
 
 		}
 
-
-
 		if (clef.getSign().equals("TAB")){
 			if (note.getChord()==null){
 				if (note.getNotations().getTechnical().getBend()!=null){
@@ -315,7 +342,11 @@ public class Visualizer {
 					//offset by one because of image height
 					int relative = getRelative("G", 4);
 					double y = A4Height - (currentY + stepSize * (relative + 1));
-					drawImageAt(x,y,noteWidth,noteWidth*3,image);
+					if (note.getType().equals("half")||note.getType().equals("whole")){
+						drawImageAt(x-noteWidth,y+stepSize,noteWidth*2,noteWidth,image);
+					}else {
+						drawImageAt(x,y,noteWidth,noteWidth*2,image);
+					}
 					drawDots(note,currentX,y+stepSize*2);
 
 				}
@@ -486,7 +517,7 @@ public class Visualizer {
 			}
 		}
 	}
-	//TODO need to be finish before midterm submission
+
 	private void drawTechnical(Note note){
 		if (note.getNotations()!=null&&note.getNotations().getTechnical()!=null){
 			Technical technical = note.getNotations().getTechnical();
