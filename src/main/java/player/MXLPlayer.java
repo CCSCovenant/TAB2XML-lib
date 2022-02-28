@@ -111,7 +111,7 @@ public class MXLPlayer{
 					}
 					musicString.append(" ");
 
-					if(note.getChord() != null) { 
+					if(note.getChord() != null && note != measure.getNotesBeforeBackup().get(measure.getNotesBeforeBackup().size()-1)) { 
 						musicString.deleteCharAt(musicString.length()-1);
 						musicString.append("+");
 					}
@@ -128,7 +128,7 @@ public class MXLPlayer{
 		if(note.getInstrument() == null || note.getInstrument().getId().equals("")) {
 			instrument = "I0";
 		}
-		else { instrument = "I[" + note.getInstrument().getId() + "]";
+		else { instrument = "I[" + getInstrument(note.getInstrument().getId()) + "]";
 		}
 		
 		musicString.append(voice + " " + instrument + " ");
@@ -159,6 +159,24 @@ public class MXLPlayer{
 		}
 //		if(musicString.length() == 0) { musicString.append(""); } 
 		return musicString.toString();
+	}
+	
+	public String getInstrument(String InstrumentId) {
+		if(InstrumentId.equals("P1-I47")) { return "Open Hi-Hat"; }
+		else if(InstrumentId.equals("P1-I52")) { return "Ride Cymbal 1"; }
+		else if(InstrumentId.equals("P1-I53")) { return "Chinese Cymbal 1"; }
+		else if(InstrumentId.equals("P1-I43")) { return "Closed Hi-Hat"; }
+		else if(InstrumentId.equals("P1-I46")) { return "Low Tom"; }
+		else if(InstrumentId.equals("P1-I44")) { return "High Floor Tom"; }
+		else if(InstrumentId.equals("P1-I54")) { return "Ride Bell"; }
+		else if(InstrumentId.equals("P1-I36")) { return "Bass Drum 1"; }
+		else if(InstrumentId.equals("P1-I50")) { return "Crash Cymbal 1"; }
+		else if(InstrumentId.equals("P1-I39")) { return "Snare"; }
+		else if(InstrumentId.equals("P1-I42")) { return "Low Floor Tom"; }
+		else if(InstrumentId.equals("P1-I48")) { return "Low-Mid Tom"; }
+		else if(InstrumentId.equals("P1-I45")) { return "Pedal Hi-Hat"; }
+		/*More could be added later on*/
+		else { return "GUNSHOT"; }//default for now
 	}
 
 }
