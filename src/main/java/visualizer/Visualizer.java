@@ -23,6 +23,7 @@ import models.measure.barline.BarLine;
 import models.measure.note.Dot;
 import models.measure.note.Note;
 import models.measure.note.Notehead;
+import models.measure.note.notations.Slur;
 import models.measure.note.notations.Tied;
 import models.measure.note.notations.technical.Technical;
 
@@ -75,11 +76,11 @@ public class Visualizer {
 	private HashSet<Integer> relatives = new HashSet<>();
 
 	private Queue<TieElement> TieElements = new LinkedList<>() ;
-
+	private Map<Integer,TieElement> slurElements = new HashMap<>();
  	public Visualizer(Score score) throws TXMLException {
 		initConverter();
 		this.score = score.getModel();
-		this.measureCounter = 0;
+		this.measureCounter = 1;
 		// create init staff for the drum
 		List<StaffTuning> staffs = new ArrayList<>();
 		staffs.add(new StaffTuning(1,"E",4));
@@ -102,6 +103,7 @@ public class Visualizer {
 		PdfPage page = pdf.addNewPage(pageSize);
 		canvas = new PdfCanvas(page);
 	}
+
 	/**
 	 * This method is going to draw musicXML
 	 * visualizer will create a PDF file.
@@ -423,6 +425,22 @@ public class Visualizer {
 						TieElements.add(new TieElement(x,y));
 					}else if (tied.getType().equals("stop")){
 						TieElement tieElement = TieElements.poll();
+						tieElement.x2 = x;
+						tieElement.y2 = y;
+						if (tieElement!=null){
+							drawTied(tieElement);
+						}
+					}
+				}
+			}
+
+			if (note.getNotations()!=null&&note.getNotations().getSlurs()!=null){
+				List<Slur> slurs  = note.getNotations().getSlurs();
+				for (Slur slur:slurs){
+					if (slur.getType().equals("start")){
+						slurElements.put(slur.getNumber(),new TieElement(x,y));
+					}else if (slur.getType().equals("stop")){
+						TieElement tieElement = slurElements.get(slur.getNumber());
 						tieElement.x2 = x;
 						tieElement.y2 = y;
 						if (tieElement!=null){
