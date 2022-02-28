@@ -6,6 +6,7 @@ import models.Part;
 import models.ScorePartwise;
 import models.measure.Measure;
 import models.measure.attributes.Attributes;
+import models.measure.note.Dot;
 import models.measure.note.Note;
 import models.part_list.PartList;
 import models.part_list.ScorePart;
@@ -64,16 +65,99 @@ public class MXLPlayer{
 	}
 	public String getMeasure(Measure measure,String partID,int duration){
 		StringBuilder musicString = new StringBuilder();
+		int durationCount = 0;
+		
 		for(Note note: measure.getNotesBeforeBackup()) {
-			musicString.append(note);
-			musicString.append(getNote(measure.getAttributes()));
+			
+			if(durationCount < duration) {
+				durationCount += note.getDuration();
+			}
+			else {
+				if(note.getChord() == null && musicString.length() > 0 && musicString.charAt(musicString.length()-1) == '+') {
+					musicString.deleteCharAt(musicString.length()-1);
+					musicString.append(" ");
+				}
+				if(measure.getAttributes().getClef() != null) {
+					if(note.getChord() != null && musicString.length() > 0 && musicString.charAt(musicString.length()-1) == '+') {
+						
+					}else {
+						musicString.append(getNoteDetails(note));
+					}
+
+					String clef = measure.getAttributes().getClef().getSign();
+
+					if(clef.equals("percussion")) {
+						musicString.append(note.getUnpitched().getDisplayStep());
+						musicString.append(note.getUnpitched().getDisplayOctave());
+						musicString.append(getNoteDuration(note));
+						musicString.append(getDots(note));
+					}
+					else if(clef.equals("TAB")){
+						if(note.getRest() != null) {
+							musicString.append("R");
+						}
+						else {
+							musicString.append(note.getPitch().getStep());
+							musicString.append(note.getPitch().getOctave());
+							
+							if(note.getGrace() != null) {
+								musicString.append("i");
+							}else {
+								musicString.append(getNoteDuration(note));
+								musicString.append(getDots(note));
+							}
+							
+						}
+					}
+					musicString.append(" ");
+
+					if(note.getChord() != null) { 
+						musicString.deleteCharAt(musicString.length()-1);
+						musicString.append("+");
+					}
+				}
+			}
 		}
 		return musicString.toString();
 	}
-	public String getNote(Attributes attributes){
+	
+	public String getNoteDetails(Note note) {
 		StringBuilder musicString = new StringBuilder();
-		musicString.append(attributes.getDivisions() + "" + attributes.getKey() + "" + attributes.getTime() + ""
-							+ attributes.getClef());
+		String voice = "V" + note.getVoice();
+		String instrument; 
+		if(note.getInstrument() == null || note.getInstrument().getId().equals("")) {
+			instrument = "I0";
+		}
+		else { instrument = "I[" + note.getInstrument().getId() + "]";
+		}
+		
+		musicString.append(voice + " " + instrument + " ");
+		
+		return musicString.toString();
+	}
+	
+	public String getNoteDuration(Note note) {
+		if(note.getType().equals("whole")) { return "w"; }
+		else if(note.getType().equals("half")) { return "h"; }
+		else if(note.getType().equals("quarter")) { return "q"; }
+		else if(note.getType().equals("eighth")) { return "i"; }
+		else if(note.getType().equals("16th")) { return "s"; }
+		else if(note.getType().equals("32nd")) { return "t"; }
+		else if(note.getType().equals("64th")) { return "x"; }
+		else if(note.getType().equals("128th")) { return "o"; }
+		else { return ""; }
+	}
+	
+	public String getDots(Note note) {
+		StringBuilder musicString = new StringBuilder();
+		if(note.getDots() != null) {
+			for(Dot dot : note.getDots()) {
+				if(dot != null) {
+					musicString.append(".");
+				}
+			}
+		}
+//		if(musicString.length() == 0) { musicString.append(""); } 
 		return musicString.toString();
 	}
 
