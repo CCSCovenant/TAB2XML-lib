@@ -625,7 +625,7 @@ public class Visualizer {
 
 			addTextAt(x,y,w1,stepSize*4,new Paragraph(t.getBeats()+"").setFontSize(21).setBold());
 			addTextAt(x,y2,w2,stepSize*4,new Paragraph(t.getBeatType()+"").setFontSize(21).setBold());
-			System.out.println(t.getBeats()+" "+t.getBeatType());
+			//System.out.println(t.getBeats()+" "+t.getBeatType());
 			drawBackground(defaultShift+Math.max(w1,w2));
 
 	}
@@ -634,7 +634,6 @@ public class Visualizer {
 	 *
 	 * @param key the key signature of this measure
 	 * */
-	//TODO finish it before midterm submission
 	private void drawKeySignature(Key key){
 
 	}
