@@ -6,6 +6,7 @@ import models.Part;
 import models.ScorePartwise;
 import models.measure.Measure;
 import models.measure.attributes.Attributes;
+import models.measure.attributes.Clef;
 import models.measure.note.Dot;
 import models.measure.note.Note;
 import models.part_list.PartList;
@@ -19,6 +20,7 @@ public class MXLPlayer{
 	private ScorePartwise score;
 	private Player player = new Player();
 	private HashMap<String,ScorePart> scorePartMap = new HashMap<>();
+	private String clef;
 	public MXLPlayer(Score score) throws TXMLException {
 		this.score = score.getModel();
 	}
@@ -77,15 +79,15 @@ public class MXLPlayer{
 					musicString.deleteCharAt(musicString.length()-1);
 					musicString.append(" ");
 				}
-				if(measure.getAttributes().getClef() != null) {
+				if(this.clef != null || measure.getAttributes().getClef() != null ) {
 					if(note.getChord() != null && musicString.length() > 0 && musicString.charAt(musicString.length()-1) == '+') {
-						
+
 					}else {
 						musicString.append(getNoteDetails(note));
 					}
-
-					String clef = measure.getAttributes().getClef().getSign();
-
+					if(clef == null) {
+						this.clef = measure.getAttributes().getClef().getSign();
+					}
 					if(clef.equals("percussion")) {
 						musicString.append(note.getUnpitched().getDisplayStep());
 						musicString.append(note.getUnpitched().getDisplayOctave());
@@ -126,7 +128,7 @@ public class MXLPlayer{
 		String voice = "V" + note.getVoice();
 		String instrument; 
 		if(note.getInstrument() == null || note.getInstrument().getId().equals("")) {
-			instrument = "I0";
+			instrument = "I25";
 		}
 		else { instrument = "I[" + getInstrument(note.getInstrument().getId()) + "]";
 		}
