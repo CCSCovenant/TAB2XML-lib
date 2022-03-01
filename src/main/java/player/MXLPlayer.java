@@ -89,10 +89,11 @@ public class MXLPlayer{
 						this.clef = measure.getAttributes().getClef().getSign();
 					}
 					if(clef.equals("percussion")) {
-						musicString.append(note.getUnpitched().getDisplayStep());
-						musicString.append(note.getUnpitched().getDisplayOctave());
+					//	musicString.append(note.getUnpitched().getDisplayStep());
+					//	musicString.append(note.getUnpitched().getDisplayOctave());
+						musicString.deleteCharAt(musicString.length()-1);
 						musicString.append(getNoteDuration(note));
-						musicString.append(getDots(note));
+					//	musicString.append(getDots(note));
 					}
 					else if(clef.equals("TAB")){
 						if(note.getRest() != null) {
@@ -125,12 +126,20 @@ public class MXLPlayer{
 	
 	public String getNoteDetails(Note note) {
 		StringBuilder musicString = new StringBuilder();
-		String voice = "V" + note.getVoice();
-		String instrument; 
+		String voice;
+		String instrument;
+		
+		if(note.getUnpitched() != null) {
+			voice = "V9";
+		}
+		else {
+			voice = "V" + note.getVoice();
+		}
+
 		if(note.getInstrument() == null || note.getInstrument().getId().equals("")) {
 			instrument = "I25";
 		}
-		else { instrument = "I[" + getInstrument(note.getInstrument().getId()) + "]";
+		else { instrument = "[" + getInstrument(note.getInstrument().getId()) + "]";
 		}
 		
 		musicString.append(voice + " " + instrument + " ");
