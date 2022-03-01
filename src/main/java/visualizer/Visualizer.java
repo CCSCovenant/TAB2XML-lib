@@ -13,6 +13,7 @@ import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.element.Paragraph;
+import com.itextpdf.layout.properties.TextAlignment;
 import converter.Score;
 import custom_exceptions.TXMLException;
 import models.Part;
@@ -463,7 +464,12 @@ public class Visualizer {
 		double x2 = tieElement.x2+noteWidth/2;
 		double y1 = tieElement.y1+stepSize;
 		double y2 = tieElement.y2-stepSize;
-		canvas.arc(x1,y1,x2,y2,200,140);
+		double start = 220;
+		double extent = 100;
+		if (tieElement.placement.equals("above")){
+			start = 40;
+		}
+		canvas.arc(x1,y1,x2,y2,start,extent);
 
 	}
 	private void drawDots(Note note,double x,double y){
@@ -549,9 +555,32 @@ public class Visualizer {
 			//offset by one because of text height
 			double y = A4Height-(currentY+stepSize*(relative)-1.5);
 
-			addTextAt(x,y,8,4,new Paragraph(fret+"").setBackgroundColor(new DeviceRgb(255,255,255)).setFontSize(9));
+			addTextAt(x,y,12,4,new Paragraph(fret+"").setBackgroundColor(new DeviceRgb(255,255,255)).setFontSize(9).setTextAlignment(TextAlignment.CENTER));
 			if (note.getNotations().getTechnical().getBend()!=null){
 				drawBend(x+10,y,note.getNotations().getTechnical().getBend().getBendAlter());
+			}
+
+			if (note.getNotations()!=null&&note.getNotations().getSlurs()!=null){
+				List<Slur> slurs  = note.getNotations().getSlurs();
+				for (Slur slur:slurs){
+					if (slur.getType().equals("start")){
+						slurElements.put(slur.getNumber(),new TieElement(x,y));
+						if (slur.getPlacement()!=null){
+							slurElements.get(slur.getNumber()).placement = slur.getPlacement();
+						}
+					}else if (slur.getType().equals("stop")){
+						TieElement tieElement = slurElements.get(slur.getNumber());
+						tieElement.x2 = x;
+						tieElement.y2 = y;
+
+						if (slur.getPlacement()!=null){
+							tieElement.placement = slur.getType();
+						}
+						if (tieElement!=null){
+							drawTied(tieElement);
+						}
+					}
+				}
 			}
 		}
 	}
