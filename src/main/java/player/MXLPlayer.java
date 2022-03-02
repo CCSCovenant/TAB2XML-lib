@@ -23,6 +23,7 @@ public class MXLPlayer{
 		this.score = score.getModel();
 		initPartList();
 	}
+
 	/**
 	 * this method will play music from given duration.
 	 *
@@ -30,6 +31,7 @@ public class MXLPlayer{
 	 * @param measureID which measure should player start
 	 * @param duration  when should player start in a measure.
 	 * */
+
 	public void play(int partID,int measureID, int duration){
 		StringBuilder musicString = new StringBuilder();
 		int partCount = 0;
@@ -167,7 +169,7 @@ public class MXLPlayer{
 		else if(note.getType().equals("64th")) { return 'x'; }
 		else if(note.getType().equals("128th")) { return 'o'; }
 		else { return 'q'; }
-}
+	}
 	
 	public String getDots(Note note) {
 		StringBuilder musicString = new StringBuilder();
