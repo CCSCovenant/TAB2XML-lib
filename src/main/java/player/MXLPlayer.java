@@ -8,6 +8,7 @@ import models.measure.Measure;
 import models.measure.attributes.Attributes;
 import models.measure.note.Dot;
 import models.measure.note.Note;
+import models.measure.note.notations.Tied;
 import models.part_list.PartList;
 import models.part_list.ScorePart;
 import org.jfugue.player.Player;
@@ -94,6 +95,7 @@ public class MXLPlayer{
 						musicString.deleteCharAt(musicString.length()-1);
 						musicString.append(getNoteDuration(note));
 						musicString.append(getDots(note));
+						addTies(musicString, note);
 					}
 					else if(clef.equals("TAB")){
 						if(note.getRest() != null) {
@@ -108,6 +110,7 @@ public class MXLPlayer{
 							}else {
 								musicString.append(getNoteDuration(note));
 								musicString.append(getDots(note));
+								addTies(musicString, note);
 							}
 							
 						}
@@ -147,16 +150,16 @@ public class MXLPlayer{
 		return musicString.toString();
 	}
 	
-	public String getNoteDuration(Note note) {
-		if(note.getType().equals("whole")) { return "w"; }
-		else if(note.getType().equals("half")) { return "h"; }
-		else if(note.getType().equals("quarter")) { return "q"; }
-		else if(note.getType().equals("eighth")) { return "i"; }
-		else if(note.getType().equals("16th")) { return "s"; }
-		else if(note.getType().equals("32nd")) { return "t"; }
-		else if(note.getType().equals("64th")) { return "x"; }
-		else if(note.getType().equals("128th")) { return "o"; }
-		else { return ""; }
+	public char getNoteDuration(Note note) {
+		if(note.getType().equals("whole")) { return 'w'; }
+		else if(note.getType().equals("half")) { return 'h'; }
+		else if(note.getType().equals("quarter")) { return 'q'; }
+		else if(note.getType().equals("eighth")) { return 'i'; }
+		else if(note.getType().equals("16th")) { return 's'; }
+		else if(note.getType().equals("32nd")) { return 't'; }
+		else if(note.getType().equals("64th")) { return 'x'; }
+		else if(note.getType().equals("128th")) { return 'o'; }
+		else { return 'q'; }
 	}
 	
 	public String getDots(Note note) {
@@ -164,7 +167,7 @@ public class MXLPlayer{
 		if(note.getDots() != null) {
 			for(Dot dot : note.getDots()) {
 				if(dot != null) {
-					musicString.append(".");
+					musicString.append('.');
 				}
 			}
 		}
@@ -188,6 +191,39 @@ public class MXLPlayer{
 		else if(InstrumentId.equals("P1-I45")) { return "PEDAL_HI_HAT"; }
 		/*More could be added later on*/
 		else { return "GUNSHOT"; }//default for now
+	}
+	
+	public void addTies(StringBuilder input, Note note) {
+		int indextoCheck = input.length() - 1;
+		if(note.getNotations() != null && note.getNotations().getTieds() != null) {
+			for(int i = 1; i <= 10; i++) {
+				if(input.charAt(input.length()-i) != '.' || input.charAt(input.length()-i) == getNoteDuration(note)) {
+					input.deleteCharAt(input.length()-i);
+					break;
+				}
+			}
+			
+			for(Tied tie : note.getNotations().getTieds()) {
+				if(tie != null && (tie.getType().equals("stop") || tie.getType().equals("continue"))) {
+					input.append("-");
+				}
+			}
+			input.append(getNoteDuration(note));
+		}
+		else if(note.getNotations() != null && note.getNotations().getTieds() != null) {
+			for(int i = 1; i <= 10; i++) {
+				if(input.charAt(input.length()-i) != '.' || input.charAt(input.length()-i) == getNoteDuration(note)) {
+					input.deleteCharAt(input.length()-i);
+					break;
+				}
+			}
+			for(Tied tie : note.getNotations().getTieds()) {
+				if(tie != null && (tie.getType().equals("start") || tie.getType().equals("continue"))) {
+					input.append("-");
+				}
+			}
+			input.append(getNoteDuration(note));
+		}
 	}
 
 }
