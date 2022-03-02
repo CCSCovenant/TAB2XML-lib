@@ -642,18 +642,22 @@ public class Visualizer {
 
 
 			StaffTuning staffTuning = staffDetails.staffTuning.get(0);
+			StaffTuning staffTuning2 = staffDetails.staffTuning.get(staffDetails.staffTuning.size()-1);
 
 			int relative = getRelative(staffTuning.tuningStep,staffTuning.tuningOctave);
+			int relative2 = getRelative(staffTuning2.tuningStep,staffTuning2.tuningOctave);
 
 			double x = currentX;
-			double y = A4Height-(currentY+stepSize*(relative-4));
-			double y2 = A4Height-(currentY+stepSize*(relative-8));
+			double yBase = A4Height-(currentY+stepSize*(relative));
+			double yTop = A4Height-(currentY+stepSize*(relative2));
+			double yMid = (yTop+yBase)/2;
 
-			double w1 = stepSize*4*Math.max(1,(int)Math.log10(t.getBeats())+1);
-			double w2 = stepSize*4*Math.max(1,(int)Math.log10(t.getBeatType())+1);
+			double Height = yTop-yMid;
+			double w1 = Height*Math.max(1,(int)Math.log10(t.getBeats())+1);
+			double w2 = Height*Math.max(1,(int)Math.log10(t.getBeatType())+1);
 
-			addTextAt(x,y,w1,stepSize*4,new Paragraph(t.getBeats()+"").setFontSize(21).setBold());
-			addTextAt(x,y2,w2,stepSize*4,new Paragraph(t.getBeatType()+"").setFontSize(21).setBold());
+			addTextAt(x,yTop,w1,Height,new Paragraph(t.getBeats()+"").setFontSize((float) (Height/16)*21).setBold());
+			addTextAt(x,yMid,w2,Height,new Paragraph(t.getBeatType()+"").setFontSize((float) (Height/16)*21).setBold());
 			//System.out.println(t.getBeats()+" "+t.getBeatType());
 			drawBackground(defaultShift+Math.max(w1,w2));
 
