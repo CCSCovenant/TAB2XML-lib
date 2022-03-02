@@ -29,7 +29,7 @@ public class PreviewViewController extends Application {
 	@FXML TextField gotoPageField;
 
 	private final String temp_dest = "tmp.pdf";
-	private final int scale = 1;
+	private final int scale = 2;
 	private static Window convertWindow = new Stage();
 
 	private MainViewController mvc;
