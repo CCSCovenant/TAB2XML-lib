@@ -14,6 +14,35 @@ import java.nio.file.Path;
 
 public class PlayerOutputTest {
 	@Test
+	void getSampleString() throws TXMLException, IOException, URISyntaxException {
+		URL outDirURL = this.getClass().getClassLoader().getResource("../../resources/test/outputs");
+		Path outDirPath = Path.of(outDirURL.toURI());
+		File outDir= outDirPath.toFile();
+		File[] outputFiles = outDir.listFiles();
+		for (File file : outputFiles) file.delete();
+
+		URL inputDirURL = this.getClass().getClassLoader().getResource("../../resources/test/system/");
+		Path inputDirPath = Path.of(inputDirURL.toURI());
+		File inputDir = inputDirPath.toFile();
+		File[] inputFiles = inputDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".txt"));
+
+		for (File input : inputFiles) {
+			String inputText = Files.readString(input.toPath());
+			StringBuilder inputEdit = new StringBuilder(inputText);
+			for (int i=0;i<inputEdit.length();i++){
+				if (inputEdit.charAt(i)=='\r'){
+					inputEdit.deleteCharAt(i);
+				}
+			}
+
+			Score score = new Score(inputEdit.toString());
+			MXLPlayer player = new MXLPlayer(score);
+			String musicString = player.getString(-1,-1,-1);
+			Path outFile = outDirPath.resolve(input.getName());
+			Files.writeString(outFile,musicString);
+		}
+	}
+	@Test
 	void getSampleOutput() throws IOException, URISyntaxException, TXMLException, InterruptedException {
 		URL outDirURL = this.getClass().getClassLoader().getResource("../../resources/test/outputs");
 		Path outDirPath = Path.of(outDirURL.toURI());

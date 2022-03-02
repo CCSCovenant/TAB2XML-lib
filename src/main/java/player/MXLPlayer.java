@@ -20,6 +20,7 @@ public class MXLPlayer{
 	private String clef;
 	public MXLPlayer(Score score) throws TXMLException {
 		this.score = score.getModel();
+		initPartList();
 	}
 	/**
 	 * this method will play music from given duration.
@@ -29,7 +30,6 @@ public class MXLPlayer{
 	 * @param duration  when should player start in a measure.
 	 * */
 	public void play(int partID,int measureID, int duration){
-		initPartList();
 		StringBuilder musicString = new StringBuilder();
 		int partCount = 0;
 		for (Part part:score.getParts()){
@@ -41,6 +41,19 @@ public class MXLPlayer{
 			partCount++;
 		}
 		player.play(musicString.toString());
+	}
+	public String getString(int partID,int measureID, int duration){
+		StringBuilder musicString = new StringBuilder();
+		int partCount = 0;
+		for (Part part:score.getParts()){
+			if (partCount>partID){
+				musicString.append(getPart(part,-1,-1));
+			}else if (partCount==partID){
+				musicString.append(getPart(part,measureID,duration));
+			}
+			partCount++;
+		}
+		return musicString.toString();
 	}
 	public void initPartList(){
 		List<ScorePart> list = score.getPartList().getScoreParts();
