@@ -5,11 +5,8 @@ import custom_exceptions.TXMLException;
 import models.Part;
 import models.ScorePartwise;
 import models.measure.Measure;
-import models.measure.attributes.Attributes;
-import models.measure.attributes.Clef;
 import models.measure.note.Dot;
 import models.measure.note.Note;
-import models.part_list.PartList;
 import models.part_list.ScorePart;
 import org.jfugue.player.Player;
 
@@ -68,55 +65,53 @@ public class MXLPlayer{
 	public String getMeasure(Measure measure,String partID,int duration){
 		StringBuilder musicString = new StringBuilder();
 		int durationCount = 0;
-	
-		for(Note note: measure.getNotesBeforeBackup()) {
-			
-			if(durationCount < duration) {
-				durationCount += note.getDuration();
-			}
-			else {
-				if(note.getChord() == null && musicString.length() > 0 && musicString.charAt(musicString.length()-1) == '+') {
-					musicString.deleteCharAt(musicString.length()-1);
-					musicString.append(" ");
-				}
-				if(this.clef != null || measure.getAttributes().getClef() != null ) {
-					if(note.getChord() != null && musicString.length() > 0 && musicString.charAt(musicString.length()-1) == '+') {
+		if (measure.getNotesBeforeBackup()!=null){
+			for(Note note: measure.getNotesBeforeBackup()) {
 
-					}else {
-						musicString.append(getNoteDetails(note));
+				if (durationCount < duration) {
+					durationCount += note.getDuration();
+				} else {
+					if (note.getChord() == null && musicString.length() > 0 && musicString.charAt(musicString.length() - 1) == '+') {
+						musicString.deleteCharAt(musicString.length() - 1);
+						musicString.append(" ");
 					}
-					if(clef == null) {
-						this.clef = measure.getAttributes().getClef().getSign();
-					}
-					if(clef.equals("percussion")) {
-					//	musicString.append(note.getUnpitched().getDisplayStep());
-					//	musicString.append(note.getUnpitched().getDisplayOctave());
-						musicString.deleteCharAt(musicString.length()-1);
-						musicString.append(getNoteDuration(note));
-					//	musicString.append(getDots(note));
-					}
-					else if(clef.equals("TAB")){
-						if(note.getRest() != null) {
-							musicString.append("R");
+					if (this.clef != null || measure.getAttributes().getClef() != null) {
+						if (note.getChord() != null && musicString.length() > 0 && musicString.charAt(musicString.length() - 1) == '+') {
+
+						} else {
+							musicString.append(getNoteDetails(note));
 						}
-						else {
-							musicString.append(note.getPitch().getStep());
-							musicString.append(note.getPitch().getOctave());
-							
-							if(note.getGrace() != null) {
-								musicString.append("i");
-							}else {
-								musicString.append(getNoteDuration(note));
-								musicString.append(getDots(note));
+						if (clef == null) {
+							this.clef = measure.getAttributes().getClef().getSign();
+						}
+						if (clef.equals("percussion")) {
+							//	musicString.append(note.getUnpitched().getDisplayStep());
+							//	musicString.append(note.getUnpitched().getDisplayOctave());
+							musicString.deleteCharAt(musicString.length() - 1);
+							musicString.append(getNoteDuration(note));
+							//	musicString.append(getDots(note));
+						} else if (clef.equals("TAB")) {
+							if (note.getRest() != null) {
+								musicString.append("R");
+							} else {
+								musicString.append(note.getPitch().getStep());
+								musicString.append(note.getPitch().getOctave());
+
+								if (note.getGrace() != null) {
+									musicString.append("i");
+								} else {
+									musicString.append(getNoteDuration(note));
+									musicString.append(getDots(note));
+								}
+
 							}
-							
 						}
-					}
-					musicString.append(" ");
+						musicString.append(" ");
 
-					if(note.getChord() != null && note != measure.getNotesBeforeBackup().get(measure.getNotesBeforeBackup().size()-1)) { 
-						musicString.deleteCharAt(musicString.length()-1);
-						musicString.append("+");
+						if (note.getChord() != null && note != measure.getNotesBeforeBackup().get(measure.getNotesBeforeBackup().size() - 1)) {
+							musicString.deleteCharAt(musicString.length() - 1);
+							musicString.append("+");
+						}
 					}
 				}
 			}
