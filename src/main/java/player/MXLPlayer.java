@@ -5,11 +5,9 @@ import custom_exceptions.TXMLException;
 import models.Part;
 import models.ScorePartwise;
 import models.measure.Measure;
-import models.measure.attributes.Attributes;
 import models.measure.note.Dot;
 import models.measure.note.Note;
 import models.measure.note.notations.Tied;
-import models.part_list.PartList;
 import models.part_list.ScorePart;
 import org.jfugue.player.Player;
 
@@ -21,7 +19,6 @@ public class MXLPlayer{
 	private String clef;
 	private Player player = new Player();
 	private HashMap<String,ScorePart> scorePartMap = new HashMap<>();
-	private String clef;
 	public MXLPlayer(Score score) throws TXMLException {
 		this.score = score.getModel();
 		initPartList();
