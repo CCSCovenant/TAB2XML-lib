@@ -21,8 +21,10 @@ public class MXLPlayer{
 	private String clef;
 	private Player player = new Player();
 	private HashMap<String,ScorePart> scorePartMap = new HashMap<>();
+	private String clef;
 	public MXLPlayer(Score score) throws TXMLException {
 		this.score = score.getModel();
+		initPartList();
 	}
 	/**
 	 * this method will play music from given duration.
@@ -32,7 +34,6 @@ public class MXLPlayer{
 	 * @param duration  when should player start in a measure.
 	 * */
 	public void play(int partID,int measureID, int duration){
-		initPartList();
 		StringBuilder musicString = new StringBuilder();
 		int partCount = 0;
 		for (Part part:score.getParts()){
@@ -44,6 +45,19 @@ public class MXLPlayer{
 			partCount++;
 		}
 		player.play(musicString.toString());
+	}
+	public String getString(int partID,int measureID, int duration){
+		StringBuilder musicString = new StringBuilder();
+		int partCount = 0;
+		for (Part part:score.getParts()){
+			if (partCount>partID){
+				musicString.append(getPart(part,-1,-1));
+			}else if (partCount==partID){
+				musicString.append(getPart(part,measureID,duration));
+			}
+			partCount++;
+		}
+		return musicString.toString();
 	}
 	public void initPartList(){
 		List<ScorePart> list = score.getPartList().getScoreParts();
@@ -68,57 +82,53 @@ public class MXLPlayer{
 	public String getMeasure(Measure measure,String partID,int duration){
 		StringBuilder musicString = new StringBuilder();
 		int durationCount = 0;
-	
-		for(Note note: measure.getNotesBeforeBackup()) {
-			
-			if(durationCount < duration) {
-				durationCount += note.getDuration();
-			}
-			else {
-				if(note.getChord() == null && musicString.length() > 0 && musicString.charAt(musicString.length()-1) == '+') {
-					musicString.deleteCharAt(musicString.length()-1);
-					musicString.append(" ");
-				}
-				if(this.clef != null || measure.getAttributes().getClef() != null ) {
-					if(note.getChord() != null && musicString.length() > 0 && musicString.charAt(musicString.length()-1) == '+') {
+		if (measure.getNotesBeforeBackup()!=null){
+			for(Note note: measure.getNotesBeforeBackup()) {
 
-					}else {
-						musicString.append(getNoteDetails(note));
+				if (durationCount < duration) {
+					durationCount += note.getDuration();
+				} else {
+					if (note.getChord() == null && musicString.length() > 0 && musicString.charAt(musicString.length() - 1) == '+') {
+						musicString.deleteCharAt(musicString.length() - 1);
+						musicString.append(" ");
 					}
-					if(clef == null) {
-						this.clef = measure.getAttributes().getClef().getSign();
-					}
-					if(clef.equals("percussion")) {
-						if(note.getRest() != null) {
-							musicString.append("R");
+					if (this.clef != null || measure.getAttributes().getClef() != null) {
+						if (note.getChord() != null && musicString.length() > 0 && musicString.charAt(musicString.length() - 1) == '+') {
+
+						} else {
+							musicString.append(getNoteDetails(note));
 						}
-						musicString.append(getNoteDuration(note));
-						musicString.append(getDots(note));
-						addTies(musicString, note);
-					}
-					else if(clef.equals("TAB")){
-						if(note.getRest() != null) {
-							musicString.append("R");
+						if (clef == null) {
+							this.clef = measure.getAttributes().getClef().getSign();
 						}
-						else {
-							musicString.append(note.getPitch().getStep());
-							musicString.append(note.getPitch().getOctave());
-							
-							if(note.getGrace() != null) {
-								musicString.append("i");
-							}else {
-								musicString.append(getNoteDuration(note));
-								musicString.append(getDots(note));
-								addTies(musicString, note);
+						if (clef.equals("percussion")) {
+							//	musicString.append(note.getUnpitched().getDisplayStep());
+							//	musicString.append(note.getUnpitched().getDisplayOctave());
+							musicString.deleteCharAt(musicString.length() - 1);
+							musicString.append(getNoteDuration(note));
+							//	musicString.append(getDots(note));
+						} else if (clef.equals("TAB")) {
+							if (note.getRest() != null) {
+								musicString.append("R");
+							} else {
+								musicString.append(note.getPitch().getStep());
+								musicString.append(note.getPitch().getOctave());
+
+								if (note.getGrace() != null) {
+									musicString.append("i");
+								} else {
+									musicString.append(getNoteDuration(note));
+									musicString.append(getDots(note));
+								}
+
 							}
-							
 						}
-					}
-					musicString.append(" ");
+						musicString.append(" ");
 
-					if(note.getChord() != null && note != measure.getNotesBeforeBackup().get(measure.getNotesBeforeBackup().size()-1)) { 
-						musicString.deleteCharAt(musicString.length()-1);
-						musicString.append("+");
+						if (note.getChord() != null && note != measure.getNotesBeforeBackup().get(measure.getNotesBeforeBackup().size() - 1)) {
+							musicString.deleteCharAt(musicString.length() - 1);
+							musicString.append("+");
+						}
 					}
 				}
 			}
@@ -149,6 +159,7 @@ public class MXLPlayer{
 		return musicString.toString();
 	}
 	
+
 	public char getNoteDuration(Note note) {
 		if(note.getType().equals("whole")) { return 'w'; }
 		else if(note.getType().equals("half")) { return 'h'; }
@@ -159,7 +170,7 @@ public class MXLPlayer{
 		else if(note.getType().equals("64th")) { return 'x'; }
 		else if(note.getType().equals("128th")) { return 'o'; }
 		else { return 'q'; }
-	}
+}
 	
 	public String getDots(Note note) {
 		StringBuilder musicString = new StringBuilder();
@@ -170,7 +181,6 @@ public class MXLPlayer{
 				}
 			}
 		}
-		
 		return musicString.toString();
 	}
 	
@@ -191,7 +201,7 @@ public class MXLPlayer{
 		/*More could be added later on*/
 		else { return "GUNSHOT"; }//default for now
 	}
-	
+
 	public void addTies(StringBuilder input, Note note) {
 		int indextoCheck = input.length() - 1;
 		if(note.getNotations() != null && note.getNotations().getTieds() != null) {
@@ -224,5 +234,4 @@ public class MXLPlayer{
 			input.append(getNoteDuration(note));
 		}
 	}
-
 }
