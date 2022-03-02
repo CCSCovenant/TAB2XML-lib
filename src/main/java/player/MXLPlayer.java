@@ -88,8 +88,12 @@ public class MXLPlayer{
 						this.clef = measure.getAttributes().getClef().getSign();
 					}
 					if(clef.equals("percussion")) {
+						if(note.getRest() != null) {
+							musicString.append("R");
+						}
 						musicString.deleteCharAt(musicString.length()-1);
 						musicString.append(getNoteDuration(note));
+						musicString.append(getDots(note));
 					}
 					else if(clef.equals("TAB")){
 						if(note.getRest() != null) {
