@@ -28,7 +28,7 @@ public class PreviewViewController extends Application {
 	@FXML ImageView pdfViewer;
 	@FXML TextField gotoPageField;
 
-	private final String temp_dest = "tmp.pdf";
+	private final String temp_dest = "./tmp.pdf";
 	private final int scale = 2;
 	private static Window convertWindow = new Stage();
 

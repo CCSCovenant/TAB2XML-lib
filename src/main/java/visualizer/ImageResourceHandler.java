@@ -8,24 +8,25 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStreamReader;
-import java.net.URISyntaxException;
 import java.util.HashMap;
 
 public class ImageResourceHandler {
-	private static ImageResourceHandler imageResourceHandler = new ImageResourceHandler("graphic/imageList.json");
+	private static ImageResourceHandler imageResourceHandler = new ImageResourceHandler("./graphic/imageList.json");
 	private HashMap<String,String> ImageResources;
 	private Gson gson = new Gson();
 	private File file;
 	private ImageResourceHandler(String filename){
 		try {
-			this.file = new File(getClass().getClassLoader().getResource(filename).toURI());
-		}catch (URISyntaxException e){
+			this.file = new File(filename);
+
+		}catch (Exception e){
 			System.out.println("wrong URL");
 		}
 		ImageResources = new HashMap<>();
 		readResources();
 	}
 	private void readResources(){
+		System.out.println("reading json");
 		try {
 			InputStreamReader reader = new InputStreamReader(new FileInputStream(file));
 			ImageResource[] resources = gson.fromJson(reader, ImageResource[].class);
@@ -48,7 +49,13 @@ public class ImageResourceHandler {
 
 	public ImageData getImage(String id) {
 		String s = ImageResources.get(id);
-		ImageData imageData = ImageDataFactory.create(getClass().getClassLoader().getResource(ImageResources.get(id)));
-		return imageData;
+		try {
+			ImageData imageData = ImageDataFactory.create(ImageResources.get(id));
+			return imageData;
+		}catch (Exception e){
+			System.out.println(ImageResources.get(id));
+			System.out.println("can't solve resources");
+			return null;
+		}
 	}
 }
