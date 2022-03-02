@@ -92,7 +92,6 @@ public class MXLPlayer{
 						if(note.getRest() != null) {
 							musicString.append("R");
 						}
-						musicString.deleteCharAt(musicString.length()-1);
 						musicString.append(getNoteDuration(note));
 						musicString.append(getDots(note));
 						addTies(musicString, note);
