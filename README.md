@@ -29,3 +29,6 @@ The steps to getting the software on your computer are as follows:
    ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/master/src/main/resources/readme/g4.png)
 
 
+# How to use
+   please refer to user manual:
+   https://github.com/CCSCovenant/TAB2XML/blob/master/Documents/EECS2311_%20USER%20MANUAL.pdf
