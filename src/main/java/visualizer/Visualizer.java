@@ -426,9 +426,14 @@ public class Visualizer {
 						TieElements.add(new TieElement(x,y));
 					}else if (tied.getType().equals("stop")){
 						TieElement tieElement = TieElements.poll();
-						tieElement.x2 = x;
-						tieElement.y2 = y;
+
 						if (tieElement!=null){
+							tieElement.x2 = x;
+							tieElement.y2 = y;
+							if (tieElement.half){
+								tieElement.x1 = tieElement.x1-(x- tieElement.x1);
+								tieElement.y1 = y;
+							}
 							drawTied(tieElement);
 						}
 					}
@@ -442,9 +447,13 @@ public class Visualizer {
 						slurElements.put(slur.getNumber(),new TieElement(x,y));
 					}else if (slur.getType().equals("stop")){
 						TieElement tieElement = slurElements.get(slur.getNumber());
-						tieElement.x2 = x;
-						tieElement.y2 = y;
 						if (tieElement!=null){
+							tieElement.x2 = x;
+							tieElement.y2 = y;
+							if (tieElement.half){
+								tieElement.x1 = tieElement.x1-(x- tieElement.x1);
+								tieElement.y1 = y;
+							}
 							drawTied(tieElement);
 						}
 					}
@@ -457,6 +466,45 @@ public class Visualizer {
 
 
 	}
+	private void resolveTied(){
+		List<TieElement> tmp = new ArrayList<>();
+		while (TieElements.peek()!=null){
+			TieElement tieElement = TieElements.poll();
+			tieElement.half = true;
+			tieElement.first = true;
+			tieElement.x2 = measureEnd;
+			tieElement.y2 = tieElement.y1;
+			drawTied(tieElement);
+			TieElement tieElement1 = new TieElement(currentX,currentY);
+			tieElement1.half = true;
+			tieElement1.first = false;
+			tmp.add(tieElement1);
+		}
+		for (TieElement tieElement:tmp){
+			TieElements.add(tieElement);
+		}
+	}
+
+	private void resolveSlur(){
+		Map<Integer,TieElement> tmp = new HashMap<>();
+		for (Integer i:slurElements.keySet()){
+			TieElement tieElement = slurElements.get(i);
+			tieElement.half = true;
+			tieElement.first = true;
+			tieElement.x2 = measureEnd;
+			tieElement.y2 = tieElement.y1;
+			drawTied(tieElement);
+			TieElement tieElement1 = new TieElement(currentX,currentY);
+			tieElement1.half = true;
+			tieElement1.first = false;
+			tmp.put(i,tieElement1);
+		}
+		slurElements = new HashMap<>();
+		for (Integer i: tmp.keySet()){
+			slurElements.put(i,tmp.get(i));
+		}
+	}
+
 	private void drawTied(TieElement tieElement){
 
 		double shift = stepSize;
@@ -466,9 +514,23 @@ public class Visualizer {
 		double y2 = tieElement.y2-stepSize;
 		double start = 220;
 		double extent = 100;
-		if (tieElement.placement.equals("above")){
-			start = 40;
+
+		if (tieElement.half){
+			extent = 50;
+			if (tieElement.first){
+				start = 220;
+			}else {
+				start = 270;
+			}
 		}
+		if (tieElement.placement.equals("above")){
+			if (tieElement.first){
+				start = 40;
+			}else {
+				start = 90;
+			}
+		}
+
 		canvas.arc(x1,y1,x2,y2,start,extent);
 
 	}
@@ -726,11 +788,14 @@ public class Visualizer {
 		return (centerStep-stepAdjusted)-(7*(octave-centerOctave));
 	}
 	private void switchLine(){
+
 		if (currentY+measureGap+marginY>A4Height){
 			switchPage();
 		}else {
 			currentX = marginX;
 			currentY += measureGap;
+			resolveSlur();
+			resolveTied();
 			lineCounter++;
 		}
 	}
@@ -741,8 +806,11 @@ public class Visualizer {
 		PageSize pageSize = PageSize.A4;
 		PdfPage page = pdf.addNewPage(pageSize);
 		canvas = new PdfCanvas(page);
+		resolveSlur();
+		resolveTied();
 		pageCounter ++;
 	}
+
 	/**
 	 * covert Note type string into Fraction number.
 	 * e.g whole number = 1
