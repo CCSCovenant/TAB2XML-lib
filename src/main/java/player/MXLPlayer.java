@@ -43,7 +43,8 @@ public class MXLPlayer{
 			}
 			partCount++;
 		}
-		player.play(musicString.toString());
+		ThreadPlayer threadPlayer = new ThreadPlayer("player-1");
+		threadPlayer.start(musicString.toString());
 	}
 	public String getString(int partID,int measureID, int duration){
 		StringBuilder musicString = new StringBuilder();
