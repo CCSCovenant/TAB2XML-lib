@@ -4,6 +4,7 @@ import converter.Score;
 import custom_exceptions.TXMLException;
 import org.junit.jupiter.api.Test;
 import player.MXLPlayer;
+import player.ThreadPlayer;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,8 +55,9 @@ public class PlayerOutputTest {
 		Path inputDirPath = Path.of(inputDirURL.toURI());
 		File inputDir = inputDirPath.toFile();
 		File[] inputFiles = inputDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".txt"));
-
+		int counter = 0;
 		for (File input : inputFiles) {
+			counter++;
 			String inputText = Files.readString(input.toPath());
 			StringBuilder inputEdit = new StringBuilder(inputText);
 			for (int i=0;i<inputEdit.length();i++){
@@ -66,8 +68,9 @@ public class PlayerOutputTest {
 
 			Score score = new Score(inputEdit.toString());
 			MXLPlayer player = new MXLPlayer(score);
-			player.play(-1,-1,-1);
-			Thread.sleep(2000);
+			String musicString = player.getString(-1,-1,-1);
+			ThreadPlayer player1 = new ThreadPlayer("Thread-"+counter);
+			player1.start(musicString);
 		}
 
 	}
