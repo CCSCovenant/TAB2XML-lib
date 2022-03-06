@@ -17,20 +17,20 @@ The steps to getting the project on your computer are as follows:
 
 For Eclipse user:
 
-1)Open Eclipse, ensure that you have the Gradle add-on installed.
+1) Open Eclipse, ensure that you have the Gradle add-on installed.
 
-2)Using the following link: https://github.com/CCSCovenant/TAB2XML.git import the project. 
+2) Using the following link: https://github.com/CCSCovenant/TAB2XML.git import the project. 
 Ensure that the master branch is the one that is pulled.
 
-3)Run the application using the Gradle Task.
+3) Run the application using the Gradle Task.
 
-4)After the program is run, a new MUSICXML window should open.
+4) After the program is run, a new MUSICXML window should open.
 
-5)Paste your text-based tablature into the text box.
+5) Paste your text-based tablature into the text box.
 
-6)Press the ‘Preview Music Sheet’ button if you would like to see the text-based tablature in music sheet form. Press the ‘Export PDF’ button if you would like to save the music sheet.
+6) Press the ‘Preview Music Sheet’ button if you would like to see the text-based tablature in music sheet form. Press the ‘Export PDF’ button if you would like to save the music sheet.
 
-7Press the ‘Play Music’ button if you would like to hear the text-based tablature played.
+7) Press the ‘Play Music’ button if you would like to hear the text-based tablature played.
 
 
 

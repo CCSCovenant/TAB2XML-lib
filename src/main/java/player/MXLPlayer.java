@@ -202,35 +202,30 @@ public class MXLPlayer{
 	}
 
 	public void addTies(StringBuilder input, Note note) {
-		int indextoCheck = input.length() - 1;
+		int indextoCheck = input.length() - 1; 
 		if(note.getNotations() != null && note.getNotations().getTieds() != null) {
 			for(int i = 1; i <= 10; i++) {
-				if(input.charAt(input.length()-i) != '.' || input.charAt(input.length()-i) == getNoteDuration(note)) {
-					input.deleteCharAt(input.length()-i);
+				if(input.charAt(input.length()-i) != '.' && input.charAt(input.length()-i) == getNoteDuration(note)) {
+					indextoCheck = input.length() - i;
 					break;
 				}
 			}
 			
 			for(Tied tie : note.getNotations().getTieds()) {
 				if(tie != null && (tie.getType().equals("stop") || tie.getType().equals("continue"))) {
-					input.append("-");
-				}
-			}
-			input.append(getNoteDuration(note));
-		}
-		else if(note.getNotations() != null && note.getNotations().getTieds() != null) {
-			for(int i = 1; i <= 10; i++) {
-				if(input.charAt(input.length()-i) != '.' || input.charAt(input.length()-i) == getNoteDuration(note)) {
-					input.deleteCharAt(input.length()-i);
+					input.replace(indextoCheck, indextoCheck + 1, "-" + getNoteDuration(note));
 					break;
 				}
 			}
+		}
+		 if(note.getNotations() != null && note.getNotations().getTieds() != null) {
 			for(Tied tie : note.getNotations().getTieds()) {
 				if(tie != null && (tie.getType().equals("start") || tie.getType().equals("continue"))) {
 					input.append("-");
+					break;
 				}
 			}
-			input.append(getNoteDuration(note));
+			
 		}
 	}
 }
