@@ -11,6 +11,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.TextAlignment;
@@ -263,14 +264,47 @@ public class Visualizer {
 		Point startR = new Point(measureEnd,A4Height-maxY);
 		Point endR = new Point(measureEnd,A4Height-minY);
 		drawLine(startR,endR);
-		drawLine(startR,endR);
 		//more barline
+		int numberFix = 5;
 		if (barLines!=null){
 			for (BarLine barLine:barLines){
-				drawBarline(barLine);
+				if (barLine.location.equals("left")){
+					startL.x =startL.x+1;
+					endL.x =endL.x+1;
+					drawLine(startL,endL);
+					startL.x =startL.x+5;
+					endL.x =endL.x+5;
+					drawLine(startL,endL);
+					if (barLine.repeat!=null&&barLine.repeat.getTimes()!=null){
+						addTextAt(endL.x+10,endL.y-numberFix,noteWidth*4,noteWidth,new Paragraph(barLine.repeat.getTimes()+"x"));
+					}
+					if (barLine.getRepeat()!=null){
+						double diff = endL.y-startL.y;
+						diff /= 6;
+						drawDotAt(startL.x+5,startL.y+diff,2);
+						drawDotAt(startL.x+5,endL.y-diff,2);
+
+					}
+				}else if (barLine.location.equals("right")){
+					startR.x =startR.x-1;
+					endR.x =endR.x-1;
+					drawLine(startR,endR);
+					startR.x =startR.x-5;
+					endR.x =endR.x-5;
+					drawLine(startR,endR);
+					if (barLine.repeat.getTimes()!=null){
+						addTextAt(endR.x-10,endR.y+numberFix+noteWidth,noteWidth*4,noteWidth,new Paragraph(barLine.repeat.getTimes()+"x"));
+					}
+					if (barLine.getRepeat()!=null){
+						double diff = endR.y-startR.y;
+						diff /= 6;
+						drawDotAt(startR.x-5,startR.y+diff,2);
+						drawDotAt(startR.x-5,endR.y-diff,2);
+					}
+				}
 			}
 		}
-		int numberFix = 5;
+
 		addTextAt(startL.x,startL.y-numberFix,noteWidth*4,noteWidth,new Paragraph(measureCounter+""));
 
 	}
@@ -466,6 +500,7 @@ public class Visualizer {
 
 
 	}
+	/*
 	private void resolveTied(){
 		List<TieElement> tmp = new ArrayList<>();
 		while (TieElements.peek()!=null){
@@ -503,7 +538,7 @@ public class Visualizer {
 		for (Integer i: tmp.keySet()){
 			slurElements.put(i,tmp.get(i));
 		}
-	}
+	}*/
 
 	private void drawTied(TieElement tieElement){
 
@@ -530,7 +565,7 @@ public class Visualizer {
 				start = 90;
 			}
 		}
-
+		canvas.setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT);
 		canvas.arc(x1,y1,x2,y2,start,extent);
 
 	}
@@ -540,12 +575,12 @@ public class Visualizer {
 			double dot_shift = 4;
 			for (Dot dot:note.getDots()){
 				x_dot += dot_shift;
-				drawDotAt(x_dot,y);
+				drawDotAt(x_dot,y,1.5);
 			}
 		}
 	}
-	private void drawDotAt(double x,double y){
-		canvas.circle(x,y,1.5);
+	private void drawDotAt(double x,double y,double r){
+		canvas.circle(x,y,r);
 		canvas.fill();
 
 
@@ -794,8 +829,8 @@ public class Visualizer {
 		}else {
 			currentX = marginX;
 			currentY += measureGap;
-			resolveSlur();
-			resolveTied();
+			TieElements = new LinkedList<>();
+			slurElements = new HashMap<>();
 			lineCounter++;
 		}
 	}
@@ -806,8 +841,8 @@ public class Visualizer {
 		PageSize pageSize = PageSize.A4;
 		PdfPage page = pdf.addNewPage(pageSize);
 		canvas = new PdfCanvas(page);
-		resolveSlur();
-		resolveTied();
+		TieElements = new LinkedList<>();
+		slurElements = new HashMap<>();
 		pageCounter ++;
 	}
 
