@@ -43,7 +43,8 @@ public class MXLPlayer{
 			}
 			partCount++;
 		}
-		player.play(musicString.toString());
+		ThreadPlayer threadPlayer = new ThreadPlayer("player-1");
+		threadPlayer.start(musicString.toString());
 	}
 	public String getString(int partID,int measureID, int duration){
 		StringBuilder musicString = new StringBuilder();
@@ -151,7 +152,7 @@ public class MXLPlayer{
 		}
 
 		if(note.getInstrument() == null || note.getInstrument().getId().equals("")) {
-			instrument = "I25";
+			instrument = "P1-I25";
 		}
 		else { instrument = "[" + getInstrument(note.getInstrument().getId()) + "]";
 		}

@@ -11,6 +11,7 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfPage;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.kernel.pdf.canvas.PdfCanvas;
+import com.itextpdf.kernel.pdf.canvas.PdfCanvasConstants;
 import com.itextpdf.layout.Canvas;
 import com.itextpdf.layout.element.Paragraph;
 import com.itextpdf.layout.properties.TextAlignment;
@@ -39,45 +40,44 @@ import java.util.*;
  * */
 public class Visualizer {
 	// Note: A4 size: 597.6 unit * 842.4 unit
-	private final int measureGap = 80; //px Gap between measure.
-	private final int noteWidth = 8; //px, the width of a note element
-	private final int clefWidth = 10; //px, the width of a clef element
-	private final int timeWidth = 10; //px, the width of a time element
-	private final int keyWidth = 10; //px, the width of a key element;
-	private final int stepSize = 4; //px, the width between steps.
-	private final int marginX = 10; // px, the width of margin.
-	private final int marginY = 10; // px, the width of margin.
-	private final int titleSpace = 150; // px, for title and author
-	private final int A4Width = 597;
-	private final int A4Height =  842;
-	private final int eighthGap = noteWidth/2;
-	private final int defaultShift = 20; // where we should put next note.
-	private final int bendShift = 10;
-	private final String temp_dest = "tmp.pdf";
+	public final int measureGap = 80; //px Gap between measure.
+	public final int noteWidth = 8; //px, the width of a note element
+	public final int clefWidth = 10; //px, the width of a clef element
+	public final int timeWidth = 10; //px, the width of a time element
+	public final int keyWidth = 10; //px, the width of a key element;
+	public final int stepSize = 4; //px, the width between steps.
+	public final int marginX = 10; // px, the width of margin.
+	public final int marginY = 10; // px, the width of margin.
+	public final int titleSpace = 150; // px, for title and author
+	public final int A4Width = 597;
+	public final int A4Height =  842;
+	public final int eighthGap = noteWidth/2;
+	public final int defaultShift = 20; // where we should put next note.
+	public final int bendShift = 10;
 
-	private ScorePartwise score;
-	private PdfCanvas canvas;
-	private PdfDocument pdf;
-	private int measureCounter = 1;
-	private int lineCounter = 0;//which measure are we currently printing
-	private int pageCounter = 0; // which page are we currently printing
-	private double currentY = marginY + titleSpace; // the position of center C in current line.
-	private double currentX = marginX;
-	private  double planShift = 0; // where we should put next note.
-	private double measureStart = 0;
-	private double measureEnd = 0;
+	public ScorePartwise score;
+	public PdfCanvas canvas;
+	public PdfDocument pdf;
+	public int measureCounter = 1;
+	public int lineCounter = 0;//which measure are we currently printing
+	public int pageCounter = 0; // which page are we currently printing
+	public double currentY = marginY + titleSpace; // the position of center C in current line.
+	public double currentX = marginX;
+	public double planShift = 0; // where we should put next note.
+	public double measureStart = 0;
+	public double measureEnd = 0;
 
-	private Time time = new Time(4,4); // default time: 4/4
-	private boolean shouldDrawTime = false;
-	private StaffDetails staffDetails;
-	private Clef clef;
-	private EighthFlag eighthFlag = new EighthFlag(currentX);
-	private ImageResourceHandler imageResourceHandler = ImageResourceHandler.getInstance();
-	private Map<String,Integer> noteType2Int = new HashMap<>();
-	private HashSet<Integer> relatives = new HashSet<>();
+	public Time time = new Time(4,4); // default time: 4/4
+	public boolean shouldDrawTime = false;
+	public StaffDetails staffDetails;
+	public Clef clef;
+	public EighthFlag eighthFlag = new EighthFlag(currentX);
+	public ImageResourceHandler imageResourceHandler = ImageResourceHandler.getInstance();
+	public Map<String,Integer> noteType2Int = new HashMap<>();
+	public HashSet<Integer> relatives = new HashSet<>();
 
-	private Queue<TieElement> TieElements = new LinkedList<>() ;
-	private Map<Integer,TieElement> slurElements = new HashMap<>();
+	public Queue<TieElement> TieElements = new LinkedList<>() ;
+	public Map<Integer,TieElement> slurElements = new HashMap<>();
  	public Visualizer(Score score) throws TXMLException {
 		initConverter();
 		this.score = score.getModel();
@@ -183,6 +183,7 @@ public class Visualizer {
 		drawAttributes(measure.getAttributes());
 		// draw Notes
 		drawNotes(measure.getNotesBeforeBackup());
+
 		//drawNotes(measure.getNotesAfterBackup());
 
 		drawEighthFlag();
@@ -263,21 +264,51 @@ public class Visualizer {
 		Point startR = new Point(measureEnd,A4Height-maxY);
 		Point endR = new Point(measureEnd,A4Height-minY);
 		drawLine(startR,endR);
-		drawLine(startR,endR);
 		//more barline
+		int numberFix = 5;
 		if (barLines!=null){
 			for (BarLine barLine:barLines){
-				drawBarline(barLine);
+				if (barLine.location.equals("left")){
+					startL.x =startL.x+1;
+					endL.x =endL.x+1;
+					drawLine(startL,endL);
+					startL.x =startL.x+5;
+					endL.x =endL.x+5;
+					drawLine(startL,endL);
+					if (barLine.repeat!=null&&barLine.repeat.getTimes()!=null){
+						addTextAt(endL.x+10,endL.y-numberFix,noteWidth*4,noteWidth,new Paragraph(barLine.repeat.getTimes()+"x"));
+					}
+					if (barLine.getRepeat()!=null){
+						double diff = endL.y-startL.y;
+						diff /= 6;
+						drawDotAt(startL.x+5,startL.y+diff,2);
+						drawDotAt(startL.x+5,endL.y-diff,2);
+
+					}
+				}else if (barLine.location.equals("right")){
+					startR.x =startR.x-1;
+					endR.x =endR.x-1;
+					drawLine(startR,endR);
+					startR.x =startR.x-5;
+					endR.x =endR.x-5;
+					drawLine(startR,endR);
+					if (barLine.repeat.getTimes()!=null){
+						addTextAt(endR.x-10,endR.y+numberFix+noteWidth,noteWidth*4,noteWidth,new Paragraph(barLine.repeat.getTimes()+"x"));
+					}
+					if (barLine.getRepeat()!=null){
+						double diff = endR.y-startR.y;
+						diff /= 6;
+						drawDotAt(startR.x-5,startR.y+diff,2);
+						drawDotAt(startR.x-5,endR.y-diff,2);
+					}
+				}
 			}
 		}
-		int numberFix = 5;
+
 		addTextAt(startL.x,startL.y-numberFix,noteWidth*4,noteWidth,new Paragraph(measureCounter+""));
 
 	}
-	// we only have two kind of barline left and right
-	public void drawBarline(BarLine barLine){
 
-	}
 	/*
 	 what inside of note:
 
@@ -307,7 +338,7 @@ public class Visualizer {
 	 Notations notations; //need to handle
 	 */
 
-	private void drawNote(Note note){
+	public void drawNote(Note note){
 		// handle chord
 		if (note.getChord()==null){
 			// if there is no chord. move the next note
@@ -356,7 +387,7 @@ public class Visualizer {
 			}
 		}
 	}
-	private void drawNoteHead(Note note){
+	public void drawNoteHead(Note note){
 		//System.out.println("drawing");
 		Notehead notehead = note.getNotehead();
 		String type = "";
@@ -426,9 +457,14 @@ public class Visualizer {
 						TieElements.add(new TieElement(x,y));
 					}else if (tied.getType().equals("stop")){
 						TieElement tieElement = TieElements.poll();
-						tieElement.x2 = x;
-						tieElement.y2 = y;
+
 						if (tieElement!=null){
+							tieElement.x2 = x;
+							tieElement.y2 = y;
+							if (tieElement.half){
+								tieElement.x1 = tieElement.x1-(x- tieElement.x1);
+								tieElement.y1 = y;
+							}
 							drawTied(tieElement);
 						}
 					}
@@ -442,9 +478,13 @@ public class Visualizer {
 						slurElements.put(slur.getNumber(),new TieElement(x,y));
 					}else if (slur.getType().equals("stop")){
 						TieElement tieElement = slurElements.get(slur.getNumber());
-						tieElement.x2 = x;
-						tieElement.y2 = y;
 						if (tieElement!=null){
+							tieElement.x2 = x;
+							tieElement.y2 = y;
+							if (tieElement.half){
+								tieElement.x1 = tieElement.x1-(x- tieElement.x1);
+								tieElement.y1 = y;
+							}
 							drawTied(tieElement);
 						}
 					}
@@ -457,38 +497,91 @@ public class Visualizer {
 
 
 	}
-	private void drawTied(TieElement tieElement){
+	/*
+	private void resolveTied(){
+		List<TieElement> tmp = new ArrayList<>();
+		while (TieElements.peek()!=null){
+			TieElement tieElement = TieElements.poll();
+			tieElement.half = true;
+			tieElement.first = true;
+			tieElement.x2 = measureEnd;
+			tieElement.y2 = tieElement.y1;
+			drawTied(tieElement);
+			TieElement tieElement1 = new TieElement(currentX,currentY);
+			tieElement1.half = true;
+			tieElement1.first = false;
+			tmp.add(tieElement1);
+		}
+		for (TieElement tieElement:tmp){
+			TieElements.add(tieElement);
+		}
+	}
 
-		double shift = stepSize;
+	private void resolveSlur(){
+		Map<Integer,TieElement> tmp = new HashMap<>();
+		for (Integer i:slurElements.keySet()){
+			TieElement tieElement = slurElements.get(i);
+			tieElement.half = true;
+			tieElement.first = true;
+			tieElement.x2 = measureEnd;
+			tieElement.y2 = tieElement.y1;
+			drawTied(tieElement);
+			TieElement tieElement1 = new TieElement(currentX,currentY);
+			tieElement1.half = true;
+			tieElement1.first = false;
+			tmp.put(i,tieElement1);
+		}
+		slurElements = new HashMap<>();
+		for (Integer i: tmp.keySet()){
+			slurElements.put(i,tmp.get(i));
+		}
+	}*/
+
+	public void drawTied(TieElement tieElement){
+
 		double x1 = tieElement.x1+noteWidth/2;
 		double x2 = tieElement.x2+noteWidth/2;
 		double y1 = tieElement.y1+stepSize;
 		double y2 = tieElement.y2-stepSize;
 		double start = 220;
 		double extent = 100;
-		if (tieElement.placement.equals("above")){
-			start = 40;
+
+		if (tieElement.half){
+			extent = 50;
+			if (tieElement.first){
+				start = 220;
+			}else {
+				start = 270;
+			}
 		}
+		if (tieElement.placement.equals("above")){
+			if (tieElement.first){
+				start = 40;
+			}else {
+				start = 90;
+			}
+		}
+		canvas.setLineCapStyle(PdfCanvasConstants.LineCapStyle.BUTT);
 		canvas.arc(x1,y1,x2,y2,start,extent);
 
 	}
-	private void drawDots(Note note,double x,double y){
+	public void drawDots(Note note,double x,double y){
 		if (note.getDots()!=null){
 			double x_dot = x+noteWidth;
 			double dot_shift = 4;
 			for (Dot dot:note.getDots()){
 				x_dot += dot_shift;
-				drawDotAt(x_dot,y);
+				drawDotAt(x_dot,y,1.5);
 			}
 		}
 	}
-	private void drawDotAt(double x,double y){
-		canvas.circle(x,y,1.5);
+	public void drawDotAt(double x,double y,double r){
+		canvas.circle(x,y,r);
 		canvas.fill();
 
 
 	}
-	private void drawNoteStem(Note note){
+	public void drawNoteStem(Note note){
 		int xOffset = 0;
 		if (note.getNotehead()!=null){
 			if (note.getNotehead().getType()!=null){
@@ -513,7 +606,7 @@ public class Visualizer {
 		eighthFlag.type = noteTypeToInt(note.getType());
 		//we assume every stem is up currently.
 	}
-	private void drawEighthFlag(){
+	public void drawEighthFlag(){
 		if (eighthFlag.type<2){
 			return;
 		}else {
@@ -542,7 +635,7 @@ public class Visualizer {
 		}
 	}
 
-	private void drawTechnical(Note note){
+	public void drawTechnical(Note note){
 		if (note.getNotations()!=null&&note.getNotations().getTechnical()!=null){
 			Technical technical = note.getNotations().getTechnical();
 			int string = technical.getString();
@@ -584,7 +677,7 @@ public class Visualizer {
 			}
 		}
 	}
-	private void drawBend(double x,double y,double bendAlter){
+	public void drawBend(double x,double y,double bendAlter){
 		StaffTuning staffTuning = staffDetails.staffTuning.get(staffDetails.staffTuning.size()-1);
 		int relative = getRelative(staffTuning.tuningStep,staffTuning.tuningOctave);
 
@@ -605,7 +698,7 @@ public class Visualizer {
 			addTextAt(x2-5,y+(topY-y)+10,15,8,new Paragraph((int)bendAlter+"/2").setFontSize(8));
 		}
 	}
-	private void addTextAt(double x,double y,double w,double h,Paragraph text){
+	public void addTextAt(double x,double y,double w,double h,Paragraph text){
 		int marginFix = 7;
 		Rectangle rectangle = new Rectangle((float) x,(float)(y-h+marginFix),(float) w,(float) h);
 		//debug
@@ -621,12 +714,12 @@ public class Visualizer {
 	 * @param start start point
 	 * @param end end point
 	 * */
-	private void drawLine(Point start,Point end){
+	public void drawLine(Point start,Point end){
 		canvas.moveTo(start.x,start.y);
 		canvas.lineTo(end.x,end.y);
 		canvas.closePathStroke();
 	}
-	private void drawImageAt(double x,double y,double w,double h,ImageData imageData){
+	public void drawImageAt(double x,double y,double w,double h,ImageData imageData){
 		AffineTransform at = AffineTransform.getTranslateInstance(x, y);
 		at.concatenate(AffineTransform.getScaleInstance(w, h));
 		float[] m = new float[6];
@@ -638,9 +731,7 @@ public class Visualizer {
 	 *
 	 * @param t the time signature of this measure.
 	 * */
-	private void drawTimeSignature(Time t){
-
-
+	public void drawTimeSignature(Time t){
 			StaffTuning staffTuning = staffDetails.staffTuning.get(0);
 			StaffTuning staffTuning2 = staffDetails.staffTuning.get(staffDetails.staffTuning.size()-1);
 
@@ -667,7 +758,7 @@ public class Visualizer {
 	 *
 	 * @param key the key signature of this measure
 	 * */
-	private void drawKeySignature(Key key){
+	public void drawKeySignature(Key key){
 
 	}
 	/**
@@ -676,7 +767,7 @@ public class Visualizer {
 	 * @param clef the key signature of this measure
 	 * */
 
-	private void drawClef(Clef clef){
+	public void drawClef(Clef clef){
 		ImageData imageData = imageResourceHandler.getImage(clef.getSign());
 		StaffTuning staffTuning = staffDetails.staffTuning.get(0);
 		StaffTuning staffTuning2 = staffDetails.staffTuning.get(staffDetails.staffTuning.size()-1);
@@ -695,7 +786,7 @@ public class Visualizer {
 
 	}
 
-	private void drawBackground(double length){
+	public void drawBackground(double length){
 		planShift = length;
 		for (StaffTuning staffTuning:staffDetails.staffTuning){
 			int relative = getRelative(staffTuning.tuningStep,staffTuning.tuningOctave);
@@ -711,7 +802,7 @@ public class Visualizer {
 	 *
 	 *
 	 * */
-	private int getRelative(String step,int octave){
+	public int getRelative(String step,int octave){
 		//center C is the baseline.
 		int centerOctave = 3;
 		char stepAdjusted = step.charAt(0);
@@ -725,24 +816,29 @@ public class Visualizer {
 		}
 		return (centerStep-stepAdjusted)-(7*(octave-centerOctave));
 	}
-	private void switchLine(){
+	public void switchLine(){
 		if (currentY+measureGap+marginY>A4Height){
 			switchPage();
 		}else {
 			currentX = marginX;
 			currentY += measureGap;
+			TieElements = new LinkedList<>();
+			slurElements = new HashMap<>();
 			lineCounter++;
 		}
 	}
-	private void switchPage(){
+	public void switchPage(){
 		currentX = marginX;
 		lineCounter = 0;
 		currentY = marginY+titleSpace;
 		PageSize pageSize = PageSize.A4;
 		PdfPage page = pdf.addNewPage(pageSize);
 		canvas = new PdfCanvas(page);
+		TieElements = new LinkedList<>();
+		slurElements = new HashMap<>();
 		pageCounter ++;
 	}
+
 	/**
 	 * covert Note type string into Fraction number.
 	 * e.g whole number = 1
@@ -751,13 +847,13 @@ public class Visualizer {
 	 * @param noteType note type
 	 * @return integer fraction of the note.
 	 * */
-	private int noteTypeToInt(String noteType){
+	public int noteTypeToInt(String noteType){
 		if (noteType2Int.containsKey(noteType)){
 			return noteType2Int.get(noteType);
 		}
 		return -1;
 	}
-	private void initConverter(){
+	public void initConverter(){
 		noteType2Int.put("whole",1);
 		noteType2Int.put("half",2);
 		noteType2Int.put("quarter",4);
@@ -770,7 +866,7 @@ public class Visualizer {
 		noteType2Int.put("512th",512);
 		noteType2Int.put("1024th",1024);
 	}
-	private int getMeasureLength(Measure measure){
+	public int getMeasureLength(Measure measure){
 		int length = 0;
 		if (measure.getNotesBeforeBackup()!=null){
 			for (Note note:measure.getNotesBeforeBackup()){
@@ -802,7 +898,7 @@ public class Visualizer {
 		return length;
 	}
 
-	private int getMeasureTotalLength(Measure measure){
+	public int getMeasureTotalLength(Measure measure){
 		int totalLength = 0;
 
 		if (measure.getAttributes().getClef()!=null){
