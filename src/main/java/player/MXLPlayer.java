@@ -83,7 +83,6 @@ public class MXLPlayer{
 		int durationCount = 0;
 		if (measure.getNotesBeforeBackup()!=null){
 			for(Note note: measure.getNotesBeforeBackup()) {
-
 				if (durationCount < duration) {
 					durationCount += note.getDuration();
 				} else {
@@ -101,12 +100,14 @@ public class MXLPlayer{
 							this.clef = measure.getAttributes().getClef().getSign();
 						}
 						if (clef.equals("percussion")) {
-							//	musicString.append(note.getUnpitched().getDisplayStep());
-							//	musicString.append(note.getUnpitched().getDisplayOctave());
-							musicString.deleteCharAt(musicString.length() - 1);
+							if (note.getRest() != null) {
+								musicString.append("R");
+							}
 							musicString.append(getNoteDuration(note));
-							//	musicString.append(getDots(note));
-						} else if (clef.equals("TAB")) {
+						//	musicString.append(getDots(note));
+						//	addTies(musicString, note);
+						} 
+						else if (clef.equals("TAB")) {
 							if (note.getRest() != null) {
 								musicString.append("R");
 							} else {
@@ -118,6 +119,7 @@ public class MXLPlayer{
 								} else {
 									musicString.append(getNoteDuration(note));
 									musicString.append(getDots(note));
+									addTies(musicString, note);
 								}
 
 							}
@@ -129,8 +131,9 @@ public class MXLPlayer{
 							musicString.append("+");
 						}
 					}
-				}
+				}			
 			}
+
 		}
 		return musicString.toString();
 	}
