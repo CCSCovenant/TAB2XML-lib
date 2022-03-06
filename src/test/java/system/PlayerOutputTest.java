@@ -2,6 +2,7 @@ package system;
 
 import converter.Score;
 import custom_exceptions.TXMLException;
+import org.jfugue.player.Player;
 import org.junit.jupiter.api.Test;
 import player.MXLPlayer;
 import player.ThreadPlayer;
@@ -44,7 +45,7 @@ public class PlayerOutputTest {
 		}
 	}
 	@Test
-	void getSampleOutput() throws IOException, URISyntaxException, TXMLException, InterruptedException {
+	void getSampleOutput_MultiThread() throws IOException, URISyntaxException, TXMLException, InterruptedException {
 		URL outDirURL = this.getClass().getClassLoader().getResource("../../resources/test/outputs");
 		Path outDirPath = Path.of(outDirURL.toURI());
 		File outDir= outDirPath.toFile();
@@ -72,6 +73,36 @@ public class PlayerOutputTest {
 			ThreadPlayer player1 = new ThreadPlayer("Thread-"+counter);
 			player1.start(musicString);
 		}
+	}
+	@Test
+	void getSampleOutput_SingleThread() throws IOException, URISyntaxException, TXMLException, InterruptedException {
+		URL outDirURL = this.getClass().getClassLoader().getResource("../../resources/test/outputs");
+		Path outDirPath = Path.of(outDirURL.toURI());
+		File outDir= outDirPath.toFile();
+		File[] outputFiles = outDir.listFiles();
+		for (File file : outputFiles) file.delete();
 
+		URL inputDirURL = this.getClass().getClassLoader().getResource("../../resources/test/system/");
+		Path inputDirPath = Path.of(inputDirURL.toURI());
+		File inputDir = inputDirPath.toFile();
+		File[] inputFiles = inputDir.listFiles((dir, name) -> name.toLowerCase().endsWith(".txt"));
+		int counter = 0;
+		for (File input : inputFiles) {
+			counter++;
+			String inputText = Files.readString(input.toPath());
+			StringBuilder inputEdit = new StringBuilder(inputText);
+			for (int i=0;i<inputEdit.length();i++){
+				if (inputEdit.charAt(i)=='\r'){
+					inputEdit.deleteCharAt(i);
+				}
+			}
+
+			Score score = new Score(inputEdit.toString());
+			MXLPlayer player = new MXLPlayer(score);
+			String musicString = player.getString(-1,-1,-1);
+			Player jplayer = new Player();
+			jplayer.play(musicString);
+			Thread.sleep(1000);
+		}
 	}
 }

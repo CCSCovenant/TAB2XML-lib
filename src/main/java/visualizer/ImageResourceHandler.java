@@ -12,9 +12,11 @@ import java.util.HashMap;
 
 public class ImageResourceHandler {
 	private static ImageResourceHandler imageResourceHandler = new ImageResourceHandler("./graphic/imageList.json");
-	private HashMap<String,String> ImageResources;
 	private Gson gson = new Gson();
 	private File file;
+
+	public HashMap<String,String> ImageResources;
+
 	private ImageResourceHandler(String filename){
 		try {
 			this.file = new File(filename);
@@ -48,8 +50,8 @@ public class ImageResourceHandler {
 	}
 
 	public ImageData getImage(String id) {
-		String s = ImageResources.get(id);
 		try {
+			String s = ImageResources.get(id);
 			ImageData imageData = ImageDataFactory.create(ImageResources.get(id));
 			return imageData;
 		}catch (Exception e){
