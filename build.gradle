@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'GUI'
-version '1.1-midterm-release-candidate'
+version '1.2-midterm-release'
 
 repositories {
     mavenCentral()
