@@ -103,8 +103,11 @@ public class MXLPlayer{
 						if (clef.equals("percussion")) {
 							if (note.getRest() != null) {
 								musicString.append("R");
+								musicString.append(getNoteDuration(note));
+							}else {
+								musicString.deleteCharAt(musicString.length() - 1);
+								musicString.append(getNoteDuration(note));
 							}
-							musicString.append(getNoteDuration(note));
 						//	musicString.append(getDots(note));
 						//	addTies(musicString, note);
 						} 
