@@ -17,6 +17,7 @@ import javafx.stage.Window;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import player.MXLPlayer;
+import player.ThreadPlayer;
 import visualizer.Visualizer;
 
 import java.awt.image.BufferedImage;
@@ -40,6 +41,7 @@ public class PreviewViewController extends Application {
 	private PDDocument document;
 	private PDFRenderer renderer;
 	private File tempFile;
+	public static ThreadPlayer thp;
 	public void setMainViewController(MainViewController mvcInput) {
 		mvc = mvcInput;
 	}
@@ -91,7 +93,9 @@ public class PreviewViewController extends Application {
 	}
 	@FXML
 	private void playHandler(){
-		player.play(-1,-1,-1);
+		String s = player.getString(-1,-1,-1);
+		thp = new ThreadPlayer("music-thread");
+		thp.start(s);
 	}
 	private void goToPage(int page)  {
 		if (page<document.getNumberOfPages()&&page>=0){

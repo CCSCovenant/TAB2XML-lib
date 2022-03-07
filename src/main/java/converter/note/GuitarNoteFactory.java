@@ -1,23 +1,19 @@
 package converter.note;
 
+import models.measure.note.Note;
+import models.measure.note.notations.Notations;
+import models.measure.note.notations.Slide;
+import models.measure.note.notations.technical.*;
+import utility.AnchoredText;
+import utility.DoubleDigitStyle;
+import utility.Patterns;
+import utility.Settings;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import models.measure.note.Note;
-import models.measure.note.notations.Notations;
-import models.measure.note.notations.Slide;
-import models.measure.note.notations.technical.HammerOn;
-import models.measure.note.notations.technical.Harmonic;
-import models.measure.note.notations.technical.Natural;
-import models.measure.note.notations.technical.PullOff;
-import models.measure.note.notations.technical.Technical;
-import utility.AnchoredText;
-import utility.DoubleDigitStyle;
-import utility.Patterns;
-import utility.Settings;
 
 public class GuitarNoteFactory extends NoteFactory {
 	
@@ -108,14 +104,14 @@ public class GuitarNoteFactory extends NoteFactory {
 		Matcher fretMatcher = Pattern.compile(Patterns.FRET + "(?![0-9])").matcher(origin);
 		//Matcher gracePairMatcher = Pattern.compile("(?<!g])" + Patterns.FRET + "$").matcher(origin);
 		Matcher connectorMatcher = Pattern.compile("(?<=[0-9])[^0-9](?=[0-9])").matcher(origin);
-		assert fretMatcher.find();
+		fretMatcher.find();
 		GuitarNote previousNote = createFret(fretMatcher.group(), position + fretMatcher.start(), distanceFromMeasureStart + fretMatcher.start());
 		int graceCount = 0;
 		while (connectorMatcher.find())
 		{
 			graceCount++;
 			String relationship = connectorMatcher.group();
-			assert fretMatcher.find();
+			fretMatcher.find();
 			GuitarNote nextNote = createFret(fretMatcher.group(), position + fretMatcher.start(),
 					distanceFromMeasureStart + fretMatcher.start());
 			if (relationship.equals("h"))
