@@ -152,7 +152,7 @@ public class MXLPlayer{
 		}
 
 		if(note.getInstrument() == null || note.getInstrument().getId().equals("")) {
-			instrument = "P1-I25";
+			instrument = "I25";
 		}
 		else { instrument = "[" + getInstrument(note.getInstrument().getId()) + "]";
 		}
