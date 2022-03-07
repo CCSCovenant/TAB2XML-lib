@@ -93,7 +93,9 @@ public class MXLPlayer{
 					}
 					if (this.clef != null || measure.getAttributes().getClef() != null) {
 						if (note.getChord() != null && musicString.length() > 0 && musicString.charAt(musicString.length() - 1) == '+') {
-
+							if(clef.equals("percussion")) {
+								musicString.append("[" + getInstrument(note.getInstrument().getId()) + "] ");
+							}
 						} else {
 							musicString.append(getNoteDetails(note));
 						}
