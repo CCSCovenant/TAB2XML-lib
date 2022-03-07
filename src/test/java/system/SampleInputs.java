@@ -38,7 +38,7 @@ class SampleInputs {
 	@Test
 	void test() throws IOException, URISyntaxException {
 		
-		URL outDirURL = this.getClass().getClassLoader().getResource("../../resources/test/system/");
+		URL outDirURL = this.getClass().getClassLoader().getResource("../../resources/test/outputs/");
 		Path outDirPath = Path.of(outDirURL.toURI());
 		File outDir= outDirPath.toFile();
 		File[] outputFiles = outDir.listFiles();
