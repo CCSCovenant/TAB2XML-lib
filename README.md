@@ -15,17 +15,17 @@ This work is licensed under a
 
 The steps to getting the software on your computer are as follows:
 
-1) make sure you have installed java-17 in your computer <br>
-    if you don't have java-17 installed, go to this link for to get it <br>
+1) Ensure you have java-17 installed on your computer. If you do not, please visit the following link 
+   for instructions on how to get java-17:
    https://www.oracle.com/java/technologies/downloads/
-2) get the newest release from the github repository. download the zip fold into your computer <br>
+2) Access the link below, and download the newest release of the software from the GitHub repository.
    https://github.com/CCSCovenant/TAB2XML/releases<br>
    ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/master/src/main/resources/readme/g1.png)
-3) unzip the zip file into desired fold<br>
+3) Download the zip folder onto your computer and extract the zip file into the desired folder.
    ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/master/src/main/resources/readme/g2.png)
-4) double click the jar file to run the application <br>
+4) Double click the .jar file to run the application.
    ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/master/src/main/resources/readme/g3.png)
-    or you can use java -jar xxx.jar in the command line to run the application<br>
+   You can also write ‘java -jar xxx.jar’ in the command line to run the application as shown below. 
    ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/master/src/main/resources/readme/g4.png)
 
 
