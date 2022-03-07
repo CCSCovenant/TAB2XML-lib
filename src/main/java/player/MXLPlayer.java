@@ -164,15 +164,17 @@ public class MXLPlayer{
 	
 
 	public char getNoteDuration(Note note) {
-		if(note.getType().equals("whole")) { return 'w'; }
-		else if(note.getType().equals("half")) { return 'h'; }
-		else if(note.getType().equals("quarter")) { return 'q'; }
-		else if(note.getType().equals("eighth")) { return 'i'; }
-		else if(note.getType().equals("16th")) { return 's'; }
-		else if(note.getType().equals("32nd")) { return 't'; }
-		else if(note.getType().equals("64th")) { return 'x'; }
-		else if(note.getType().equals("128th")) { return 'o'; }
-		else { return 'q'; }
+		if (note.getType()!=null){
+			if(note.getType().equals("whole")) { return 'w'; }
+			else if(note.getType().equals("half")) { return 'h'; }
+			else if(note.getType().equals("quarter")) { return 'q'; }
+			else if(note.getType().equals("eighth")) { return 'i'; }
+			else if(note.getType().equals("16th")) { return 's'; }
+			else if(note.getType().equals("32nd")) { return 't'; }
+			else if(note.getType().equals("64th")) { return 'x'; }
+			else if(note.getType().equals("128th")) { return 'o'; }
+			else { return 'q'; }
+		} else { return 'q'; }
 	}
 	
 	public String getDots(Note note) {
