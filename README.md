@@ -25,10 +25,11 @@ The steps to getting the software on your computer are as follows:
    ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/master/src/main/resources/readme/g2.png)
 4) Double click the .jar file to run the application.
    ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/master/src/main/resources/readme/g3.png)
+  
    You can also write ‘java -jar xxx.jar’ in the command line to run the application as shown below. 
    ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/master/src/main/resources/readme/g4.png)
 
 
 # How to use
-   please refer to user manual:
+   Please refer to the user manual for further instructions:
    https://github.com/CCSCovenant/TAB2XML/blob/master/Documents/EECS2311_%20USER%20MANUAL.pdf
