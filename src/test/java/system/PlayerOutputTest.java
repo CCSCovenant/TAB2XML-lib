@@ -17,7 +17,7 @@ import java.nio.file.Path;
 public class PlayerOutputTest {
 	@Test
 	void getSampleString() throws TXMLException, IOException, URISyntaxException {
-		URL outDirURL = this.getClass().getClassLoader().getResource("../../resources/test/outputs");
+		URL outDirURL = this.getClass().getClassLoader().getResource("../../resources/test/system/");
 		Path outDirPath = Path.of(outDirURL.toURI());
 		File outDir= outDirPath.toFile();
 		File[] outputFiles = outDir.listFiles();
@@ -46,7 +46,7 @@ public class PlayerOutputTest {
 	}
 	@Test
 	void getSampleOutput_MultiThread() throws IOException, URISyntaxException, TXMLException, InterruptedException {
-		URL outDirURL = this.getClass().getClassLoader().getResource("../../resources/test/outputs");
+		URL outDirURL = this.getClass().getClassLoader().getResource("../../resources/test/system/");
 		Path outDirPath = Path.of(outDirURL.toURI());
 		File outDir= outDirPath.toFile();
 		File[] outputFiles = outDir.listFiles();
@@ -76,7 +76,7 @@ public class PlayerOutputTest {
 	}
 	@Test
 	void getSampleOutput_SingleThread() throws IOException, URISyntaxException, TXMLException, InterruptedException {
-		URL outDirURL = this.getClass().getClassLoader().getResource("../../resources/test/outputs");
+		URL outDirURL = this.getClass().getClassLoader().getResource("../../resources/test/system/");
 		Path outDirPath = Path.of(outDirURL.toURI());
 		File outDir= outDirPath.toFile();
 		File[] outputFiles = outDir.listFiles();
