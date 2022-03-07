@@ -17,9 +17,9 @@ import java.nio.file.Path;
 class VisualizerOutputTest {
 	@Test
 	void getSampleOutput() throws IOException, URISyntaxException, TXMLException {
-		URL outDirURL = this.getClass().getClassLoader().getResource("../../resources/test/outputs");
+		URL outDirURL = this.getClass().getClassLoader().getResource("../../resources/test/system/");
 		Path outDirPath = Path.of(outDirURL.toURI());
-		File outDir= outDirPath.toFile();
+		File outDir = outDirPath.toFile();
 		File[] outputFiles = outDir.listFiles();
 		for (File file : outputFiles) file.delete();
 
