@@ -5,6 +5,7 @@ import custom_exceptions.TXMLException;
 import models.Part;
 import models.ScorePartwise;
 import models.measure.Measure;
+import models.measure.barline.BarLine;
 import models.measure.note.Dot;
 import models.measure.note.Note;
 import models.measure.note.notations.Tied;
@@ -71,8 +72,10 @@ public class MXLPlayer{
 			for (Measure measure:part.getMeasures()){
 				if (measureCount>measureID){
 					musicString.append(getMeasure(measure,part.getId(),-1));
+					musicString.append(getRepeats(part, measure, -1));
 				}else if (measureCount==measureID){
 					musicString.append(getMeasure(measure,part.getId(),duration));
+					musicString.append(getRepeats(part, measure, duration));
 				}
 				measureCount++;
 			}
@@ -110,8 +113,8 @@ public class MXLPlayer{
 								musicString.deleteCharAt(musicString.length() - 1);
 								musicString.append(getNoteDuration(note));
 							}
-						//	musicString.append(getDots(note));
-						//	addTies(musicString, note);
+						//	musicString.append(getDots(note)); 
+						//	addTies(musicString, note); 
 						} 
 						else if (clef.equals("TAB")) {
 							if (note.getRest() != null) {
@@ -149,16 +152,19 @@ public class MXLPlayer{
 		String voice;
 		String instrument;
 		
+		//unpitched notes are generally used in music that contain a percussion clef
+		//We need to use the appropriate voice for percussive notes (V9)
 		if(note.getUnpitched() != null) {
 			voice = "V9";
 		}
 		else {
 			voice = "V" + note.getVoice();
 		}
-
+		
+		//The MIDI instrument code for acoustic guitar is I25
 		if(note.getInstrument() == null || note.getInstrument().getId().equals("")) {
 			instrument = "I25";
-		}
+		}//instruments for percussive notes are in the form '[name_of_instrument]' 
 		else { instrument = "[" + getInstrument(note.getInstrument().getId()) + "]";
 		}
 		
@@ -212,31 +218,54 @@ public class MXLPlayer{
 		else { return "GUNSHOT"; }//default for now
 	}
 
-	public void addTies(StringBuilder input, Note note) {
-		int indextoCheck = input.length() - 1; 
+	public void addTies(StringBuilder musicString, Note note) {
+		int indextoCheck = musicString.length() - 1; 
 		if(note.getNotations() != null && note.getNotations().getTieds() != null) {
+			//This loop looks for the position of the last note in the music string
 			for(int i = 1; i <= 10; i++) {
-				if(input.charAt(input.length()-i) != '.' && input.charAt(input.length()-i) == getNoteDuration(note)) {
-					indextoCheck = input.length() - i;
+				if(musicString.charAt(musicString.length()-i) != '.' && musicString.charAt(musicString.length()-i) == getNoteDuration(note)) {
+					indextoCheck = musicString.length() - i;
 					break;
 				}
 			}
-			
+			//Once the last note is found, this loop checks if that note is tied to another 
+			//note and if it is the end or middle of the tie.
+			//If so, then a '-' is added before the note
 			for(Tied tie : note.getNotations().getTieds()) {
 				if(tie != null && (tie.getType().equals("stop") || tie.getType().equals("continue"))) {
-					input.replace(indextoCheck, indextoCheck + 1, "-" + getNoteDuration(note));
+					musicString.replace(indextoCheck, indextoCheck + 1, "-" + getNoteDuration(note));
 					break;
 				}
 			}
 		}
+		//Checks if the last note is tied to another note and if it is the start or middle of the tie.
+		//There is no need to look for the exact location of the note because the '-' can be added after the 
+		//note's dots(if there are any)
 		 if(note.getNotations() != null && note.getNotations().getTieds() != null) {
 			for(Tied tie : note.getNotations().getTieds()) {
 				if(tie != null && (tie.getType().equals("start") || tie.getType().equals("continue"))) {
-					input.append("-");
+					musicString.append("-");
 					break;
 				}
 			}
 			
 		}
+	}
+	private String getRepeats(Part part,Measure measure, int duration) {
+		/* Method checks whether the measure is going to be repeated */
+		StringBuilder musicString = new StringBuilder();
+		if(measure.getBarlines() != null) {
+			for(BarLine bar : measure.getBarlines()) {
+				//if-statement to avoid null-pointer exception
+				if(bar != null && bar.getRepeat() != null && bar.getRepeat().getTimes() != null) {
+					//'Times' is the number of times the measure is played. It is a string so it needs to be converted to integer
+					int repeats = Integer.parseInt(bar.getRepeat().getTimes());
+					for(int i = 1; i < repeats; i++) {//i is 1 because the measure has already been played once (in getPart() ).
+						musicString.append(getMeasure(measure,part.getId(),duration));
+					}
+				}
+			}
+		}
+		return musicString.toString();
 	}
 }
