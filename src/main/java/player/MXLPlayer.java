@@ -12,6 +12,7 @@ import models.measure.note.notations.Tied;
 import models.part_list.ScorePart;
 import org.jfugue.player.Player;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -67,15 +68,17 @@ public class MXLPlayer{
 		}
 	}
 	public String getPart(Part part,int measureID, int duration){
-		StringBuilder musicString = new StringBuilder();
-			int measureCount = 0;
+		StringBuilder musicString = new StringBuilder(); 
+		List<Measure> repeats = new ArrayList<>(); 
+		boolean partOfRepeat = false;
+			int measureCount = 0; 
 			for (Measure measure:part.getMeasures()){
 				if (measureCount>measureID){
 					musicString.append(getMeasure(measure,part.getId(),-1));
-					musicString.append(getRepeats(part, measure, -1));
+					musicString.append(getRepeats(part, measure, -1,repeats,partOfRepeat));
 				}else if (measureCount==measureID){
 					musicString.append(getMeasure(measure,part.getId(),duration));
-					musicString.append(getRepeats(part, measure, duration));
+					musicString.append(getRepeats(part, measure, duration,repeats,partOfRepeat));
 				}
 				measureCount++;
 			}
@@ -124,7 +127,7 @@ public class MXLPlayer{
 								musicString.append(note.getPitch().getOctave());
 
 								if (note.getGrace() != null) {
-									musicString.append("i");
+									musicString.append("s");
 								} else {
 									musicString.append(getNoteDuration(note));
 									musicString.append(getDots(note));
@@ -251,20 +254,46 @@ public class MXLPlayer{
 			
 		}
 	}
-	private String getRepeats(Part part,Measure measure, int duration) {
-		/* Method checks whether the measure is going to be repeated */
+	private String getRepeats(Part part,Measure measure, int duration, List<Measure> repeats, boolean partOfRepeat) {
+		/* Method checks whether the measure or group of measures is repeated then 
+		 * appends the repeats to the musicString
+		 */
 		StringBuilder musicString = new StringBuilder();
+		
 		if(measure.getBarlines() != null) {
-			for(BarLine bar : measure.getBarlines()) {
+			boolean sameMeasure = false;
+			for(BarLine barline : measure.getBarlines()) {
 				//if-statement to avoid null-pointer exception
-				if(bar != null && bar.getRepeat() != null && bar.getRepeat().getTimes() != null) {
-					//'Times' is the number of times the measure is played. It is a string so it needs to be converted to integer
-					int repeats = Integer.parseInt(bar.getRepeat().getTimes());
-					for(int i = 1; i < repeats; i++) {//i is 1 because the measure has already been played once (in getPart() ).
-						musicString.append(getMeasure(measure,part.getId(),duration));
+				if(barline != null && barline.getRepeat() != null) {
+					//"forward" determines the beginning of a repeat
+					if(barline.getRepeat().getDirection().equals("forward")) {
+						repeats.add(measure); 
+						partOfRepeat = true; 
+						sameMeasure = true;
+					}
+					//"backward" determines the end of a repeat
+					if(barline.getRepeat().getDirection().equals("backward") && !sameMeasure) {
+						repeats.add(measure); 
+						partOfRepeat = false;
+					}
+					//when the measure is part of repeat but not the beginning or end
+					else if(partOfRepeat && !sameMeasure) {
+						repeats.add(measure);
+					}
+					
+					if(barline.getRepeat().getDirection().equals("backward")) {
+						//'times' is the number of times the measure is played. It is a string so it needs to be converted to integer
+						int times = Integer.parseInt(barline.getRepeat().getTimes());
+						for(int i = 1; i < times; i++) {
+							for(Measure currentMeasure: repeats) {
+								musicString.append(getMeasure(currentMeasure,part.getId(),duration));
+							}
+						}
+						
+						break;
 					}
 				}
-			}
+			}	
 		}
 		return musicString.toString();
 	}
