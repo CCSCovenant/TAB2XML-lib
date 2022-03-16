@@ -1,6 +1,7 @@
 package visualizer;
 
 
+import GUI.PreviewConfig;
 import com.itextpdf.io.image.ImageData;
 import com.itextpdf.kernel.colors.DeviceRgb;
 import com.itextpdf.kernel.geom.AffineTransform;
@@ -40,24 +41,22 @@ import java.util.*;
  * */
 public class Visualizer {
 	// Note: A4 size: 597.6 unit * 842.4 unit
-	public final int measureGap = 80; //px Gap between measure.
-	public final int noteWidth = 8; //px, the width of a note element
-	public final int clefWidth = 10; //px, the width of a clef element
-	public final int timeWidth = 10; //px, the width of a time element
-	public final int keyWidth = 10; //px, the width of a key element;
-	public final int stepSize = 4; //px, the width between steps.
-	public final int marginX = 10; // px, the width of margin.
-	public final int marginY = 10; // px, the width of margin.
-	public final int titleSpace = 150; // px, for title and author
-	public final int A4Width = 597;
-	public final int A4Height =  842;
-	public final int eighthGap = noteWidth/2;
-	public final int defaultShift = 20; // where we should put next note.
-	public final int bendShift = 10;
+	public PreviewConfig c = PreviewConfig.getInstance();
+	public  int measureGap = 80; //px Gap between measure.
+	public  int noteWidth = 8; //px, the width of a note element
+	public  int clefWidth = 10; //px, the width of a clef element
+	public  int timeWidth = 10; //px, the width of a time element
+	public  int keyWidth = 10; //px, the width of a key element;
+	public  int stepSize = 4; //px, the width between steps.
+	public  int marginX = 10; // px, the width of margin.
+	public  int marginY = 10; // px, the width of margin.
+	public  int titleSpace = 150; // px, for title and author
+	public  int A4Width = 597;
+	public  int A4Height =  842;
+	public  int eighthGap = noteWidth/2;
+	public  int defaultShift = 20; // where we should put next note.
+	public  int bendShift = 10;
 
-	public ScorePartwise score;
-	public PdfCanvas canvas;
-	public PdfDocument pdf;
 	public int measureCounter = 1;
 	public int lineCounter = 0;//which measure are we currently printing
 	public int pageCounter = 0; // which page are we currently printing
@@ -67,6 +66,9 @@ public class Visualizer {
 	public double measureStart = 0;
 	public double measureEnd = 0;
 
+	public ScorePartwise score;
+	public PdfCanvas canvas;
+	public PdfDocument pdf;
 	public Time time = new Time(4,4); // default time: 4/4
 	public boolean shouldDrawTime = false;
 	public StaffDetails staffDetails;
@@ -105,6 +107,12 @@ public class Visualizer {
 		canvas = new PdfCanvas(page);
 	}
 
+	public void updateConfig(){
+		measureGap = c.getIntConfig("measureGap"); //px Gap between measure.
+		noteWidth = c.getIntConfig("noteWidth"); //px, the width of a note element
+		stepSize = c.getIntConfig("stepSize"); //px, the width between steps.
+		defaultShift = c.getIntConfig("defaultShift"); // where we should put next note.
+	}
 	/**
 	 * This method is going to draw musicXML
 	 * visualizer will create a PDF file.
@@ -115,6 +123,7 @@ public class Visualizer {
 
 	public PdfDocument draw(File file) throws FileNotFoundException {
 		initPDF(file);
+		updateConfig();
 		// Parts is collection of part
 		drawParts(score.getParts());
 		return pdf;

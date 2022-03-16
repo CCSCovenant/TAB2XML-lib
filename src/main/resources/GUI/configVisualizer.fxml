@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.AnchorPane?>
+<AnchorPane prefHeight="83.0" prefWidth="435.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.ConfigVisualizer">
+   <children>
+      <Label text="Label" />
+      <ChoiceBox layoutX="31.0" layoutY="15.0" prefHeight="23.0" prefWidth="94.0" />
+      <TextField layoutX="160.0" layoutY="15.0" prefHeight="23.0" prefWidth="140.0" />
+      <Separator layoutX="141.0" layoutY="-14.0" orientation="VERTICAL" prefHeight="97.0" prefWidth="6.0" />
+      <Slider layoutX="160.0" layoutY="50.0" />
+      <Button layoutX="31.0" layoutY="46.0" mnemonicParsing="false" prefHeight="23.0" prefWidth="94.0" text="confirm" />
+   </children>
+</AnchorPane>
