@@ -4,8 +4,12 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.Document;
 import custom_exceptions.TXMLException;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,11 +32,16 @@ import java.io.IOException;
 public class PreviewViewController extends Application {
 	@FXML ImageView pdfViewer;
 	@FXML TextField gotoPageField;
-
+	@FXML ChoiceBox configs;
+	@FXML ChoiceBox values;
 	private final String temp_dest = "./tmp.pdf";
 	private final int scale = 2;
 	private static Window convertWindow = new Stage();
 
+	private ObservableList<String> configsList;
+	private ObservableList<Double> configsValueList;
+	private String selected = "";
+	private PreviewConfig c = PreviewConfig.getInstance();
 	private MainViewController mvc;
 	private PdfDocument pdf;
 	private int pageNumber = 0;
@@ -58,6 +67,7 @@ public class PreviewViewController extends Application {
 		}catch (IOException e){
 
 		}
+		initChoiceBox();
 		goToPage(0);
 	}
 	@FXML
@@ -93,6 +103,29 @@ public class PreviewViewController extends Application {
 		goToPage(pageNumber);
 	}
 	@FXML
+	private void apply(){
+		refreshPDF();
+	}
+	private void initChoiceBox(){
+		configs.setItems(c.getConfigList());
+		configsList = c.getConfigList();
+		configs.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				selected = configsList.get(newValue.intValue());
+				configsValueList = c.getValues(selected);
+				values.setItems(c.getValues(selected));
+			}
+		});
+		values.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				if (newValue.intValue()>=0&&newValue.intValue()<configsValueList.size()){
+					c.setConfig(selected,configsValueList.get(newValue.intValue()));
+				}
+			}
+		});
+	}
 	private void refreshPDF(){
 		long t = System.currentTimeMillis();
 		try {

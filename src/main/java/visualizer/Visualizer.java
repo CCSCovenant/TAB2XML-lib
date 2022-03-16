@@ -110,16 +110,8 @@ public class Visualizer {
 	public void updateConfig(){
 		measureGap = c.getIntConfig("measureGap"); //px Gap between measure.
 		noteWidth = c.getIntConfig("noteWidth"); //px, the width of a note element
-		clefWidth = c.getIntConfig("clefWidth"); //px, the width of a clef element
-		timeWidth = c.getIntConfig("timeWidth"); //px, the width of a time element
-		keyWidth = c.getIntConfig("keyWidth"); //px, the width of a key element;
 		stepSize = c.getIntConfig("stepSize"); //px, the width between steps.
-		marginX = c.getIntConfig("marginX"); // px, the width of margin.
-		marginY = c.getIntConfig("marginY"); // px, the width of margin.
-		titleSpace = c.getIntConfig("titleSpace"); // px, for title and author
-		eighthGap = c.getIntConfig("eighthGap")/2;
 		defaultShift = c.getIntConfig("defaultShift"); // where we should put next note.
-		bendShift = c.getIntConfig("bendShift");
 	}
 	/**
 	 * This method is going to draw musicXML
