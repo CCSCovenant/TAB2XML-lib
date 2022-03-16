@@ -71,6 +71,7 @@
                         <Button mnemonicParsing="false" onAction="#playHandler" text="play" />
                      </children>
                   </HBox>
+                  <Button layoutX="628.0" layoutY="15.0" mnemonicParsing="false" onAction="#refreshPDF" text="Button" />
                     </children>
                 </AnchorPane>
             </children>

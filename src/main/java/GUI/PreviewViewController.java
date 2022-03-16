@@ -76,6 +76,7 @@ public class PreviewViewController extends Application {
 
 			}
 		}
+
 	}
 	@FXML
 	private void LastPageHandler(){
@@ -88,8 +89,27 @@ public class PreviewViewController extends Application {
 	}
 	@FXML
 	private void goToPageHandler(){
-		int pageNumber = Integer.parseInt(gotoPageField.getText() );
+		int pageNumber = Integer.parseInt(gotoPageField.getText());
 		goToPage(pageNumber);
+	}
+	@FXML
+	private void refreshPDF(){
+		long t = System.currentTimeMillis();
+		try {
+			this.visualizer = new Visualizer(mvc.converter.getScore());
+			pdf = visualizer.draw(tempFile);
+			System.out.println(System.currentTimeMillis()-t);
+			Document document1 = new Document(pdf);
+			document1.close();
+			System.out.println(System.currentTimeMillis()-t);
+			document = PDDocument.load(tempFile);
+			System.out.println(System.currentTimeMillis()-t);
+			renderer = new PDFRenderer(document);
+		}catch (Exception e){
+
+		}
+		goToPage(Integer.parseInt(gotoPageField.getText()));
+		System.out.println(System.currentTimeMillis()-t);
 	}
 	@FXML
 	private void playHandler(){
@@ -113,6 +133,7 @@ public class PreviewViewController extends Application {
 			alert.show();
 		}
 	}
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {}
 

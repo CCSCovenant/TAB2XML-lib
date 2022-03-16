@@ -1,5 +1,6 @@
 package system;
 
+import GUI.PreviewConfig;
 import converter.Score;
 import custom_exceptions.TXMLException;
 import models.measure.Measure;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 class VisulaizerInternalTest {
+	public static PreviewConfig c = PreviewConfig.getInstance();
 	@Test
 	void getRelativeTest() throws TXMLException {
 		String[] steps = {"A","B","C","D","E","F","G","A","B","C","D","E","F","G","A","B"};
@@ -92,7 +94,7 @@ class VisulaizerInternalTest {
 		visualizer.initPDF(file);
 
 		visualizer.switchLine();
-		Assertions.assertEquals(visualizer.currentY,visualizer.marginY+visualizer.titleSpace+visualizer.measureGap);
+		Assertions.assertEquals(visualizer.currentY,visualizer.marginY+visualizer.titleSpace+c.getIntConfig("measureGap"));
 	}
 	@Test
 	void switchPageTest() throws FileNotFoundException, TXMLException {

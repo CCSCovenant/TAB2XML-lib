@@ -44,7 +44,7 @@ public class ImageResourceHandler {
 	}
 	public static ImageResourceHandler getInstance(){
 		if (imageResourceHandler==null){
-			imageResourceHandler = new ImageResourceHandler("Resources.json");
+			imageResourceHandler = new ImageResourceHandler("./graphic/imageList.json");
 		}
 		return imageResourceHandler;
 	}
