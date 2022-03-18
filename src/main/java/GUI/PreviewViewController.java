@@ -69,6 +69,7 @@ public class PreviewViewController extends Application {
 		}
 		initChoiceBox();
 		goToPage(0);
+
 	}
 	@FXML
 	private void exportPDFHandler(){
