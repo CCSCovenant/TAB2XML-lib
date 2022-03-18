@@ -1,15 +1,16 @@
 package GUI;
 
 import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.layout.Document;
 import custom_exceptions.TXMLException;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
+import javafx.scene.Group;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -28,12 +29,15 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 public class PreviewViewController extends Application {
 	@FXML ImageView pdfViewer;
 	@FXML TextField gotoPageField;
 	@FXML ChoiceBox configs;
 	@FXML ChoiceBox values;
+	@FXML ScrollPane scrollView;
 	private final String temp_dest = "./tmp.pdf";
 	private final int scale = 2;
 	private static Window convertWindow = new Stage();
@@ -51,24 +55,17 @@ public class PreviewViewController extends Application {
 	private PDFRenderer renderer;
 	private File tempFile;
 	public static ThreadPlayer thp;
+
+	public ArrayList<Group> groups;
 	public void setMainViewController(MainViewController mvcInput) {
 		mvc = mvcInput;
 	}
-	public void update() throws TXMLException, FileNotFoundException {
+	public void update() throws TXMLException, FileNotFoundException, URISyntaxException {
+
 		this.player = new MXLPlayer(mvc.converter.getScore());
 		this.visualizer = new Visualizer(mvc.converter.getScore());
-		tempFile = new File(temp_dest);
-		pdf = visualizer.draw(tempFile);
-		Document document1 = new Document(pdf);
-		document1.close();
-		try {
-			 document = PDDocument.load(tempFile);
-			 renderer = new PDFRenderer(document);
-		}catch (IOException e){
-
-		}
-		initChoiceBox();
-		goToPage(0);
+		groups = visualizer.getElementGroups();
+		scrollView.setContent(groups.get(0));
 
 	}
 	@FXML
@@ -80,9 +77,7 @@ public class PreviewViewController extends Application {
 
 		if (file!=null){
 			try {
-				pdf = visualizer.draw(file);
-				Document document1 = new Document(pdf);
-				document1.close();
+
 			}catch (Exception e){
 
 			}
@@ -91,21 +86,21 @@ public class PreviewViewController extends Application {
 	}
 	@FXML
 	private void LastPageHandler(){
-		goToPage(pageNumber-1);
+		//goToPage(pageNumber-1);
 
 	}
 	@FXML
 	private void NextPageHandler(){
-		goToPage(pageNumber+1);
+		//goToPage(pageNumber+1);
 	}
 	@FXML
 	private void goToPageHandler(){
-		int pageNumber = Integer.parseInt(gotoPageField.getText());
-		goToPage(pageNumber);
+		//int pageNumber = Integer.parseInt(gotoPageField.getText());
+		//goToPage(pageNumber);
 	}
 	@FXML
 	private void apply(){
-		refreshPDF();
+		//refreshPDF();
 	}
 	private void initChoiceBox(){
 		configs.setItems(c.getConfigList());
@@ -126,24 +121,6 @@ public class PreviewViewController extends Application {
 				}
 			}
 		});
-	}
-	private void refreshPDF(){
-		long t = System.currentTimeMillis();
-		try {
-			this.visualizer = new Visualizer(mvc.converter.getScore());
-			pdf = visualizer.draw(tempFile);
-			System.out.println(System.currentTimeMillis()-t);
-			Document document1 = new Document(pdf);
-			document1.close();
-			System.out.println(System.currentTimeMillis()-t);
-			document = PDDocument.load(tempFile);
-			System.out.println(System.currentTimeMillis()-t);
-			renderer = new PDFRenderer(document);
-		}catch (Exception e){
-
-		}
-		goToPage(Integer.parseInt(gotoPageField.getText()));
-		System.out.println(System.currentTimeMillis()-t);
 	}
 	@FXML
 	private void playHandler(){

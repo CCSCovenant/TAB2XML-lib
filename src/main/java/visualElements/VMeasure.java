@@ -1,28 +1,47 @@
 package visualElements;
 
-import javafx.scene.canvas.Canvas;
-import javafx.scene.layout.StackPane;
+import javafx.scene.Group;
+import visualElements.Notations.VGNotation;
 
+import java.util.HashMap;
 import java.util.List;
 
-public class VMeasure {
+public class VMeasure implements VElement,VConfigAble {
+	private int number;
 	private List<VNote> Notes;
-	private List<VNotations> Notations;
+	private List<VGNotation> Notations;
 	private List<VStaffLine> staffLines;
-	private static VConfig config = VConfig.getInstance();
-	private double X;
-	private double Y;
-	private Canvas canvas;
-	StackPane stackPane;
+	private List<VBarline> barlines;
+	private HashMap<String,Double> Configs = VConfig.getInstance().getDefaultConfigMap("VMeasure");
+
+
 	public VMeasure(){
 
 	}
-	public void draw(){
+
+
+	@Override
+	public void updateConfigList(HashMap<String, Double> configs) {
 
 	}
-	public boolean sizeCheck(){
 
+	@Override
+	public HashMap<String, Double> getConfigAbleList() {
+		return null;
+	}
 
-		return false;
+	@Override
+	public void updateConfig(String id, double value) {
+
+	}
+
+	@Override
+	public void setHighLight(boolean states) {
+
+	}
+
+	@Override
+	public Group getShapeGroups() {
+		return null;
 	}
 }

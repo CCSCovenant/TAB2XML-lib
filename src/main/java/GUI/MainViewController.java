@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -323,6 +324,8 @@ public class MainViewController extends Application {
 			logger.log(Level.SEVERE, "Failed to create new Window.", e);
 		} catch (TXMLException e) {
 			e.printStackTrace();
+		} catch (URISyntaxException e){
+
 		}
 	}
 
@@ -387,9 +390,6 @@ public class MainViewController extends Application {
                 	saveMXLButton.setDisable(false);
                 	previewButton.setDisable(false);
                 	showMXLButton.setDisable(false);
-					if (previewViewController!=null){
-						previewViewController.update();
-					}
                 }
                 return highlighter.computeHighlighting(text);
             }

@@ -4,7 +4,7 @@ import javafx.scene.Group;
 
 import java.util.HashMap;
 
-public class VSign implements VConfigAble,VElement{
+public class VBarline implements VElement,VConfigAble{
 	@Override
 	public void updateConfigList(HashMap<String, Double> configs) {
 

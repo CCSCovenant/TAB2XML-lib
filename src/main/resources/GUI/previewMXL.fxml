@@ -8,7 +8,7 @@
     <center>
         <AnchorPane prefHeight="200.0" prefWidth="666.0" BorderPane.alignment="CENTER">
             <children>
-            <ScrollPane layoutX="25.0" layoutY="30.0" prefHeight="536.0" prefWidth="950.0">
+            <ScrollPane fx:id="scrollView" layoutX="25.0" layoutY="30.0" prefHeight="500.0" prefWidth="900.0">
                <content>
                   <ImageView fx:id="pdfViewer" fitHeight="1343.0" fitWidth="950.0" pickOnBounds="true" preserveRatio="true" />
                </content></ScrollPane>

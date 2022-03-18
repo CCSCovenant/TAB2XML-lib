@@ -15,6 +15,14 @@ public class VUtility {
 		}
 		return (centerStep-stepAdjusted)-(7*(octave-centerOctave));
 	}
+	public static double HSizeCheck(){
+
+		return 0;
+	}
+	public static double VSizeCheck(){
+
+		return 0;
+	}
 
 
 

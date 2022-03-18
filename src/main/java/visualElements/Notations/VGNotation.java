@@ -1,21 +1,12 @@
-package visualElements;
+package visualElements.Notations;
 
 import javafx.scene.Group;
-import visualElements.Notations.VINotation;
+import visualElements.VConfigAble;
+import visualElements.VElement;
 
 import java.util.HashMap;
-import java.util.List;
 
-public class VNote implements VElement,VConfigAble {
-	int number;
-	List<VNoteHead> noteHeads;
-	List<VINotation> notations;
-
-	public VNote(){
-
-	}
-
-
+public class VGNotation implements VElement, VConfigAble {
 	@Override
 	public void setHighLight(boolean states) {
 
