@@ -8,7 +8,7 @@ import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
-import javafx.scene.control.Alert;
+import javafx.scene.Node;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
@@ -19,8 +19,6 @@ import javafx.scene.image.WritableImage;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.rendering.PDFRenderer;
 import player.MXLPlayer;
 import player.ThreadPlayer;
 import visualizer.Visualizer;
@@ -28,7 +26,6 @@ import visualizer.Visualizer;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
@@ -51,11 +48,9 @@ public class PreviewViewController extends Application {
 	private int pageNumber = 0;
 	private Visualizer visualizer;
 	private MXLPlayer player;
-	private PDDocument document;
-	private PDFRenderer renderer;
-	private File tempFile;
 	public static ThreadPlayer thp;
 
+	public Node currentSelected;
 	public ArrayList<Group> groups;
 	public void setMainViewController(MainViewController mvcInput) {
 		mvc = mvcInput;
@@ -129,20 +124,7 @@ public class PreviewViewController extends Application {
 		thp.start(s);
 	}
 	private void goToPage(int page)  {
-		if (page<document.getNumberOfPages()&&page>=0){
-			try {
-				BufferedImage img = renderer.renderImage(page,scale);
-				pdfViewer.setImage(convertToFxImage(img));
-				pageNumber = page;
-				gotoPageField.setText(pageNumber+"");
-			}catch (IOException e){
 
-			}
-		}else {
-			Alert alert = new Alert(Alert.AlertType.WARNING);
-			alert.setContentText("This page number is out of range");
-			alert.show();
-		}
 	}
 
 	@Override

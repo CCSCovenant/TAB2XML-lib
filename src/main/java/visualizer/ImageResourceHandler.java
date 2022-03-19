@@ -1,13 +1,8 @@
 package visualizer;
 
 import com.google.gson.Gson;
-import com.itextpdf.io.image.ImageData;
-import com.itextpdf.io.image.ImageDataFactory;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.util.HashMap;
 
 public class ImageResourceHandler {
@@ -49,11 +44,11 @@ public class ImageResourceHandler {
 		return imageResourceHandler;
 	}
 
-	public ImageData getImage(String id) {
+	public InputStream getImage(String id) {
 		try {
 			String s = ImageResources.get(id);
-			ImageData imageData = ImageDataFactory.create(ImageResources.get(id));
-			return imageData;
+			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(s);
+			return inputStream;
 		}catch (Exception e){
 			System.out.println(ImageResources.get(id));
 			System.out.println("can't solve resources");

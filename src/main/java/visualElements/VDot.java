@@ -4,9 +4,10 @@ import javafx.scene.Group;
 
 import java.util.HashMap;
 
-public class VStaffLine extends VElement implements VConfigAble{
+public class VDot implements VElement,VConfigAble{
+	public VDot(){
 
-
+	}
 
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {

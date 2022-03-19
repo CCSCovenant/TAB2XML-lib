@@ -5,10 +5,6 @@ import javafx.scene.Group;
 import java.util.HashMap;
 
 public class VBarline implements VElement,VConfigAble{
-	@Override
-	public void updateConfigList(HashMap<String, Double> configs) {
-
-	}
 
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
@@ -28,5 +24,15 @@ public class VBarline implements VElement,VConfigAble{
 	@Override
 	public Group getShapeGroups() {
 		return null;
+	}
+
+	@Override
+	public double getH() {
+		return 0;
+	}
+
+	@Override
+	public double getW() {
+		return 0;
 	}
 }

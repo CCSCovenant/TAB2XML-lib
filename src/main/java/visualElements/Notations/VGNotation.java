@@ -18,6 +18,16 @@ public class VGNotation implements VElement, VConfigAble {
 	}
 
 	@Override
+	public double getH() {
+		return 0;
+	}
+
+	@Override
+	public double getW() {
+		return 0;
+	}
+
+	@Override
 	public void updateConfigList(HashMap<String, Double> configs) {
 
 	}

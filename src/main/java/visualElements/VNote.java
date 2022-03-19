@@ -6,7 +6,7 @@ import visualElements.Notations.VINotation;
 import java.util.HashMap;
 import java.util.List;
 
-public class VNote implements VElement,VConfigAble {
+public class VNote extends VElement implements VConfigAble {
 	int number;
 	List<VNoteHead> noteHeads;
 	List<VINotation> notations;
@@ -27,9 +27,16 @@ public class VNote implements VElement,VConfigAble {
 	}
 
 	@Override
-	public void updateConfigList(HashMap<String, Double> configs) {
-
+	public double getH() {
+		return 0;
 	}
+
+	@Override
+	public double getW() {
+		return 0;
+	}
+
+
 
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {

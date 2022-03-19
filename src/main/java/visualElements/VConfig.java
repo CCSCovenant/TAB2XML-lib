@@ -10,6 +10,18 @@ public class VConfig {
 	}
 
 	private void initDefaultConfig(){
+		HashMap<String,Double> globalConfig = new HashMap<>();
+		globalConfig.put("pageX",1080d);
+		globalConfig.put("pageY",1920d);
+		globalConfig.put("MarginX",20d);
+		globalConfig.put("MarginY",20d);
+		globalConfig.put("step",10d);
+		globalConfig.put("minNoteDistance",10d);
+		configMap.put("global",globalConfig);
+
+		HashMap<String,Double> measureConfig = new HashMap<>();
+		measureConfig.put("noteDistance",10d);
+		configMap.put("measure",measureConfig);
 
 	}
 

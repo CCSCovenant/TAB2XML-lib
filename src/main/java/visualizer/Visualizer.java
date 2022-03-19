@@ -4,7 +4,10 @@ package visualizer;
 import converter.Score;
 import custom_exceptions.TXMLException;
 import javafx.scene.Group;
-import visualElements.VConfigAble;
+import models.Part;
+import models.ScorePartwise;
+import models.measure.Measure;
+import visualElements.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -16,25 +19,47 @@ import java.util.HashMap;
  * */
 public class Visualizer implements VConfigAble {
 	Score score;
-	ArrayList<Group> groups;
+	ArrayList<Group> groups = new ArrayList<>();
+	ArrayList<VPage> pages = new ArrayList<>();
 	HashMap<String, Double> configMap;
  	public Visualizer(Score score) throws TXMLException {
 		this.score = score;
+		configMap = VConfig.getInstance().getDefaultConfigMap("global");
 		alignment();
 	}
 
 	public ArrayList<Group> getElementGroups(){
 		 return groups;
 	}
-	public void alignment(){
+	public void alignment() throws TXMLException {
 		configMap = this.getConfigAbleList();
+		ScorePartwise scorePartwise = score.getModel();
+		VPage tmpPage = new VPage();
+		VLine tmpLine = new VLine();
+		for (Part part:scorePartwise.getParts()){
+			for (Measure measure:part.getMeasures()){
 
+				if (tmpLine.addNewMeasure(getVMeasure(measure))){
+
+				}else {
+					if (tmpPage.addNewLine(tmpLine)){
+
+					}else {
+						pages.add(tmpPage);
+						tmpPage = new VPage();
+						tmpPage.addNewLine(tmpLine);
+					}
+					tmpLine = new VLine();
+					tmpLine.addNewMeasure(getVMeasure(measure));
+				}
+			}
+		}
 
 	}
+	public VMeasure getVMeasure(Measure measure){
 
-	@Override
-	public void updateConfigList(HashMap<String, Double> configs) {
 
+		 return new VMeasure();
 	}
 
 	@Override

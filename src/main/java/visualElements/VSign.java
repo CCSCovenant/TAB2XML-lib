@@ -4,11 +4,8 @@ import javafx.scene.Group;
 
 import java.util.HashMap;
 
-public class VSign implements VConfigAble,VElement{
-	@Override
-	public void updateConfigList(HashMap<String, Double> configs) {
+public class VSign extends VElement implements VConfigAble{
 
-	}
 
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
@@ -28,5 +25,15 @@ public class VSign implements VConfigAble,VElement{
 	@Override
 	public Group getShapeGroups() {
 		return null;
+	}
+
+	@Override
+	public double getH() {
+		return 0;
+	}
+
+	@Override
+	public double getW() {
+		return 0;
 	}
 }

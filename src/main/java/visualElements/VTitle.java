@@ -4,8 +4,7 @@ import javafx.scene.Group;
 
 import java.util.HashMap;
 
-public class VStaffLine extends VElement implements VConfigAble{
-
+public class VTitle extends VElement implements VConfigAble{
 
 
 	@Override

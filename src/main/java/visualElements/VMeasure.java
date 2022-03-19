@@ -6,7 +6,7 @@ import visualElements.Notations.VGNotation;
 import java.util.HashMap;
 import java.util.List;
 
-public class VMeasure implements VElement,VConfigAble {
+public class VMeasure extends VElement implements VConfigAble {
 	private int number;
 	private List<VNote> Notes;
 	private List<VGNotation> Notations;
@@ -16,12 +16,6 @@ public class VMeasure implements VElement,VConfigAble {
 
 
 	public VMeasure(){
-
-	}
-
-
-	@Override
-	public void updateConfigList(HashMap<String, Double> configs) {
 
 	}
 
@@ -43,5 +37,15 @@ public class VMeasure implements VElement,VConfigAble {
 	@Override
 	public Group getShapeGroups() {
 		return null;
+	}
+
+	@Override
+	public double getH() {
+		return 0;
+	}
+
+	@Override
+	public double getW() {
+		return 0;
 	}
 }
