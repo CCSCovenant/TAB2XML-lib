@@ -14,7 +14,6 @@ public class VNoteHead extends VElement implements VConfigAble{
 	ImageResourceHandler imageResourceHandler = ImageResourceHandler.getInstance();
 	List<VDot> dots = new ArrayList<>();
 	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("VNoteHead");
-	String type;
 	public VNoteHead(String type){
 		imageView.setImage(new Image(imageResourceHandler.getImage(type)));
 	}
@@ -22,9 +21,6 @@ public class VNoteHead extends VElement implements VConfigAble{
 	@Override
 	public void setHighLight(boolean states) {
 
-	}
-	public VElement getCurrentElement(){
-		return this;
 	}
 
 	@Override

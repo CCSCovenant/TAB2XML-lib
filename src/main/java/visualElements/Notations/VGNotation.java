@@ -6,7 +6,7 @@ import visualElements.VElement;
 
 import java.util.HashMap;
 
-public class VGNotation implements VElement, VConfigAble {
+public class VGNotation extends VElement implements VConfigAble {
 	@Override
 	public void setHighLight(boolean states) {
 
@@ -27,10 +27,6 @@ public class VGNotation implements VElement, VConfigAble {
 		return 0;
 	}
 
-	@Override
-	public void updateConfigList(HashMap<String, Double> configs) {
-
-	}
 
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {

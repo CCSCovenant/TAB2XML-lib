@@ -22,6 +22,9 @@ public class Visualizer implements VConfigAble {
 	ArrayList<Group> groups = new ArrayList<>();
 	ArrayList<VPage> pages = new ArrayList<>();
 	HashMap<String, Double> configMap;
+
+	double currentX = 0;
+	double currentY = 0;
  	public Visualizer(Score score) throws TXMLException {
 		this.score = score;
 		configMap = VConfig.getInstance().getDefaultConfigMap("global");
@@ -40,15 +43,18 @@ public class Visualizer implements VConfigAble {
 			for (Measure measure:part.getMeasures()){
 
 				if (tmpLine.addNewMeasure(getVMeasure(measure))){
-
+						
 				}else {
 					if (tmpPage.addNewLine(tmpLine)){
-
+						currentY += configMap.get("gapMeasure");
 					}else {
+						currentY = 0;
 						pages.add(tmpPage);
 						tmpPage = new VPage();
 						tmpPage.addNewLine(tmpLine);
 					}
+					tmpLine.getShapeGroups().setLayoutY(currentY);
+					tmpLine.alignment();
 					tmpLine = new VLine();
 					tmpLine.addNewMeasure(getVMeasure(measure));
 				}
@@ -57,6 +63,7 @@ public class Visualizer implements VConfigAble {
 
 	}
 	public VMeasure getVMeasure(Measure measure){
+		 VMeasure vMeasure = new VMeasure();
 
 
 		 return new VMeasure();

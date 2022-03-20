@@ -22,6 +22,10 @@ public class VConfig {
 		HashMap<String,Double> measureConfig = new HashMap<>();
 		measureConfig.put("noteDistance",10d);
 		configMap.put("measure",measureConfig);
+		HashMap<String,Double> dotConfig = new HashMap<>();
+		configMap.put("dot",dotConfig);
+		dotConfig.put("size",1d);
+		dotConfig.put("gap_with_last_element",5d);
 
 	}
 

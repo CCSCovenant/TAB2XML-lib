@@ -14,13 +14,16 @@ public class VElement {
 					Selected.getInstance().getSElement().setHighLight(false);
 					Selected.getInstance().setSElement(getCurrentElement());
 					setHighLight(true);
+					event.consume();
 				}else {
 					Selected.getInstance().setSElement(null);
 					setHighLight(false);
+					event.consume();
 				}
 			}
 		});
 	}
+
 	public void setHighLight(boolean states){
 
 	}

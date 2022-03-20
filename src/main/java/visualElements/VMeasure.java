@@ -48,4 +48,27 @@ public class VMeasure extends VElement implements VConfigAble {
 	public double getW() {
 		return 0;
 	}
+
+	public void setNotes(List<VNote> notes) {
+		Notes = notes;
+	}
+
+	public void setBarlines(List<VBarline> barlines) {
+		this.barlines = barlines;
+	}
+
+	public void setNotations(List<VGNotation> notations) {
+		Notations = notations;
+	}
+
+	public void setNumber(int number) {
+		this.number = number;
+	}
+
+	public void setStaffLines(List<VStaffLine> staffLines) {
+		this.staffLines = staffLines;
+	}
+	public void alignment(){
+
+	}
 }

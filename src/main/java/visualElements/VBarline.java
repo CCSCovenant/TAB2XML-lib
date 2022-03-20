@@ -4,7 +4,7 @@ import javafx.scene.Group;
 
 import java.util.HashMap;
 
-public class VBarline implements VElement,VConfigAble{
+public class VBarline extends VElement implements VConfigAble{
 
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {

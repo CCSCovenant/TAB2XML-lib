@@ -8,7 +8,6 @@ import java.util.List;
 
 public class VLine extends VElement{
 	List<VMeasure> measures;
-	boolean dirtySign = false;
 	public VLine(){
 
 	}
@@ -44,5 +43,15 @@ public class VLine extends VElement{
 	}
 	public boolean addNewMeasure(VMeasure measure){
 		return false;
+	}
+	public void alignment(){
+		for (VMeasure measure:measures){
+			measure.updateConfig("",0);
+		}
+		for (int i=1;i<measures.size();i++){
+			measures.get(i-1).alignment();
+			measures.get(i).getShapeGroups().setLayoutY(measures.get(i-1).getW());
+		}
+		measures.get(measures.size()-1).alignment();
 	}
 }

@@ -6,6 +6,7 @@ import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.ObservableList;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -16,6 +17,10 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.MouseEvent;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -52,15 +57,87 @@ public class PreviewViewController extends Application {
 
 	public Node currentSelected;
 	public ArrayList<Group> groups;
+	boolean flag = false;
+	boolean flag1 = false;
+	boolean flag2 = false;
 	public void setMainViewController(MainViewController mvcInput) {
 		mvc = mvcInput;
 	}
 	public void update() throws TXMLException, FileNotFoundException, URISyntaxException {
 
-		this.player = new MXLPlayer(mvc.converter.getScore());
-		this.visualizer = new Visualizer(mvc.converter.getScore());
-		groups = visualizer.getElementGroups();
-		scrollView.setContent(groups.get(0));
+		//this.player = new MXLPlayer(mvc.converter.getScore());
+		//this.visualizer = new Visualizer(mvc.converter.getScore());
+		//groups = visualizer.getElementGroups();
+
+
+		Group group = new Group();
+		Circle circle = new Circle();
+		circle.setRadius(50);
+		circle.setLayoutX(200);
+		circle.setLayoutY(50);
+		Circle circle1 = new Circle();
+		circle1.setRadius(50);
+		circle1.setLayoutX(50);
+		circle1.setLayoutY(50);
+		Rectangle rectangle = new Rectangle();
+		group.getChildren().add(circle);
+		group.getChildren().add(circle1);
+		group.getChildren().add(rectangle);
+		rectangle.setHeight(100);
+		rectangle.setWidth(400);
+		rectangle.toBack();
+		group.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if (flag) {
+					circle.setFill(Color.GREEN);
+					circle1.setFill(Color.GREEN);
+					rectangle.setFill(Color.BLUE);
+					flag = false;
+				}else {
+					circle.setFill(Color.YELLOW);
+					circle1.setFill(Color.YELLOW);
+					rectangle.setFill(Color.RED);
+					flag = true;
+				}
+
+			}
+		});
+
+		circle.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if (flag1) {
+					circle.setFill(Color.GREEN);
+					flag1 = false;
+					event.consume();
+				}else {
+					circle.setFill(Color.YELLOW);
+					flag1 = true;
+					event.consume();
+				}
+
+			}
+		});
+
+		circle1.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				if (flag2) {
+					circle1.setFill(Color.GREEN);
+					flag2 = false;
+					event.consume();
+				}else {
+					circle1.setFill(Color.YELLOW);
+					flag2 = true;
+					event.consume();
+				}
+
+			}
+		});
+
+
+		scrollView.setContent(group);
 
 	}
 	@FXML
