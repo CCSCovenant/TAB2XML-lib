@@ -124,6 +124,11 @@ public class MXLPlayer{
 								musicString.append("R");
 							} else {
 								musicString.append(note.getPitch().getStep());
+								
+								if(note.getPitch().getAlter() != null) {
+									if(note.getPitch().getAlter() == 1) musicString.append("#");
+									else if(note.getPitch().getAlter() == -1) musicString.append("b");
+								}
 								musicString.append(note.getPitch().getOctave());
 
 								if (note.getGrace() != null) {
