@@ -192,19 +192,19 @@ public class MXLPlayer{
 		else { return "GUNSHOT"; }//default for now
 	}
 	
-	public void addTies(StringBuilder input, Note note) {
-		int indextoCheck = input.length() - 1; 
+	public void addTies(StringBuilder musicString, Note note) {
+		int indextoCheck = musicString.length() - 1; 
 		if(note.getNotations() != null && note.getNotations().getTieds() != null) {
 			for(int i = 1; i <= 10; i++) {
-				if(input.charAt(input.length()-i) != '.' && input.charAt(input.length()-i) == getNoteDuration(note)) {
-					indextoCheck = input.length() - i;
+				if(musicString.charAt(musicString.length()-i) != '.' && musicString.charAt(musicString.length()-i) == getNoteDuration(note)) {
+					indextoCheck = musicString.length() - i;
 					break;
 				}
 			}
 			
 			for(Tied tie : note.getNotations().getTieds()) {
 				if(tie != null && (tie.getType().equals("stop") || tie.getType().equals("continue"))) {
-					input.replace(indextoCheck, indextoCheck + 1, "-" + getNoteDuration(note));
+					musicString.replace(indextoCheck, indextoCheck + 1, "-" + getNoteDuration(note));
 					break;
 				}
 			}
@@ -212,7 +212,7 @@ public class MXLPlayer{
 		 if(note.getNotations() != null && note.getNotations().getTieds() != null) {
 			for(Tied tie : note.getNotations().getTieds()) {
 				if(tie != null && (tie.getType().equals("start") || tie.getType().equals("continue"))) {
-					input.append("-");
+					musicString.append("-");
 					break;
 				}
 			}
