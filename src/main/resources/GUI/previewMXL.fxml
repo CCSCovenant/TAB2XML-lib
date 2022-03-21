@@ -8,12 +8,12 @@
     <center>
         <AnchorPane prefHeight="200.0" prefWidth="666.0" BorderPane.alignment="CENTER">
             <children>
-            <ScrollPane layoutX="25.0" layoutY="30.0" prefHeight="600.0" prefWidth="950.0">
+            <ScrollPane layoutX="25.0" layoutY="30.0" prefHeight="536.0" prefWidth="950.0">
                <content>
                   <ImageView fx:id="pdfViewer" fitHeight="1343.0" fitWidth="950.0" pickOnBounds="true" preserveRatio="true" />
                </content></ScrollPane>
                 <AnchorPane layoutX="13.0" prefHeight="32.0" prefWidth="974.0" AnchorPane.leftAnchor="13.0" AnchorPane.rightAnchor="13.0" AnchorPane.topAnchor="0.0" />
-                <AnchorPane layoutX="12.0" layoutY="614.0" prefHeight="52.0" prefWidth="977.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0">
+                <AnchorPane layoutX="12.0" layoutY="614.0" prefHeight="122.0" prefWidth="976.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0">
                     <children>
                         <HBox layoutY="11.0" spacing="5.0" AnchorPane.leftAnchor="870.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="8.0">
                             <children>
@@ -39,7 +39,7 @@
                         </HBox>
                   <HBox AnchorPane.leftAnchor="250.0" AnchorPane.topAnchor="8.0">
                      <children>
-                        <Label text="Last page">
+                        <Label text="previous page">
                            <padding>
                               <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                            </padding>
@@ -50,7 +50,7 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                   </HBox>
-                  <HBox AnchorPane.leftAnchor="400.0" AnchorPane.topAnchor="8.0">
+                  <HBox prefHeight="35.0" prefWidth="131.0" AnchorPane.leftAnchor="420.0" AnchorPane.topAnchor="8.0">
                      <children>
                         <Label text="Next page">
                            <padding>
@@ -68,9 +68,15 @@
                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                      </padding>
                      <children>
-                        <Button mnemonicParsing="false" text="play" />
+                        <Button mnemonicParsing="false" onAction="#playHandler" text="play" />
                      </children>
                   </HBox>
+                  <Separator layoutX="3.0" layoutY="56.0" prefHeight="11.0" prefWidth="970.0" />
+                  <ChoiceBox fx:id="configs" layoutX="100.0" layoutY="76.0" prefHeight="23.0" prefWidth="108.0" />
+                  <ChoiceBox fx:id="values" layoutX="277.0" layoutY="77.0" prefHeight="23.0" prefWidth="108.0" />
+                  <Button layoutX="808.0" layoutY="76.0" mnemonicParsing="false" onAction="#apply" prefHeight="23.0" prefWidth="100.0" text="apply config" />
+                  <Label layoutX="29.0" layoutY="74.0" prefHeight="28.0" prefWidth="60.0" text="configs" />
+                  <Label layoutX="225.0" layoutY="80.0" text="value" />
                     </children>
                 </AnchorPane>
             </children>

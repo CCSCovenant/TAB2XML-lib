@@ -1,8 +1,5 @@
 package converter.note;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import models.measure.note.Note;
 import models.measure.note.Notehead;
 import models.measure.note.notations.Notations;
@@ -10,6 +7,9 @@ import models.measure.note.notations.technical.Ornaments;
 import models.measure.note.notations.technical.Tremolo;
 import utility.AnchoredText;
 import utility.Patterns;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DrumNoteFactory extends NoteFactory {
 
@@ -102,7 +102,7 @@ public class DrumNoteFactory extends NoteFactory {
 
 	@Override
 	protected void setGraceStem(Note noteModel) {
-		assert noteModel.getStem().equals("up");
+		noteModel.getStem().equals("up");
 	}
 	
 	@Override

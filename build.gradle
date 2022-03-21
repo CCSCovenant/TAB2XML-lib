@@ -6,7 +6,7 @@ plugins {
 }
 
 group 'GUI'
-version '1.0-SNAPSHOT'
+version '1.2-midterm-release'
 
 repositories {
     mavenCentral()
@@ -39,6 +39,7 @@ dependencies {
     implementation 'com.itextpdf:itext7-core:7.2.1'
     implementation 'com.google.code.gson:gson:2.9.0'
     implementation 'org.apache.pdfbox:pdfbox:2.0.25'
+    implementation 'org.openjfx:javafx:17'
 }
 
 task debug {
@@ -87,3 +88,16 @@ run {
 
 mainClassName = 'GUI.MainApp'
 
+task fatJar(type: Jar) {
+    duplicatesStrategy = DuplicatesStrategy.INCLUDE
+
+    manifest {
+        attributes 'Implementation-Title': 'Gradle Jar File Example',
+                'Implementation-Version': version,
+                'Main-Class': 'GUI.TAB2XML'
+    }
+    baseName = 'TAB2XML'
+    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
+    with jar
+}

@@ -1,6 +1,27 @@
 package GUI;
 
+import converter.Converter;
+import converter.measure.TabMeasure;
+import custom_exceptions.TXMLException;
+import javafx.application.Application;
+import javafx.concurrent.Task;
+import javafx.event.EventHandler;
+import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
+import javafx.scene.control.*;
+import javafx.scene.layout.BorderPane;
+import javafx.stage.*;
+import org.fxmisc.richtext.CodeArea;
+import org.fxmisc.richtext.LineNumberFactory;
+import org.fxmisc.richtext.model.StyleSpans;
+import player.ThreadPlayer;
+import utility.Range;
+import utility.Settings;
+
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -15,44 +36,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.prefs.Preferences;
 
-import custom_exceptions.TXMLException;
-import nu.xom.ParsingException;
-import org.fxmisc.richtext.CodeArea;
-import org.fxmisc.richtext.LineNumberFactory;
-import org.fxmisc.richtext.model.StyleSpans;
-
-import converter.Converter;
-import converter.measure.TabMeasure;
-import javafx.application.Application;
-import javafx.concurrent.Task;
-import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
-import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ComboBox;
-import javafx.scene.control.IndexRange;
-import javafx.scene.control.Label;
-import javafx.scene.control.TextField;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.FileChooser;
-import javafx.stage.Modality;
-import javafx.stage.Stage;
-import javafx.stage.Window;
-import utility.Range;
-import utility.Settings;
-
-import javax.xml.parsers.ParserConfigurationException;
-
 public class MainViewController extends Application {
 	
 	private Preferences prefs;
 	public static ExecutorService executor = Executors.newSingleThreadExecutor();
 	public File saveFile;
 	private static boolean isEditingSavedFile;
+	public PreviewViewController previewViewController;
 	
 	public Window convertWindow;
 	public Window settingsWindow;
@@ -314,10 +304,20 @@ public class MainViewController extends Application {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("GUI/previewMXL.fxml"));
 			root = loader.load();
-			PreviewViewController controller = loader.getController();
-			controller.setMainViewController(this);
-			controller.update();
+			previewViewController = loader.getController();
+			previewViewController.setMainViewController(this);
+			previewViewController.update();
 			convertWindow = this.openNewWindow(root, "preview musicXML");
+			convertWindow.setOnCloseRequest(new EventHandler<WindowEvent>() {
+				@Override
+				public void handle(WindowEvent event) {
+					if (PreviewViewController.thp!=null){
+						PreviewViewController.thp = new ThreadPlayer("0");
+						PreviewViewController.thp.start("");
+					}
+					System.out.println("close");
+				}
+			});
 		} catch (IOException e) {
 			Logger logger = Logger.getLogger(getClass().getName());
 			logger.log(Level.SEVERE, "Failed to create new Window.", e);
@@ -374,9 +374,9 @@ public class MainViewController extends Application {
 
         Task<StyleSpans<Collection<String>>> task = new Task<>() {
             @Override
-            protected StyleSpans<Collection<String>> call() {
+            protected StyleSpans<Collection<String>> call() throws TXMLException, FileNotFoundException {
             	converter.update();
-            	
+
                 if (converter.getScore().getTabSectionList().isEmpty()){
                 	saveMXLButton.setDisable(true);
                 	previewButton.setDisable(true);
@@ -387,6 +387,9 @@ public class MainViewController extends Application {
                 	saveMXLButton.setDisable(false);
                 	previewButton.setDisable(false);
                 	showMXLButton.setDisable(false);
+					if (previewViewController!=null){
+						previewViewController.update();
+					}
                 }
                 return highlighter.computeHighlighting(text);
             }

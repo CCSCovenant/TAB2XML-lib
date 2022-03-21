@@ -4,8 +4,12 @@ import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.layout.Document;
 import custom_exceptions.TXMLException;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
@@ -17,6 +21,7 @@ import javafx.stage.Window;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.rendering.PDFRenderer;
 import player.MXLPlayer;
+import player.ThreadPlayer;
 import visualizer.Visualizer;
 
 import java.awt.image.BufferedImage;
@@ -27,11 +32,16 @@ import java.io.IOException;
 public class PreviewViewController extends Application {
 	@FXML ImageView pdfViewer;
 	@FXML TextField gotoPageField;
-
-	private final String temp_dest = "tmp.pdf";
-	private final int scale = 1;
+	@FXML ChoiceBox configs;
+	@FXML ChoiceBox values;
+	private final String temp_dest = "./tmp.pdf";
+	private final int scale = 2;
 	private static Window convertWindow = new Stage();
 
+	private ObservableList<String> configsList;
+	private ObservableList<Double> configsValueList;
+	private String selected = "";
+	private PreviewConfig c = PreviewConfig.getInstance();
 	private MainViewController mvc;
 	private PdfDocument pdf;
 	private int pageNumber = 0;
@@ -40,6 +50,7 @@ public class PreviewViewController extends Application {
 	private PDDocument document;
 	private PDFRenderer renderer;
 	private File tempFile;
+	public static ThreadPlayer thp;
 	public void setMainViewController(MainViewController mvcInput) {
 		mvc = mvcInput;
 	}
@@ -56,6 +67,7 @@ public class PreviewViewController extends Application {
 		}catch (IOException e){
 
 		}
+		initChoiceBox();
 		goToPage(0);
 	}
 	@FXML
@@ -74,6 +86,7 @@ public class PreviewViewController extends Application {
 
 			}
 		}
+
 	}
 	@FXML
 	private void LastPageHandler(){
@@ -86,12 +99,56 @@ public class PreviewViewController extends Application {
 	}
 	@FXML
 	private void goToPageHandler(){
-		int pageNumber = Integer.parseInt(gotoPageField.getText() );
+		int pageNumber = Integer.parseInt(gotoPageField.getText());
 		goToPage(pageNumber);
 	}
 	@FXML
+	private void apply(){
+		refreshPDF();
+	}
+	private void initChoiceBox(){
+		configs.setItems(c.getConfigList());
+		configsList = c.getConfigList();
+		configs.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				selected = configsList.get(newValue.intValue());
+				configsValueList = c.getValues(selected);
+				values.setItems(c.getValues(selected));
+			}
+		});
+		values.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
+			@Override
+			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
+				if (newValue.intValue()>=0&&newValue.intValue()<configsValueList.size()){
+					c.setConfig(selected,configsValueList.get(newValue.intValue()));
+				}
+			}
+		});
+	}
+	private void refreshPDF(){
+		long t = System.currentTimeMillis();
+		try {
+			this.visualizer = new Visualizer(mvc.converter.getScore());
+			pdf = visualizer.draw(tempFile);
+			System.out.println(System.currentTimeMillis()-t);
+			Document document1 = new Document(pdf);
+			document1.close();
+			System.out.println(System.currentTimeMillis()-t);
+			document = PDDocument.load(tempFile);
+			System.out.println(System.currentTimeMillis()-t);
+			renderer = new PDFRenderer(document);
+		}catch (Exception e){
+
+		}
+		goToPage(Integer.parseInt(gotoPageField.getText()));
+		System.out.println(System.currentTimeMillis()-t);
+	}
+	@FXML
 	private void playHandler(){
-		player.play(-1,-1,-1);
+		String s = player.getString(-1,-1,-1);
+		thp = new ThreadPlayer("music-thread");
+		thp.start(s);
 	}
 	private void goToPage(int page)  {
 		if (page<document.getNumberOfPages()&&page>=0){
@@ -109,6 +166,7 @@ public class PreviewViewController extends Application {
 			alert.show();
 		}
 	}
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {}
 

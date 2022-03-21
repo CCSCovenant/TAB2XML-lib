@@ -2,14 +2,16 @@ package visualizer;
 
 public class EighthFlag {
 	int type;
-	int x;
-	int maxy;
-	int miny;
+	double x;
+	double maxy;
+	double miny;
+	boolean isGrace;
 
-	public EighthFlag(int x){
+	public EighthFlag(double x){
 		this.x = x;
 		this.maxy = Integer.MIN_VALUE;
 		this.miny = Integer.MAX_VALUE;
 		this.type =0;
+		this.isGrace = false;
 	}
 }
