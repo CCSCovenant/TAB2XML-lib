@@ -6,6 +6,7 @@ import models.Part;
 import models.ScorePartwise;
 import models.measure.Measure;
 import models.measure.attributes.Attributes;
+import models.measure.barline.BarLine;
 import models.measure.note.Dot;
 import models.measure.note.Note;
 import models.measure.note.notations.Tied;
@@ -191,17 +192,20 @@ public class MXLPlayer{
 		/*More could be added later on*/
 		else { return "GUNSHOT"; }//default for now
 	}
-	
+
 	public void addTies(StringBuilder musicString, Note note) {
 		int indextoCheck = musicString.length() - 1; 
 		if(note.getNotations() != null && note.getNotations().getTieds() != null) {
+			//This loop looks for the position of the last note in the music string
 			for(int i = 1; i <= 10; i++) {
 				if(musicString.charAt(musicString.length()-i) != '.' && musicString.charAt(musicString.length()-i) == getNoteDuration(note)) {
 					indextoCheck = musicString.length() - i;
 					break;
 				}
 			}
-			
+			//Once the last note is found, this loop checks if that note is tied to another 
+			//note and if it is the end or middle of the tie.
+			//If so, then a '-' is added before the note
 			for(Tied tie : note.getNotations().getTieds()) {
 				if(tie != null && (tie.getType().equals("stop") || tie.getType().equals("continue"))) {
 					musicString.replace(indextoCheck, indextoCheck + 1, "-" + getNoteDuration(note));
@@ -209,6 +213,9 @@ public class MXLPlayer{
 				}
 			}
 		}
+		//Checks if the last note is tied to another note and if it is the start or middle of the tie.
+		//There is no need to look for the exact location of the note because the '-' can be added after the 
+		//note's dots(if there are any)
 		 if(note.getNotations() != null && note.getNotations().getTieds() != null) {
 			for(Tied tie : note.getNotations().getTieds()) {
 				if(tie != null && (tie.getType().equals("start") || tie.getType().equals("continue"))) {
@@ -219,5 +226,47 @@ public class MXLPlayer{
 			
 		}
 	}
-
+	private String getRepeats(Part part,Measure measure, int duration, List<Measure> repeats, boolean partOfRepeat) {
+		/* Method checks whether the measure or group of measures is repeated then 
+		 * appends the repeats to the musicString
+		 */
+		StringBuilder musicString = new StringBuilder();
+		
+		if(measure.getBarlines() != null) {
+			boolean sameMeasure = false;
+			for(BarLine barline : measure.getBarlines()) {
+				//if-statement to avoid null-pointer exception
+				if(barline != null && barline.getRepeat() != null) {
+					//"forward" determines the beginning of a repeat
+					if(barline.getRepeat().getDirection().equals("forward")) {
+						repeats.add(measure); 
+						partOfRepeat = true; 
+						sameMeasure = true;
+					}
+					//"backward" determines the end of a repeat
+					if(barline.getRepeat().getDirection().equals("backward") && !sameMeasure) {
+						repeats.add(measure); 
+						partOfRepeat = false;
+					}
+					//when the measure is part of repeat but not the beginning or end
+					else if(partOfRepeat && !sameMeasure) {
+						repeats.add(measure);
+					}
+					
+					if(barline.getRepeat().getDirection().equals("backward")) {
+						//'times' is the number of times the measure is played. It is a string so it needs to be converted to integer
+						int times = Integer.parseInt(barline.getRepeat().getTimes());
+						for(int i = 1; i < times; i++) {
+							for(Measure currentMeasure: repeats) {
+								musicString.append(getMeasure(currentMeasure,part.getId(),duration));
+							}
+						}
+						
+						break;
+					}
+				}
+			}	
+		}
+		return musicString.toString();
+	}
 }
