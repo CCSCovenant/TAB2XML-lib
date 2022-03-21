@@ -10,7 +10,7 @@ public class VNote extends VElement implements VConfigAble {
 	int number;
 	double H = 0;
 	double W = 0;
-
+	double step = VConfig.getInstance().getGlobalConfig().get("step");
 	List<VNoteHead> noteHeads;
 	List<VINotation> notations;
 
@@ -20,7 +20,8 @@ public class VNote extends VElement implements VConfigAble {
 
 	public void addNoteHead(VNoteHead noteHead, int relative){
 		noteHeads.add(noteHead);
-
+		noteHead.getShapeGroups().setLayoutY(relative*step);
+		group.getChildren().add(noteHead.getShapeGroups());
 	}
 	@Override
 	public void setHighLight(boolean states) {
@@ -29,7 +30,7 @@ public class VNote extends VElement implements VConfigAble {
 
 	@Override
 	public Group getShapeGroups() {
-		return null;
+		return group;
 	}
 
 	@Override

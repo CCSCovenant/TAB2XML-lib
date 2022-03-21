@@ -56,7 +56,7 @@ public class VLine extends VElement{
 					}
 					alignment(); // update measure with new config.
 					measures.add(newMeasure);
-					return false;
+					return true;
 				}else {
 					double idealLengthDiff = PageW-MarginX-W;
 					double ideaGapDiff = idealLengthDiff/gapCount;

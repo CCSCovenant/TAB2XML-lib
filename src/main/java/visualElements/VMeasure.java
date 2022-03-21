@@ -1,19 +1,21 @@
 package visualElements;
 
 import javafx.scene.Group;
+import javafx.scene.shape.Line;
 import visualElements.Notations.VGNotation;
 import visualElements.Signs.VSign;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
 public class VMeasure extends VElement implements VConfigAble {
 	private int number;
 	private List<VNote> Notes;
-	private List<VGNotation> Notations;
-	private List<VSign> Signs;
-	private List<VStaffLine> staffLines;
-	private List<VBarline> barlines;
+	private List<VGNotation> Notations = new ArrayList<>();
+	private List<VSign> Signs = new ArrayList<>();
+	private List<Line> staffLines = new ArrayList<>();
+	private List<VBarline> barlines = new ArrayList<>();
 	private HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("VMeasure");
 	double W = 0;
 	double H = 0;
@@ -71,8 +73,16 @@ public class VMeasure extends VElement implements VConfigAble {
 	public double getGapCount(){
 		return gapCount;
 	}
-	public void setStaffLines(List<VStaffLine> staffLines) {
-		this.staffLines = staffLines;
+	public void initStaffLines(List<Integer> staffInfo){
+		//staffInfo contain offset of each staff
+		for (Integer i:staffInfo){
+			staffLines.add(new Line(0,i,0,i));
+		}
+	}
+	public void updateStaffLine(double W){
+		for (Line line:staffLines){
+			line.setEndX(W);
+		}
 	}
 	public void alignment(){
 		W = 0;
@@ -93,5 +103,7 @@ public class VMeasure extends VElement implements VConfigAble {
 			W += gapBetweenElement;
 			gapCount++;
 		}
+		//update the staffline.
+		updateStaffLine(W);
 	}
 }

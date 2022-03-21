@@ -46,14 +46,11 @@ public class Visualizer implements VConfigAble {
 						
 				}else {
 					if (tmpPage.addNewLine(tmpLine)){
-						currentY += configMap.get("gapMeasure");
 					}else {
-						currentY = 0;
 						pages.add(tmpPage);
 						tmpPage = new VPage();
 						tmpPage.addNewLine(tmpLine);
 					}
-					tmpLine.getShapeGroups().setLayoutY(currentY);
 					tmpLine.alignment();
 					tmpLine = new VLine();
 					tmpLine.addNewMeasure(getVMeasure(measure));
@@ -63,10 +60,7 @@ public class Visualizer implements VConfigAble {
 
 	}
 	public VMeasure getVMeasure(Measure measure){
-		 VMeasure vMeasure = new VMeasure();
-
-
-		 return new VMeasure();
+		 return null;
 	}
 
 	@Override

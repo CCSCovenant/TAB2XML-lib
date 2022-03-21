@@ -45,7 +45,7 @@ public class VPage extends VElement{
 		}else {
 			lines.add(line);
 			line.getShapeGroups().setLayoutY(H);
-			H += measureDistance;
+			H += line.getH()+measureDistance;
 			return true;
 		}
 	}
