@@ -14,13 +14,24 @@ public class VNoteHead extends VElement implements VConfigAble{
 	ImageResourceHandler imageResourceHandler = ImageResourceHandler.getInstance();
 	List<VDot> dots = new ArrayList<>();
 	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("VNoteHead");
-	public VNoteHead(String type){
+	double H = 0;
+	double W = 0;
+	public VNoteHead(String type,int dots){
 		imageView.setImage(new Image(imageResourceHandler.getImage(type)));
+		imageView.setFitHeight(config.get("StepSize"));
+		imageView.setFitWidth(config.get("StepSize"));
+		initDots(dots);
 	}
 
 	@Override
 	public void setHighLight(boolean states) {
 
+		if (states){
+			// add color fiter into image view
+		}
+		for (VDot dot:dots){
+			dot.setHighLight(states);
+		}
 	}
 
 	@Override
@@ -30,16 +41,31 @@ public class VNoteHead extends VElement implements VConfigAble{
 
 	@Override
 	public double getH() {
-		return 0;
+		return H;
 	}
 
 	@Override
 	public double getW() {
-		return 0;
+		return W;
 	}
 
+	public void initDots(int number){
+		for (int i = 0; i < number; i++) {
+			dots.add(new VDot());
+		}
+	}
+	public void alignment(){
+		W = imageView.getFitWidth();
+		H = imageView.getFitHeight();
 
+		if (dots.size()>0){
+			for (int i = 0; i < dots.size(); i++) {
+				dots.get(i).getShapeGroups().setLayoutX(W);
+				W += dots.get(i).getW();
+			}
+		}
 
+	}
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
 		return null;

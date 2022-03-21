@@ -17,6 +17,8 @@ public class VConfig {
 		globalConfig.put("MarginY",20d);
 		globalConfig.put("step",10d);
 		globalConfig.put("minNoteDistance",10d);
+		globalConfig.put("measureDistance",150d);
+
 		configMap.put("global",globalConfig);
 
 		HashMap<String,Double> measureConfig = new HashMap<>();
@@ -40,5 +42,8 @@ public class VConfig {
 			defaultConfig.put(s,targetConfig.get(s));
 		}
 		return defaultConfig;
+	}
+	public HashMap<String,Double> getGlobalConfig(){
+		return getDefaultConfigMap("global");
 	}
 }

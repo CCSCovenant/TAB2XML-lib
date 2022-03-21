@@ -8,14 +8,20 @@ import java.util.List;
 
 public class VNote extends VElement implements VConfigAble {
 	int number;
+	double H = 0;
+	double W = 0;
+
 	List<VNoteHead> noteHeads;
 	List<VINotation> notations;
 
-	public VNote(){
-
+	public VNote(int number){
+		this.number = number;
 	}
 
+	public void addNoteHead(VNoteHead noteHead, int relative){
+		noteHeads.add(noteHead);
 
+	}
 	@Override
 	public void setHighLight(boolean states) {
 
@@ -28,15 +34,20 @@ public class VNote extends VElement implements VConfigAble {
 
 	@Override
 	public double getH() {
-		return 0;
+		return H;
 	}
 
 	@Override
 	public double getW() {
-		return 0;
+		return W;
 	}
 
-
+	public void alignment(){
+		for(VNoteHead noteHead:noteHeads){
+			noteHead.alignment();
+			W = Math.max(W,noteHead.getW());
+		}
+	}
 
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {

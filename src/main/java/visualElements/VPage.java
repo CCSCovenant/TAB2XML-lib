@@ -1,15 +1,19 @@
 package visualElements;
 
-import javafx.collections.ObservableList;
 import javafx.scene.Group;
-import javafx.scene.Node;
 
 import java.util.List;
 
 public class VPage extends VElement{
+	VTitle vTitle;
 	List<VLine> lines;
+	double MarginY = VConfig.getInstance().getGlobalConfig().get("MarginY");
+	double PageY = VConfig.getInstance().getGlobalConfig().get("PageY");
+	double measureDistance = VConfig.getInstance().getGlobalConfig().get("measureDistance");
+	double H = MarginY;
+
 	public VPage(){
-		group = new Group();
+
 	}
 
 	@Override
@@ -21,7 +25,6 @@ public class VPage extends VElement{
 
 	@Override
 	public Group getShapeGroups() {
-		updateGroup();
 		return group;
 	}
 
@@ -35,14 +38,20 @@ public class VPage extends VElement{
 		return 0;
 	}
 
-	public void updateGroup(){
-		ObservableList<Node> children = group.getChildren();
-		children.clear();
-		for (VLine line:lines){
-			children.add(line.getShapeGroups());
+
+	public boolean addNewLine(VLine line){
+		if (H+measureDistance>PageY-MarginY){
+			return false;
+		}else {
+			lines.add(line);
+			line.getShapeGroups().setLayoutY(H);
+			H += measureDistance;
+			return true;
 		}
 	}
-	public boolean addNewLine(VLine line){
-		return false;
+	// must be called before add line
+	public void addVTitle(VTitle vTitle){
+		this.vTitle = vTitle;
+		H += vTitle.getH();
 	}
 }
