@@ -5,7 +5,6 @@ import custom_exceptions.TXMLException;
 import models.Part;
 import models.ScorePartwise;
 import models.measure.Measure;
-import models.measure.attributes.Attributes;
 import models.measure.barline.BarLine;
 import models.measure.note.Dot;
 import models.measure.note.Note;
