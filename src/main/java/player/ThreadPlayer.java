@@ -13,7 +13,7 @@ public class ThreadPlayer extends Thread {
 	}
 	public void run(){
 		Player player = new Player();
-		isPlaying = true;
+		isPlaying = true;//System.out.println(musicString);
 		player.play(musicString);
 		isPlaying = false;
 	}

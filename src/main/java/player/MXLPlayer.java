@@ -8,6 +8,7 @@ import models.measure.Measure;
 import models.measure.barline.BarLine;
 import models.measure.note.Dot;
 import models.measure.note.Note;
+import models.measure.note.notations.Slur;
 import models.measure.note.notations.Tied;
 import models.part_list.ScorePart;
 import org.jfugue.player.Player;
@@ -130,11 +131,17 @@ public class MXLPlayer{
 									else if(note.getPitch().getAlter() == -1) musicString.append("b");
 								}
 								musicString.append(note.getPitch().getOctave());
-
-								if (note.getGrace() != null) {
+								
+								if(note.getNotations() != null && note.getNotations().getTechnical() != null
+										&& note.getNotations().getTechnical().getBend() != null) {
+								musicString.append(bendNote(note, false));
+								}
+								else if(note.getGrace() != null) {
 									musicString.append("s");
+									addSlur(musicString,note);
 								} else {
 									musicString.append(getNoteDuration(note));
+									addSlur(musicString,note);
 									musicString.append(getDots(note));
 									addTies(musicString, note);
 								}
@@ -301,5 +308,126 @@ public class MXLPlayer{
 			}	
 		}
 		return musicString.toString();
+	}
+	
+	private String bendNote(Note note, boolean isInChord) {
+		StringBuilder musicString = new StringBuilder();
+//	      musicString.append(" T100 V0 L0 I25  :CON(100,0) :CON(101,0) :CON(6,1) ");
+//	      musicString.append(note.getPitch().getStep());
+//			
+//			if(note.getPitch().getAlter() != null) {
+//				if(note.getPitch().getAlter() == 1) musicString.append("#");
+//				else if(note.getPitch().getAlter() == -1) musicString.append("b");
+//			}
+//			musicString.append(note.getPitch().getOctave() +" R3 L1");
+//	        int PW = 8192; // Default Pitch Bend
+//	        int steps=250;  // Let us consider 250 steps in one semitone
+//	        double duration = 0.25/steps;  // Duration of each step
+//	        int PWValue=8192/steps;        // This is the value of pitch bend to be changed gradually
+//	        for(int i=0;i<steps;i++) // S1 to R1
+//	        {
+//	             PW=PW+PWValue;
+//	             musicString.append(" R/"+duration +" :PW("+PW+") ");
+//	        }
+	      
+		double time;
+		if(note.getType().equals("half")) time = 0.5;
+		else time = 0.25;
+		
+		int PB = 8192; // Default Pitch Bend
+		int steps=20; // Let us consider 20 steps in one semitone
+		double duration = time/steps; // Duration of each step
+		int PWValue=8192/steps; // This is the value of pitch bend to be changed gradually
+		
+		if(note.getNotations() != null && note.getNotations().getTechnical() != null
+				&& note.getNotations().getTechnical().getBend() != null) {
+			double bendalter = note.getNotations().getTechnical().getBend().getBendAlter();
+			PWValue = 8192/(int)(steps/(2*bendalter));
+		}
+//		if(isInChord) musicString.append("");
+//		else {
+		
+//			musicString.append("x "+note.getPitch().getStep());
+//			
+//			if(note.getPitch().getAlter() != null) {
+//				if(note.getPitch().getAlter() == 1) musicString.append("#");
+//				else if(note.getPitch().getAlter() == -1) musicString.append("b");
+//			}
+//			musicString.append(note.getPitch().getOctave());
+			musicString.append("+");
+			
+	//	}
+//			for(int i=0;i<(steps/4);i++) 
+//			{
+//				musicString.append("R/"+duration +" :PW("+PB+") ");
+//			}
+//		for(int i=0;i<(steps/2);i++) // S1 to R1
+//		{
+//		PB+=PWValue;
+//		musicString.append("R/"+duration +" :PW("+PB+") ");
+//		}
+//		musicString.append(":PW(8192) ");
+//		System.out.println(PWValue);
+			
+			for(int i=0;i<(steps*0.25);i++) 
+			{
+				musicString.append("R/"+duration +" :PW("+PB+") ");
+			}
+			if(PWValue == 1638) PB = 8190;
+			else if(PWValue == 819) PB=4914;
+		for(int i=0;i<(steps*0.8);i++) // S1 to R1
+		{
+		PB+=PWValue;
+		musicString.append("R/"+duration +" :PW("+PB+") ");
+		}
+		//musicString.append(":PW(40952) ");
+		musicString.append(":PW(8192) ");
+		System.out.println(PWValue);
+	//	musicString.append("V1 I25 Rh");
+		return musicString.toString();
+	}
+	
+	private int index=-1;
+	private void addSlur(StringBuilder musicString, Note note) {
+		int indextoCheck = musicString.length() - 1; 
+		String current=""; boolean sameNote = false;
+		if(note.getNotations() != null && note.getNotations().getSlurs() != null) {
+			//This loop looks for the position of the last note in the music string
+			for(int i = 1; i <= 10; i++) {
+				current+=musicString.charAt(musicString.length()-i);
+				if(note.getPitch().getStep().equals(current)) {
+					indextoCheck = musicString.length() - i;
+					break;
+				}
+				current="";
+			}
+			for(Slur slur : note.getNotations().getSlurs()) {
+				if(slur != null && (slur.getType().equals("stop"))) {
+					sameNote = true;
+					
+				}
+				else if(slur.getType().equals("start") && sameNote) {
+					musicString.replace(index-1, index, "o");
+					for(int i=indextoCheck; i<musicString.length(); i++) {
+						if(musicString.charAt(i) == getNoteDuration(note)) {
+							musicString.replace(i, i + 1, "o");
+							break;
+						}
+					}
+					index=-1;
+					sameNote=false;
+				}
+			}
+		}
+		
+		 if(note.getNotations() != null && note.getNotations().getSlurs() != null) {
+			for(Slur slur : note.getNotations().getSlurs()) {
+				 if(slur != null && (slur.getType().equals("start"))) {
+					index=musicString.length();
+					break;
+				}
+			}
+			
+		}
 	}
 }
