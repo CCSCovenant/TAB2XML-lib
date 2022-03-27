@@ -11,6 +11,7 @@ import visualElements.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * This Class is use for visualize musicXML file.
@@ -19,50 +20,94 @@ import java.util.HashMap;
  * */
 public class Visualizer implements VConfigAble {
 	Score score;
-	ArrayList<Group> groups = new ArrayList<>();
-	ArrayList<VPage> pages = new ArrayList<>();
+	ArrayList<Group> groups;
+	ArrayList<VPage> pages;
 	HashMap<String, Double> configMap;
-
-	double currentX = 0;
-	double currentY = 0;
+	List<Integer> staffDetail;
+	List<VMeasure> VMeasures;
+	String staffType;
  	public Visualizer(Score score) throws TXMLException {
 		this.score = score;
+		VMeasures = new ArrayList<>();
 		configMap = VConfig.getInstance().getDefaultConfigMap("global");
+		setUpInitStaffLine(5,1);
+		initMeasures();
 		alignment();
+		initGroups();
 	}
 
 	public ArrayList<Group> getElementGroups(){
 		 return groups;
 	}
-	public void alignment() throws TXMLException {
-		configMap = this.getConfigAbleList();
+
+	public void initMeasures() throws TXMLException{
 		ScorePartwise scorePartwise = score.getModel();
-		VPage tmpPage = new VPage();
-		VLine tmpLine = new VLine();
+		staffType = "percussion";
 		for (Part part:scorePartwise.getParts()){
 			for (Measure measure:part.getMeasures()){
-
-				if (tmpLine.addNewMeasure(getVMeasure(measure))){
-						
-				}else {
-					if (tmpPage.addNewLine(tmpLine)){
-					}else {
-						pages.add(tmpPage);
-						tmpPage = new VPage();
-						tmpPage.addNewLine(tmpLine);
+				if (measure.getAttributes()!=null&&measure.getAttributes().getStaffDetails()!=null){
+					if (measure.getAttributes().getClef()!=null){
+						if (measure.getAttributes().getClef().getSign().equals("TAB")){
+							setUpInitStaffLine(measure.getAttributes().getClef().getLine(),2);
+							staffType = "TAB";
+						}else {
+							setUpInitStaffLine(measure.getAttributes().getClef().getLine(),1);
+							staffType = "percussion";
+						}
 					}
-					tmpLine.alignment();
-					tmpLine = new VLine();
-					tmpLine.addNewMeasure(getVMeasure(measure));
 				}
+				VMeasures.add(getVMeasure(measure));
 			}
 		}
+	}
+	public void alignment() throws TXMLException {
+		pages = new ArrayList<>();
+		VPage tmpPage = new VPage();
+		VLine tmpLine = new VLine();
+		for (VMeasure measure:VMeasures){
+			if (tmpLine.addNewMeasure(measure)){ // if this measure can fit into this line, do nothing
 
+			}else {    //if this measure fail to fit into this line
+				if (tmpPage.addNewLine(tmpLine)){ //try to add this line into the page. if success, create a new line(in line 79)
+
+				}else { //else create a new page to add current line.
+					pages.add(tmpPage);
+					tmpPage = new VPage();
+					tmpPage.addNewLine(tmpLine);
+				}
+				tmpLine.alignment();
+				tmpLine = new VLine();
+				tmpLine.addNewMeasure(measure);
+			}
+		}
+		if (tmpPage.addNewLine(tmpLine)){
+			pages.add(tmpPage);
+		}else {
+			pages.add(tmpPage);
+			tmpPage = new VPage();
+			tmpPage.addNewLine(tmpLine);
+			pages.add(tmpPage);
+		}
+	}
+	public void initGroups(){
+		 groups = new ArrayList<>();
+		 for (VPage page:pages){
+			 groups.add(page.getShapeGroups());
+		 }
 	}
 	public VMeasure getVMeasure(Measure measure){
-		 return null;
+		VMeasure vMeasure = new VMeasure(measure,staffType,staffDetail);
+		return vMeasure;
 	}
 
+
+
+	public void setUpInitStaffLine(int lines,int gap){
+		staffDetail = new ArrayList<>();
+		for (int i=0;i<lines*gap;i+=gap){
+			 staffDetail.add(i);
+		 }
+	}
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
 		return null;

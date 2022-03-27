@@ -2,16 +2,18 @@ package visualElements;
 
 import javafx.scene.Group;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class VPage extends VElement{
 	VTitle vTitle;
-	List<VLine> lines;
+	List<VLine> lines = new ArrayList<>();
 	double MarginY = VConfig.getInstance().getGlobalConfig().get("MarginY");
-	double PageY = VConfig.getInstance().getGlobalConfig().get("PageY");
-	double measureDistance = VConfig.getInstance().getGlobalConfig().get("measureDistance");
-	double H = MarginY;
+	double MarginX = VConfig.getInstance().getGlobalConfig().get("MarginX");
 
+	double PageY = VConfig.getInstance().getGlobalConfig().get("PageY");
+	double measureDistance = VConfig.getInstance().getGlobalConfig().get("MeasureDistance");
+	double H = MarginY+measureDistance;
 	public VPage(){
 
 	}
@@ -43,8 +45,11 @@ public class VPage extends VElement{
 		if (H+measureDistance>PageY-MarginY){
 			return false;
 		}else {
-			lines.add(line);
 			line.getShapeGroups().setLayoutY(H);
+			line.getShapeGroups().setLayoutX(MarginX);
+			lines.add(line);
+			line.alignment();
+			group.getChildren().add(line.getShapeGroups());
 			H += line.getH()+measureDistance;
 			return true;
 		}
