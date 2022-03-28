@@ -18,7 +18,7 @@ public class VDrumGNotation extends VGNotation{
 				globalHLineNum = localHline;
 				for (int j=0;j<diff;j++){
 					Line line = new Line();
-					line.setStrokeWidth(5);
+					line.setStrokeWidth(configMap.get("thickness"));
 					Hlines.add(line);
 				}
 			}else if (localHline<globalHLineNum){
@@ -55,7 +55,7 @@ public class VDrumGNotation extends VGNotation{
 						Hlines.get(HlinePointer).setStartX((HPosition.get(i)+HPosition.get(i-1))/2);
 						Hlines.get(HlinePointer).setLayoutY(height+(lineStack.size()-1)*gap);
 					}else {
-						Hlines.get(HlinePointer).setStartX(HPosition.get(i));
+						Hlines.get(HlinePointer).setStartX(HPosition.get(i)+configMap.get("thickness")/2);
 						Hlines.get(HlinePointer).setLayoutY(height+(lineStack.size()-1)*gap);
 					}
 					HlinePointer++;
@@ -66,13 +66,13 @@ public class VDrumGNotation extends VGNotation{
 				globalHLineNum = localHline;
 				for (int j=0;j<diff;j++){
 					Line line = lineStack.pop();
-					line.setEndX(HPosition.get(i));
+					line.setEndX(HPosition.get(i)-configMap.get("thickness"));
 				}
 			}
 		}
 		while (!lineStack.isEmpty()){
 			Line line = lineStack.pop();
-			line.setEndX(HPosition.get(HPosition.size()-1));
+			line.setEndX(HPosition.get(HPosition.size()-1)-configMap.get("thickness")/2);
 		}
 	}
 }

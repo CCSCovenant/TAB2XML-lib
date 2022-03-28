@@ -41,8 +41,9 @@ public class VConfig {
 		barlineConfig.put("distanceBetweenLine",5d);
 		configMap.put("barline",barlineConfig);
 		HashMap<String,Double> gNotationConfig = new HashMap<>();
-		gNotationConfig.put("notationHeight",-50d);
+		gNotationConfig.put("notationHeight",-30d);
 		gNotationConfig.put("notationGap",15d);
+		gNotationConfig.put("thickness",5d);
 		configMap.put("gNotation",gNotationConfig);
 
 	}

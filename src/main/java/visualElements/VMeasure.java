@@ -76,9 +76,9 @@ public class VMeasure extends VElement implements VConfigAble {
 			}else {
 				notation.addNote(note.number, type);
 			}
-			durationCounter += (1/VUtility.NoteType2Integer(type));
+			durationCounter += (1d/VUtility.NoteType2Integer(type));
 
-			if (durationCounter>=0.25){
+			if (durationCounter>=0.5){
 				durationCounter = 0;
 				Notations.add(notation);
 				if (instrument.equals("TAB")){
