@@ -1,7 +1,5 @@
 package visualElements;
 
-import javafx.scene.Group;
-
 import java.util.HashMap;
 
 public class VSign extends VElement implements VConfigAble{
@@ -22,18 +20,4 @@ public class VSign extends VElement implements VConfigAble{
 
 	}
 
-	@Override
-	public Group getShapeGroups() {
-		return null;
-	}
-
-	@Override
-	public double getH() {
-		return 0;
-	}
-
-	@Override
-	public double getW() {
-		return 0;
-	}
 }

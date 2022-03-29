@@ -6,6 +6,8 @@ import javafx.scene.input.MouseEvent;
 
 public class VElement {
 	public Group group = new Group();
+	double W = 0;
+	double H = 0;
 	public VElement(){
 		group.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
@@ -35,10 +37,10 @@ public class VElement {
 		return null;
 	}
 	public double getH(){
-		return 0;
+		return W;
 	}
 	public double getW(){
-		return 0;
+		return H;
 	}
 	public VElement getCurrentElement(){
 		return this;

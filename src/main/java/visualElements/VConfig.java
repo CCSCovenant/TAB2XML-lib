@@ -16,7 +16,7 @@ public class VConfig {
 		globalConfig.put("MarginX",20d);
 		globalConfig.put("MarginY",20d);
 		globalConfig.put("Step",5d);
-		globalConfig.put("GapBetweenLines",10d);
+		globalConfig.put("GapBetweenLines",5d);
 		globalConfig.put("MinNoteDistance",10d);
 		globalConfig.put("MeasureDistance",150d);
 

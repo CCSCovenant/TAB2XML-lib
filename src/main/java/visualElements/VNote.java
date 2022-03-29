@@ -1,6 +1,5 @@
 package visualElements;
 
-import javafx.scene.Group;
 import visualElements.Notations.VINotation;
 
 import java.util.ArrayList;
@@ -10,8 +9,6 @@ import java.util.List;
 public class VNote extends VElement implements VConfigAble {
 	int number;
 	int noteHeadCount = 1;
-	double H = 0;
-	double W = 0;
 	double maxVPos = 0;
 	HashMap<String,Double> configMap = VConfig.getInstance().getDefaultConfigMap("note");
 
@@ -37,21 +34,6 @@ public class VNote extends VElement implements VConfigAble {
 	@Override
 	public void setHighLight(boolean states) {
 
-	}
-
-	@Override
-	public Group getShapeGroups() {
-		return group;
-	}
-
-	@Override
-	public double getH() {
-		return H;
-	}
-
-	@Override
-	public double getW() {
-		return W;
 	}
 
 	public void alignment(){

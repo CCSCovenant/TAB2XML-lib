@@ -25,8 +25,6 @@ public class VMeasure extends VElement implements VConfigAble {
 
 
 	String instrument = "";
-	double W = 0;
-	double H = 0;
 	double gapCount = 0;
 
 	public VMeasure(Measure measure,String instrument,List<Integer> staffInfo){
@@ -114,13 +112,12 @@ public class VMeasure extends VElement implements VConfigAble {
 		int relative = 3;
 		//TODO set relative to default rest position. calculate based on the staffline.
 		if (note.getRest()!=null){
-
+			noteHead = new VNoteHead(VUtility.getDrumAssetName(note),0,relative);
 		}else {
 			if (instrument.equals("TAB")){
 				if (note.getNotations()!=null&&note.getNotations().getTechnical()!=null){
-					relative = note.getNotations().getTechnical().getString()*2; // since tab staff is double-space\
+					relative = note.getNotations().getTechnical().getString()*3; // since tab staff is double-space\
 					noteHead = new VNoteHead(note.getNotations().getTechnical().getFret(),dots,relative);
-
 				}
 			}else {
 				String result = VUtility.getDrumAssetName(note);
@@ -151,16 +148,6 @@ public class VMeasure extends VElement implements VConfigAble {
 	@Override
 	public Group getShapeGroups() {
 		return group;
-	}
-
-	@Override
-	public double getH() {
-		return H;
-	}
-
-	@Override
-	public double getW() {
-		return W;
 	}
 
 	public void setNumber(int number) {

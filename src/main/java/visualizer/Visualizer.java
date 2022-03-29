@@ -30,7 +30,7 @@ public class Visualizer implements VConfigAble {
 		this.score = score;
 		VMeasures = new ArrayList<>();
 		configMap = VConfig.getInstance().getDefaultConfigMap("global");
-		setUpInitStaffLine(5,1);
+		setUpInitStaffLine(5,2);
 		initMeasures();
 		alignment();
 		initGroups();
@@ -48,10 +48,10 @@ public class Visualizer implements VConfigAble {
 				if (measure.getAttributes()!=null&&measure.getAttributes().getStaffDetails()!=null){
 					if (measure.getAttributes().getClef()!=null){
 						if (measure.getAttributes().getClef().getSign().equals("TAB")){
-							setUpInitStaffLine(measure.getAttributes().getClef().getLine(),2);
+							setUpInitStaffLine(measure.getAttributes().getStaffDetails().getStaffLines(),3);
 							staffType = "TAB";
 						}else {
-							setUpInitStaffLine(measure.getAttributes().getClef().getLine(),1);
+							setUpInitStaffLine(measure.getAttributes().getStaffDetails().getStaffLines(),2);
 							staffType = "percussion";
 						}
 					}

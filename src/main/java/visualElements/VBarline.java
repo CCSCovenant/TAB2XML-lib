@@ -59,10 +59,6 @@ public class VBarline extends VElement implements VConfigAble{
 		return group;
 	}
 
-	@Override
-	public double getH() {
-		return 0;
-	}
 
 	@Override
 	public double getW() {

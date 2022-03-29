@@ -1,10 +1,12 @@
 package visualElements;
 
-import javafx.scene.Group;
-import javafx.scene.control.Label;
+import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import visualizer.ImageResourceHandler;
 
 import java.util.ArrayList;
@@ -13,14 +15,13 @@ import java.util.List;
 
 public class VNoteHead extends VElement implements VConfigAble{
 	ImageView imageView = new ImageView();
-	Label label = new Label();
+	Text text = new Text();
 	ImageResourceHandler imageResourceHandler = ImageResourceHandler.getInstance();
 	List<VDot> dots = new ArrayList<>();
+	Rectangle background = new Rectangle();
 	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("noteHead");
 	int relative = 0;
 	double step = VConfig.getInstance().getGlobalConfig().get("Step");
-	double H = 0;
-	double W = 0;
 	public VNoteHead(String AssetName,int dots,int relative){
 		this.relative = relative;
 		imageView.setImage(new Image(imageResourceHandler.getImage(AssetName)));
@@ -31,9 +32,17 @@ public class VNoteHead extends VElement implements VConfigAble{
 	}
 	public VNoteHead(int fret,int dots,int relative){
 		this.relative = relative-2; // double-spaced for tab
- 		label.setText(fret+"");
-		label.setFont(new Font(config.get("defaultSize")*config.get("scale")));
-		group.getChildren().add(label);
+
+		text.setText(fret+"");
+		text.setFont(new Font(config.get("defaultSize")*config.get("scale")));
+		Bounds bounds = text.getBoundsInLocal();
+		background.setWidth(bounds.getWidth());
+		background.setHeight(bounds.getHeight());
+		background.setFill(Color.WHITESMOKE);
+		background.setLayoutY(-bounds.getHeight());
+		group.getChildren().add(background);
+		group.getChildren().add(text);
+
 		initDots(dots);
 	}
 
@@ -49,20 +58,6 @@ public class VNoteHead extends VElement implements VConfigAble{
 		}
 	}
 
-	@Override
-	public Group getShapeGroups() {
-		return group;
-	}
-
-	@Override
-	public double getH() {
-		return H;
-	}
-
-	@Override
-	public double getW() {
-		return W;
-	}
 
 	public void initDots(int number){
 		for (int i = 0; i < number; i++) {

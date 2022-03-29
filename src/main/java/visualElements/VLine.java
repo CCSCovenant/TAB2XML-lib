@@ -12,10 +12,9 @@ public class VLine extends VElement{
 	double MarginX = VConfig.getInstance().getGlobalConfig().get("MarginX");
 	double PageW = VConfig.getInstance().getGlobalConfig().get("PageX");
 	double minGap = VConfig.getInstance().getGlobalConfig().get("MinNoteDistance");
-	double W = MarginX;
 	double gapCount = 0;
 	public VLine(){
-
+		W = MarginX;
 	}
 
 
