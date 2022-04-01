@@ -2,6 +2,7 @@ package visualElements;
 
 import javafx.scene.shape.Line;
 import models.measure.Measure;
+import models.measure.attributes.Time;
 import models.measure.barline.BarLine;
 import models.measure.note.Note;
 import visualElements.Notations.VDrumGNotation;
@@ -16,6 +17,7 @@ public class VMeasure extends VElement implements VConfigAble {
 	private int number;
 	private List<VNote> Notes;
 	private List<VGNotation> Notations = new ArrayList<>();
+	private VClef clef;
 	private List<VSign> Signs = new ArrayList<>();
 	private List<Line> staffLines = new ArrayList<>();
 	private List<VBarline> barlines = new ArrayList<>();
@@ -24,9 +26,17 @@ public class VMeasure extends VElement implements VConfigAble {
 
 	String instrument = "";
 	double gapCount = 0;
-
+	boolean showClef = false;
 	public VMeasure(Measure measure,String instrument,List<Integer> staffInfo){
+		if (measure.getAttributes().getTime()!=null){
+			Time time = measure.getAttributes().getTime();
+			VTime vTime = new VTime(time.getBeats(),time.getBeatType());
+			Signs.add(vTime);
+			group.getChildren().add(vTime.getShapeGroups());
+		}
 		this.instrument = instrument;
+		clef = new VClef(instrument);
+		group.getChildren().add(clef.getShapeGroups());
 		int i = 0;
 		Notes = new ArrayList<>();
 		initStaffLines(staffInfo);
@@ -196,6 +206,9 @@ public class VMeasure extends VElement implements VConfigAble {
 
 		}
 	}
+	public void setShowClef(boolean states){
+		this.showClef = states;
+	}
 	public void initBarlines(List<BarLine> barLine){
 		barlines = new ArrayList<>();
 		double length = staffLines.get(staffLines.size()-1).getLayoutY();
@@ -244,6 +257,13 @@ public class VMeasure extends VElement implements VConfigAble {
 		W += config.get("gapBeforeMeasure");
 		gapCount = 0;
 		double gapBetweenElement = config.get("gapBetweenElement");
+		if (showClef){
+			clef.alignment();
+			clef.getShapeGroups().setLayoutX(W);
+			W += clef.getW();
+			addGapBetweenElements(gapBetweenElement);
+		}
+		clef.setVisible(showClef);
 		for (VSign sign:Signs){
 			sign.alignment();
 			sign.getShapeGroups().setLayoutX(W);
