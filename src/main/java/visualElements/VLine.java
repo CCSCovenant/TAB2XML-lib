@@ -30,36 +30,27 @@ public class VLine extends VElement{
 			if (W+newMeasure.getW()>PageW-MarginX){
 				if (measures.size()==0){
 					//TODO give user a warning that this line is squeezed under current setting. please adjust the setting.
-					double idealLengthDiff = PageW-MarginX-W;
-					double ideaGapDiff = idealLengthDiff/gapCount;
-					//find the gap that fit into the page
-					for (VMeasure measure:measures){
-						measure.updateConfig("gapBetweenElement",minGap+ideaGapDiff);
-					}
 					measures.add(newMeasure);
-					alignment(); // update measure with new config.
-					addMeasure2Group();
 					return true;
 				}else {
-					double idealLengthDiff = PageW-MarginX-W;
-					double ideaGapDiff = idealLengthDiff/gapCount;
-					//find the gap that fit into the page
-					for (VMeasure measure:measures){
-						measure.updateConfig("gapBetweenElement",minGap+ideaGapDiff);
-					}
-					alignment(); // update measure with new config.
-					addMeasure2Group();
 					return false;
 				}
 			}else {
 				measures.add(newMeasure);
 				gapCount += newMeasure.getGapCount();
 				W += newMeasure.getW();
+				group.getChildren().add(newMeasure.getShapeGroups());
 				return true;
 			}
 
 	}
 	public void alignment(){
+		double idealLengthDiff = PageW-MarginX-W;
+		double ideaGapDiff = idealLengthDiff/gapCount;
+		//find the gap that fit into the page
+		for (VMeasure measure:measures){
+			measure.updateConfig("gapBetweenElement",measure.getConfigAbleList().get("gapBetweenElement")+ideaGapDiff);
+		}
 		W = 0;
 		for (int i=1;i<measures.size();i++){
 			measures.get(i-1).alignment();
@@ -69,9 +60,5 @@ public class VLine extends VElement{
 		measures.get(measures.size()-1).alignment();
 		W += measures.get(measures.size()-1).getW();
 	}
-	public void addMeasure2Group(){
-		for (VMeasure measure:measures){
-			group.getChildren().add(measure.getShapeGroups());
-		}
-	}
+
 }

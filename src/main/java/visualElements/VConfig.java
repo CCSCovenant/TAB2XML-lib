@@ -1,10 +1,12 @@
 package visualElements;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class VConfig {
 	private static VConfig config = new VConfig();;
 	public HashMap<String,HashMap<String,Double>>configMap = new HashMap<>();
+	public List<Integer> staffDetail;
 	private VConfig(){
 		initDefaultConfig();
 	}
@@ -65,5 +67,13 @@ public class VConfig {
 	}
 	public HashMap<String,Double> getGlobalConfig(){
 		return configMap.get("global");
+	}
+
+	public List<Integer> getStaffDetail() {
+		return staffDetail;
+	}
+
+	public void setStaffDetail(List<Integer> staffDetail) {
+		this.staffDetail = staffDetail;
 	}
 }

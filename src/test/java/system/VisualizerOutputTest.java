@@ -38,7 +38,6 @@ class VisualizerOutputTest {
 			Score score = new Score(inputEdit.toString());
 			Path outPath = outDirPath.resolve(input.getName()+".pdf");
 			File outFile = outPath.toFile();
-			System.out.println(outFile.getPath());
 			Visualizer visualizer = new Visualizer(score);
 
 		}

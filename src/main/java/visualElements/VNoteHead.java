@@ -76,7 +76,6 @@ public class VNoteHead extends VElement implements VConfigAble{
 				W += dots.get(i).getW();
 			}
 		}
-		System.out.println(W);
 	}
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {

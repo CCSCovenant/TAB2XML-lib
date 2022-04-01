@@ -18,14 +18,7 @@ public class VUtility {
 		return (centerStep-stepAdjusted)-(7*(octave-centerOctave));
 	}
 	// C4 A B3 C D2 E F1 G A0 B C D E F G
-	public static double HSizeCheck(){
 
-		return 0;
-	}
-	public static double VSizeCheck(){
-
-		return 0;
-	}
 
 	public static String getDrumAssetName(Note note){
 		if (note.getRest()!=null){

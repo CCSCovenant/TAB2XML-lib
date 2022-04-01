@@ -1,4 +1,4 @@
-package visualElements.Signs;
+package visualElements;
 
 public class VKey extends VSign{
 }

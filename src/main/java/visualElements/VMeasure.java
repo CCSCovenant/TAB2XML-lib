@@ -7,7 +7,6 @@ import models.measure.note.Note;
 import visualElements.Notations.VDrumGNotation;
 import visualElements.Notations.VGNotation;
 import visualElements.Notations.VGuitarGNotation;
-import visualElements.Signs.VSign;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -158,7 +157,7 @@ public class VMeasure extends VElement implements VConfigAble {
 	}
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
-		return null;
+		return config;
 	}
 
 	@Override

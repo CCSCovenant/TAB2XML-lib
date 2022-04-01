@@ -23,7 +23,6 @@ public class Visualizer implements VConfigAble {
 	ArrayList<Group> groups;
 	ArrayList<VPage> pages;
 	HashMap<String, Double> configMap;
-	List<Integer> staffDetail;
 	List<VMeasure> VMeasures;
 	String staffType;
  	public Visualizer(Score score) throws TXMLException {
@@ -75,7 +74,6 @@ public class Visualizer implements VConfigAble {
 					tmpPage = new VPage();
 					tmpPage.addNewLine(tmpLine);
 				}
-				tmpLine.alignment();
 				tmpLine = new VLine();
 				tmpLine.addNewMeasure(measure);
 			}
@@ -96,17 +94,18 @@ public class Visualizer implements VConfigAble {
 		 }
 	}
 	public VMeasure getVMeasure(Measure measure){
-		VMeasure vMeasure = new VMeasure(measure,staffType,staffDetail);
+		VMeasure vMeasure = new VMeasure(measure,staffType,VConfig.getInstance().getStaffDetail());
 		return vMeasure;
 	}
 
 
 
 	public void setUpInitStaffLine(int lines,int gap){
-		staffDetail = new ArrayList<>();
+		List<Integer> list= new ArrayList<>();
 		for (int i=0;i<lines*gap;i+=gap){
-			 staffDetail.add(i);
+			 list.add(i);
 		 }
+		VConfig.getInstance().setStaffDetail(list);
 	}
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
