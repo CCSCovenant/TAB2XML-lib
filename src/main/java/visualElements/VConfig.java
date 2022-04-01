@@ -7,6 +7,7 @@ public class VConfig {
 	private static VConfig config = new VConfig();;
 	public HashMap<String,HashMap<String,Double>>configMap = new HashMap<>();
 	public List<Integer> staffDetail;
+	public String instrument;
 	private VConfig(){
 		initDefaultConfig();
 	}
@@ -25,7 +26,7 @@ public class VConfig {
 
 		HashMap<String,Double> measureConfig = new HashMap<>();
 		measureConfig.put("noteDistance",10d);
-		measureConfig.put("gapBeforeMeasure",10d);
+		measureConfig.put("gapBeforeMeasure",20d);
 		measureConfig.put("gapBetweenElement",globalConfig.get("MinNoteDistance"));
 		configMap.put("measure",measureConfig);
 		HashMap<String,Double> dotConfig = new HashMap<>();
@@ -75,5 +76,13 @@ public class VConfig {
 
 	public void setStaffDetail(List<Integer> staffDetail) {
 		this.staffDetail = staffDetail;
+	}
+
+	public void setInstrument(String instrument) {
+		this.instrument = instrument;
+	}
+
+	public String getInstrument() {
+		return instrument;
 	}
 }

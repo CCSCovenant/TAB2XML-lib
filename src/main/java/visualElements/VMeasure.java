@@ -17,7 +17,6 @@ public class VMeasure extends VElement implements VConfigAble {
 	private int number;
 	private List<VNote> Notes;
 	private List<VGNotation> Notations = new ArrayList<>();
-	private VClef clef;
 	private List<VSign> Signs = new ArrayList<>();
 	private List<Line> staffLines = new ArrayList<>();
 	private List<VBarline> barlines = new ArrayList<>();
@@ -35,8 +34,6 @@ public class VMeasure extends VElement implements VConfigAble {
 			group.getChildren().add(vTime.getShapeGroups());
 		}
 		this.instrument = instrument;
-		clef = new VClef(instrument);
-		group.getChildren().add(clef.getShapeGroups());
 		int i = 0;
 		Notes = new ArrayList<>();
 		initStaffLines(staffInfo);
@@ -203,7 +200,6 @@ public class VMeasure extends VElement implements VConfigAble {
 	public void updateStaffLine(double W){
 		for (Line line:staffLines){
 			line.setEndX(W);
-
 		}
 	}
 	public void setShowClef(boolean states){
@@ -257,13 +253,6 @@ public class VMeasure extends VElement implements VConfigAble {
 		W += config.get("gapBeforeMeasure");
 		gapCount = 0;
 		double gapBetweenElement = config.get("gapBetweenElement");
-		if (showClef){
-			clef.alignment();
-			clef.getShapeGroups().setLayoutX(W);
-			W += clef.getW();
-			addGapBetweenElements(gapBetweenElement);
-		}
-		clef.setVisible(showClef);
 		for (VSign sign:Signs){
 			sign.alignment();
 			sign.getShapeGroups().setLayoutX(W);

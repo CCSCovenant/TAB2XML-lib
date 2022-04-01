@@ -42,15 +42,18 @@ public class Visualizer implements VConfigAble {
 	public void initMeasures() throws TXMLException{
 		ScorePartwise scorePartwise = score.getModel();
 		staffType = "percussion";
+		VConfig.getInstance().setInstrument(staffType);
 		for (Part part:scorePartwise.getParts()){
 			for (Measure measure:part.getMeasures()){
 				if (measure.getAttributes()!=null&&measure.getAttributes().getStaffDetails()!=null){
 					if (measure.getAttributes().getClef()!=null){
 						if (measure.getAttributes().getClef().getSign().equals("TAB")){
 							setUpInitStaffLine(measure.getAttributes().getStaffDetails().getStaffLines(),3);
+							VConfig.getInstance().setInstrument(staffType);
 							staffType = "TAB";
 						}else {
 							setUpInitStaffLine(measure.getAttributes().getStaffDetails().getStaffLines(),2);
+							VConfig.getInstance().setInstrument(staffType);
 							staffType = "percussion";
 						}
 					}
@@ -62,7 +65,7 @@ public class Visualizer implements VConfigAble {
 	public void alignment() throws TXMLException {
 		pages = new ArrayList<>();
 		VPage tmpPage = new VPage();
-		VLine tmpLine = new VLine();
+		VLine tmpLine = new VLine(staffType);
 		for (VMeasure measure:VMeasures){
 			if (tmpLine.addNewMeasure(measure)){ // if this measure can fit into this line, do nothing
 
@@ -74,7 +77,7 @@ public class Visualizer implements VConfigAble {
 					tmpPage = new VPage();
 					tmpPage.addNewLine(tmpLine);
 				}
-				tmpLine = new VLine();
+				tmpLine = new VLine(staffType);
 				tmpLine.addNewMeasure(measure);
 			}
 		}

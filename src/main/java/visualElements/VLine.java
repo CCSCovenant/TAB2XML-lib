@@ -9,10 +9,14 @@ public class VLine extends VElement{
 	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("global");
 	double MarginX = VConfig.getInstance().getGlobalConfig().get("MarginX");
 	double PageW = VConfig.getInstance().getGlobalConfig().get("PageX");
+	VClef vClef;
 	double gapCount = 0;
-	public VLine(){
+	public VLine(String stafftype){
 		W = MarginX;
-
+		vClef = new VClef(stafftype);
+		group.getChildren().add(vClef.getShapeGroups());
+		vClef.alignment();
+		W += vClef.getW();
 	}
 
 
@@ -59,12 +63,14 @@ public class VLine extends VElement{
 		}
 		System.out.println(W);
 		W = 0;
-		for (int i=1;i<measures.size();i++){
-			measures.get(i-1).alignment();
-			W = W+measures.get(i-1).getW();
+		vClef.alignment();
+		W += vClef.getW();
+		
+		for (int i=0;i<measures.size();i++){
 			measures.get(i).getShapeGroups().setLayoutX(W);
+			measures.get(i).alignment();
+			W = W+measures.get(i).getW();
 		}
-		measures.get(measures.size()-1).alignment();
 		W += measures.get(measures.size()-1).getW();
 		System.out.println(W);
 	}

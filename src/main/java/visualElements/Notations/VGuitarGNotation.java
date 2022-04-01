@@ -33,13 +33,23 @@ public class VGuitarGNotation extends VGNotation{
 				globalHLineNum = localHline;
 				for (int j=0;j<diff;j++){
 					lineStack.push(Hlines.get(HlinePointer));
+					double startX = 0;
 					if (i>0){
-						Hlines.get(HlinePointer).setStartX((HPosition.get(i)+HPosition.get(i-1))/2);
-						Hlines.get(HlinePointer).setLayoutY(end-(lineStack.size()-1)*gap);
+						if (i<notes.size()-1){
+							if (VUtility.NoteType2Integer(types.get(i))<=VUtility.NoteType2Integer(types.get(i+1))){
+								startX = HPosition.get(i)+configMap.get("thickness")/2;
+							}else {
+								startX = (HPosition.get(i) + HPosition.get(i - 1)) / 2;
+							}
+						}else {
+							startX = (HPosition.get(i) + HPosition.get(i - 1)) / 2;
+						}
 					}else {
-						Hlines.get(HlinePointer).setStartX(HPosition.get(i)+configMap.get("thickness")/2);
-						Hlines.get(HlinePointer).setLayoutY(end-(lineStack.size()-1)*gap);
+						startX = HPosition.get(i)+configMap.get("thickness")/2;
 					}
+					Hlines.get(HlinePointer).setStartX(startX);
+
+					Hlines.get(HlinePointer).setLayoutY(end-(lineStack.size()-1)*gap);
 					HlinePointer++;
 				}
 			}else if (localHline<globalHLineNum){
@@ -47,7 +57,11 @@ public class VGuitarGNotation extends VGNotation{
 				globalHLineNum = localHline;
 				for (int j=0;j<diff;j++){
 					Line line = lineStack.pop();
-					line.setEndX(HPosition.get(i-1)-configMap.get("thickness")/2);
+					if (i==1) {
+						line.setEndX((HPosition.get(i) + HPosition.get(i - 1)) / 2);
+					}else {
+						line.setEndX(HPosition.get(i-1)-configMap.get("thickness")/2);
+					}
 				}
 			}
 		}
