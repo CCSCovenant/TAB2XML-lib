@@ -38,16 +38,6 @@ public class VPage extends VElement{
 		return group;
 	}
 
-	@Override
-	public double getH() {
-		return 0;
-	}
-
-	@Override
-	public double getW() {
-		return 0;
-	}
-
 
 	public boolean addNewLine(VLine line){
 		if (H+measureDistance>PageY-MarginY){

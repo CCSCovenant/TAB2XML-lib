@@ -25,8 +25,8 @@ public class VNoteHead extends VElement implements VConfigAble{
 	public VNoteHead(String AssetName,int dots,int relative){
 		this.relative = relative;
 		imageView.setImage(new Image(imageResourceHandler.getImage(AssetName)));
-		imageView.setFitHeight(config.get("defaultSize")*config.get("scale"));
-		imageView.setFitWidth(config.get("defaultSize")*config.get("scale"));
+		imageView.setFitHeight(step*2);
+		imageView.setFitWidth(step*2);
 		group.getChildren().add(imageView);
 		initDots(dots);
 	}
@@ -34,7 +34,7 @@ public class VNoteHead extends VElement implements VConfigAble{
 		this.relative = relative-2; // double-spaced for tab
 
 		text.setText(fret+"");
-		text.setFont(new Font(config.get("defaultSize")*config.get("scale")));
+		text.setFont(new Font(step*2));
 		Bounds bounds = text.getBoundsInLocal();
 		background.setWidth(bounds.getWidth());
 		background.setHeight(bounds.getHeight());
@@ -45,7 +45,9 @@ public class VNoteHead extends VElement implements VConfigAble{
 
 		initDots(dots);
 	}
+	public void setFlip(boolean states){
 
+	}
 	@Override
 	public void setHighLight(boolean states) {
 
@@ -67,14 +69,14 @@ public class VNoteHead extends VElement implements VConfigAble{
 	public void alignment(){
 		step = VConfig.getInstance().getGlobalConfig().get("Step");
 		group.setLayoutY(relative*step);
-		W = config.get("defaultSize")*config.get("scale");
+		W = step*2;
 		if (dots.size()>0){
 			for (int i = 0; i < dots.size(); i++) {
 				dots.get(i).getShapeGroups().setLayoutX(W);
 				W += dots.get(i).getW();
 			}
 		}
-
+		System.out.println(W);
 	}
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {

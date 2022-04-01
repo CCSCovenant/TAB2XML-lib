@@ -1,6 +1,5 @@
 package visualElements;
 
-import javafx.scene.Group;
 import javafx.scene.shape.Line;
 import models.measure.Measure;
 import models.measure.barline.BarLine;
@@ -52,17 +51,17 @@ public class VMeasure extends VElement implements VConfigAble {
 			}
 		}
 		initNoteGroups();
-		initGNotations();
+		if (instrument.equals("TAB")){
+			initGuitarNotations();
+		}else {
+			initDrumNotations();
+		}
 	}
 
-	public void initGNotations(){
+	public void initDrumNotations(){
 		double durationCounter = 0;
 		VGNotation notation;
-		if (instrument.equals("TAB")){
-			notation = new VGuitarGNotation();
-		}else {
-			notation = new VDrumGNotation();
-		}
+		notation = new VDrumGNotation();
 
 		for (VNote note:Notes){
 			String type = "quarter";
@@ -79,11 +78,38 @@ public class VMeasure extends VElement implements VConfigAble {
 			if (durationCounter>=0.5){
 				durationCounter = 0;
 				Notations.add(notation);
-				if (instrument.equals("TAB")){
-					notation = new VGuitarGNotation();
-				}else {
-					notation = new VDrumGNotation();
-				}
+				notation = new VDrumGNotation();
+			}
+		}
+
+		if (notation.getSize()>0){
+			Notations.add(notation);
+		}
+		for (VGNotation notationf:Notations){
+			notationf.initElements();
+			group.getChildren().add(notationf.getShapeGroups());
+		}
+	}
+
+	public void initGuitarNotations(){
+		double durationCounter = 0;
+		VGNotation notation;
+		notation = new VGuitarGNotation();
+
+		for (VNote note:Notes){
+			String type = "quarter";
+			if (note.type!=null){
+				type = note.type;
+			}
+
+			notation.addNote(note.number, type);
+
+			durationCounter += (1d/VUtility.NoteType2Integer(type));
+
+			if (durationCounter>=0.5){
+				durationCounter = 0;
+				Notations.add(notation);
+				notation = new VGuitarGNotation();
 			}
 		}
 
@@ -137,17 +163,14 @@ public class VMeasure extends VElement implements VConfigAble {
 
 	@Override
 	public void updateConfig(String id, double value) {
-
+		if (config.containsKey(id)){
+			config.put(id,value);
+		}
 	}
 
 	@Override
 	public void setHighLight(boolean states) {
 
-	}
-
-	@Override
-	public Group getShapeGroups() {
-		return group;
 	}
 
 	public void setNumber(int number) {
@@ -162,7 +185,7 @@ public class VMeasure extends VElement implements VConfigAble {
 		//staffInfo contain offset of each staff
 		for (Integer i:staffInfo){
 			Line line = new Line(0,0,0,0);
-			double gap = VConfig.getInstance().getGlobalConfig().get("GapBetweenLines");
+			double gap = VConfig.getInstance().getGlobalConfig().get("Step");
 			line.setLayoutY(i*gap);//
 			staffLines.add(line);
 			group.getChildren().add(line);
@@ -201,8 +224,8 @@ public class VMeasure extends VElement implements VConfigAble {
 		for (VGNotation notation:Notations){
 			List<Double> HPosition = new ArrayList<>();
 			for (Integer i:notation.getNotes()){
-				HPosition.add(Notes.get(i).getShapeGroups().getLayoutX()+Notes.get(i).getW());
-				System.out.println(Notes.get(i).getW());
+				double offset = VConfig.getInstance().getGlobalConfig().get("Step")*2;
+				HPosition.add(Notes.get(i).getShapeGroups().getLayoutX()+offset);
 			}
 			//H position for each note
 			List<Double> VPosition = new ArrayList<>();
@@ -213,6 +236,10 @@ public class VMeasure extends VElement implements VConfigAble {
 			//V position for the most bottom note
 		}
 	}
+	public void addGapBetweenElements(double width){
+		W += width;
+		gapCount++;
+	}
 	public void alignment(){
 		W = 0;
 		W += config.get("gapBeforeMeasure");
@@ -222,18 +249,16 @@ public class VMeasure extends VElement implements VConfigAble {
 			sign.alignment();
 			sign.getShapeGroups().setLayoutX(W);
 			W += sign.getW();
-			W += gapBetweenElement;
-			gapCount++;
+			addGapBetweenElements(gapBetweenElement);
 		}
 		for (VNote note:Notes){
 			note.alignment();
 			note.getShapeGroups().setLayoutX(W);
 			W += note.getW();
-			W += gapBetweenElement;
-			gapCount++;
+			addGapBetweenElements(gapBetweenElement);
 		}
+		addGapBetweenElements(gapBetweenElement);
 		//update the staffline.
-		W += gapBetweenElement;
 		updateStaffLine(W);
 		alignmentBarlines();
 		alignmentNotations();

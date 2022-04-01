@@ -16,8 +16,7 @@ public class VConfig {
 		globalConfig.put("MarginX",20d);
 		globalConfig.put("MarginY",20d);
 		globalConfig.put("Step",5d);
-		globalConfig.put("GapBetweenLines",5d);
-		globalConfig.put("MinNoteDistance",10d);
+		globalConfig.put("MinNoteDistance",20d);
 		globalConfig.put("MeasureDistance",150d);
 
 		configMap.put("global",globalConfig);
@@ -25,7 +24,7 @@ public class VConfig {
 		HashMap<String,Double> measureConfig = new HashMap<>();
 		measureConfig.put("noteDistance",10d);
 		measureConfig.put("gapBeforeMeasure",10d);
-		measureConfig.put("gapBetweenElement",20d);
+		measureConfig.put("gapBetweenElement",globalConfig.get("MinNoteDistance"));
 		configMap.put("measure",measureConfig);
 		HashMap<String,Double> dotConfig = new HashMap<>();
 		configMap.put("dot",dotConfig);
@@ -41,8 +40,12 @@ public class VConfig {
 		barlineConfig.put("distanceBetweenLine",5d);
 		configMap.put("barline",barlineConfig);
 		HashMap<String,Double> gNotationConfig = new HashMap<>();
-		gNotationConfig.put("notationHeight",-30d);
-		gNotationConfig.put("notationGap",15d);
+		gNotationConfig.put("GuitarNotationStartHeight",100d);
+		gNotationConfig.put("GuitarNotationEndHeight",120d);
+
+		gNotationConfig.put("DrumNotationHeight",-30d);
+
+		gNotationConfig.put("notationGap",10d);
 		gNotationConfig.put("thickness",5d);
 		configMap.put("gNotation",gNotationConfig);
 

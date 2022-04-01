@@ -1,7 +1,5 @@
 package visualElements;
 
-import javafx.scene.Group;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -23,22 +21,6 @@ public class VLine extends VElement{
 
 	}
 
-	@Override
-	public Group getShapeGroups() {
-		return group;
-	}
-
-	@Override
-	public double getH() {
-		return 0;
-	}
-
-	@Override
-	public double getW() {
-		return 0;
-	}
-
-
 	public boolean addNewMeasure(VMeasure newMeasure){
 		// calculate if new Measure's length will exceed the width of a page
 		// if new measure is exceed the page width: return false and adjust rest of measure in order to fit in the page
@@ -54,8 +36,9 @@ public class VLine extends VElement{
 					for (VMeasure measure:measures){
 						measure.updateConfig("gapBetweenElement",minGap+ideaGapDiff);
 					}
-					alignment(); // update measure with new config.
 					measures.add(newMeasure);
+					alignment(); // update measure with new config.
+					addMeasure2Group();
 					return true;
 				}else {
 					double idealLengthDiff = PageW-MarginX-W;
@@ -65,11 +48,13 @@ public class VLine extends VElement{
 						measure.updateConfig("gapBetweenElement",minGap+ideaGapDiff);
 					}
 					alignment(); // update measure with new config.
+					addMeasure2Group();
 					return false;
 				}
 			}else {
 				measures.add(newMeasure);
 				gapCount += newMeasure.getGapCount();
+				W += newMeasure.getW();
 				return true;
 			}
 
@@ -80,10 +65,13 @@ public class VLine extends VElement{
 			measures.get(i-1).alignment();
 			W = W+measures.get(i-1).getW();
 			measures.get(i).getShapeGroups().setLayoutX(W);
-			group.getChildren().add(measures.get(i-1).getShapeGroups());
-
 		}
 		measures.get(measures.size()-1).alignment();
-		group.getChildren().add(measures.get(measures.size()-1).getShapeGroups());
+		W += measures.get(measures.size()-1).getW();
+	}
+	public void addMeasure2Group(){
+		for (VMeasure measure:measures){
+			group.getChildren().add(measure.getShapeGroups());
+		}
 	}
 }

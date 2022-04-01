@@ -5,6 +5,7 @@ import javafx.scene.shape.Line;
 import visualElements.VConfig;
 import visualElements.VConfigAble;
 import visualElements.VElement;
+import visualElements.VUtility;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -59,7 +60,29 @@ public class VGNotation extends VElement implements VConfigAble {
 	public void updateConfig(String id, double value) {
 
 	}
-	public void initElements() {
+	public void initElements(){
+		int globalHLineNum = 0;
+		for (int i =0;i<notes.size();i++){
+			Vlines.add(new Line());
+			int localHline = (int)(Math.log(VUtility.NoteType2Integer(types.get(i)))/Math.log(2))-2;
+			if (localHline>globalHLineNum){
+				int diff =  localHline - globalHLineNum;
+				globalHLineNum = localHline;
+				for (int j=0;j<diff;j++){
+					Line line = new Line();
+					line.setStrokeWidth(configMap.get("thickness"));
+					Hlines.add(line);
+				}
+			}else if (localHline<globalHLineNum){
+				globalHLineNum = localHline;
+			}
+		}
+		for (Line line:Vlines){
+			group.getChildren().add(line);
+		}
+		for (Line line:Hlines){
+			group.getChildren().add(line);
+		}
 	}
 
 	public void alignment(List<Double> HPosition,List<Double> VPosition){

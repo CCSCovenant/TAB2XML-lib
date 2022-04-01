@@ -34,13 +34,13 @@ public class VElement {
 
 	}
 	public Group getShapeGroups(){
-		return null;
+		return group;
 	}
 	public double getH(){
-		return W;
+		return H;
 	}
 	public double getW(){
-		return H;
+		return W;
 	}
 	public VElement getCurrentElement(){
 		return this;
