@@ -4,6 +4,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -19,11 +20,18 @@ public class VNoteHead extends VElement implements VConfigAble{
 	ImageResourceHandler imageResourceHandler = ImageResourceHandler.getInstance();
 	List<VDot> dots = new ArrayList<>();
 	Rectangle background = new Rectangle();
+	Line line = new Line();
 	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("noteHead");
 	int relative = 0;
 	double step = VConfig.getInstance().getGlobalConfig().get("Step");
 	public VNoteHead(String AssetName,int dots,int relative){
 		this.relative = relative;
+		List<Integer> staff = VConfig.getInstance().getStaffDetail();
+		if (relative<staff.get(0)||relative>staff.get(staff.size()-1)){
+			if (Math.abs(relative-staff.get(0))%2==0){
+				group.getChildren().add(line);
+			}
+		}
 		imageView.setImage(new Image(imageResourceHandler.getImage(AssetName)));
 		imageView.setFitHeight(step*2);
 		imageView.setFitWidth(step*2);
@@ -64,15 +72,21 @@ public class VNoteHead extends VElement implements VConfigAble{
 	public void initDots(int number){
 		for (int i = 0; i < number; i++) {
 			dots.add(new VDot());
+			group.getChildren().add(dots.get(i).getShapeGroups());
 		}
 	}
 	public void alignment(){
 		step = VConfig.getInstance().getGlobalConfig().get("Step");
 		group.setLayoutY(relative*step);
 		W = step*2;
+		line.setLayoutY(step);
+		line.setEndX(W);
+		double dotGap = config.get("dotGap");
 		if (dots.size()>0){
 			for (int i = 0; i < dots.size(); i++) {
+				W += dotGap;
 				dots.get(i).getShapeGroups().setLayoutX(W);
+				dots.get(i).getShapeGroups().setLayoutY(step-dots.size()/2);
 				W += dots.get(i).getW();
 			}
 		}

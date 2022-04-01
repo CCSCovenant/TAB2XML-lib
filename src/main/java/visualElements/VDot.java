@@ -10,6 +10,7 @@ public class VDot extends VElement implements VConfigAble{
 	Circle circle = new Circle();
 	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("dot");
 	public VDot(){
+		circle.setRadius(config.get("size"));
 		group.getChildren().add(circle);
 	}
 
@@ -46,13 +47,7 @@ public class VDot extends VElement implements VConfigAble{
 		return group;
 	}
 
-	@Override
-	public double getH() {
-		return circle.getRadius()*2;
-	}
-
-	@Override
-	public double getW() {
-		return config.get("gap_with_last_element")+circle.getRadius()*2;
+	public void alignment(){
+		W = circle.getRadius()*2;
 	}
 }

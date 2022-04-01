@@ -31,13 +31,14 @@ public class VConfig {
 		configMap.put("measure",measureConfig);
 		HashMap<String,Double> dotConfig = new HashMap<>();
 		configMap.put("dot",dotConfig);
-		dotConfig.put("size",1d);
+		dotConfig.put("size",1.5d);
 		dotConfig.put("gap_with_last_element",5d);
 		HashMap<String,Double> noteConfig = new HashMap<>();
 		configMap.put("note",noteConfig);
 		HashMap<String,Double> noteHeadConfig = new HashMap<>();
 		noteHeadConfig.put("scale",1d);
 		noteHeadConfig.put("defaultSize",10d);
+		noteHeadConfig.put("dotGap",5d);
 		configMap.put("noteHead",noteHeadConfig);
 		HashMap<String,Double> barlineConfig = new HashMap<>();
 		barlineConfig.put("distanceBetweenLine",5d);
