@@ -42,25 +42,15 @@ public class VMeasure extends VElement implements VConfigAble {
 			boolean hasKeyNote = true;
 			for (Note note:measure.getNotesBeforeBackup()){
 				if (note.getChord()==null){
-					if (hasKeyNote) {
-						if (vNote != null) {
+						if (vNote!=null){
 							Notes.add(vNote);
 						}
 						vNote = new VNote(i);
-						hasKeyNote = false;
 						i++;
+						addNoteHead(note,vNote);
+					}else {
+						addNoteHead(note,vNote);
 					}
-					if (note.getGrace()==null){
-						hasKeyNote = true;
-					}
-					boolean isGrace = false;
-					if (note.getGrace()!=null){
-						isGrace = true;
-					}
-					addNoteHead(note,vNote,isGrace);
-				}else {
-					addNoteHead(note,vNote,false);
-				}
 			}
 			if (vNote!=null){
 				Notes.add(vNote);
@@ -88,7 +78,9 @@ public class VMeasure extends VElement implements VConfigAble {
 			if (VUtility.NoteType2Integer(type)<=2){ // do not create notation for whole and half notes.
 
 			}else {
-				notation.addNote(note.number, type);
+				if (!note.isGrace){
+					notation.addNote(note.number, type);
+				}
 			}
 			durationCounter += (1d/VUtility.NoteType2Integer(type));
 
@@ -118,8 +110,9 @@ public class VMeasure extends VElement implements VConfigAble {
 			if (note.type!=null){
 				type = note.type;
 			}
-
-			notation.addNote(note.number, type);
+			if (!note.isGrace){
+				notation.addNote(note.number, type);
+			}
 
 			durationCounter += (1d/VUtility.NoteType2Integer(type));
 
@@ -143,7 +136,7 @@ public class VMeasure extends VElement implements VConfigAble {
 			group.getChildren().add(vNote.getShapeGroups());
 		}
 	}
-	public void addNoteHead(Note note,VNote vNote,boolean grace){
+	public void addNoteHead(Note note,VNote vNote){
 		int dots = 0;
 		if (note.getDots()!=null){
 			dots = note.getDots().size();
@@ -155,22 +148,25 @@ public class VMeasure extends VElement implements VConfigAble {
 		int relative = 3;
 		//TODO set relative to default rest position. calculate based on the staffline.
 		if (note.getRest()!=null){
-			noteHead = new VNoteHead(VUtility.getDrumAssetName(note),0,relative,false);
+			noteHead = new VNoteHead(VUtility.getDrumAssetName(note),0,relative);
 		}else {
 			if (instrument.equals("TAB")){
 				if (note.getNotations()!=null&&note.getNotations().getTechnical()!=null){
 					relative = note.getNotations().getTechnical().getString()*3; // since tab staff is double-space\
-					noteHead = new VNoteHead(note.getNotations().getTechnical().getFret(),dots,relative,grace);
+					noteHead = new VNoteHead(note.getNotations().getTechnical().getFret(),dots,relative);
 				}
 			}else {
 				String result = VUtility.getDrumAssetName(note);
 				step = note.getUnpitched().getDisplayStep();
 				octave = note.getUnpitched().getDisplayOctave();
 				relative = VUtility.getRelative(step,octave);
-				noteHead = new VNoteHead(result,dots,relative,grace);
+				noteHead = new VNoteHead(result,dots,relative);
 			}
 		}
-		if (!grace){
+		if (note.getGrace()!=null){
+			vNote.setGrace(true);
+		}
+		if (note.getType()!=null) {
 			vNote.setNoteType(note.getType());
 		}
 		vNote.addNoteHead(noteHead);
@@ -247,9 +243,9 @@ public class VMeasure extends VElement implements VConfigAble {
 			for (Integer i:notation.getNotes()){
 				double offset = VConfig.getInstance().getGlobalConfig().get("Step")*2;
 				if (instrument.equals("TAB")){
-					HPosition.add(Notes.get(i).getShapeGroups().getLayoutX()+offset/2+Notes.get(i).internalOffset);
+					HPosition.add(Notes.get(i).getShapeGroups().getLayoutX()+offset/2);
 				}else {
-					HPosition.add(Notes.get(i).getShapeGroups().getLayoutX()+offset+Notes.get(i).internalOffset);
+					HPosition.add(Notes.get(i).getShapeGroups().getLayoutX()+offset);
 
 				}
 			}
@@ -271,6 +267,8 @@ public class VMeasure extends VElement implements VConfigAble {
 		W += config.get("gapBeforeMeasure");
 		gapCount = 0;
 		double gapBetweenElement = config.get("gapBetweenElement");
+		double gapBetweenGrace = config.get("gapBetweenGrace");
+
 		for (VSign sign:Signs){
 			sign.alignment();
 			sign.getShapeGroups().setLayoutX(W);
@@ -281,7 +279,11 @@ public class VMeasure extends VElement implements VConfigAble {
 			note.alignment();
 			note.getShapeGroups().setLayoutX(W);
 			W += note.getW();
-			addGapBetweenElements(gapBetweenElement);
+			if (note.isGrace){
+				W += gapBetweenGrace;
+			}else {
+				addGapBetweenElements(gapBetweenElement);
+			}
 		}
 		addGapBetweenElements(gapBetweenElement);
 		//update the staffline.

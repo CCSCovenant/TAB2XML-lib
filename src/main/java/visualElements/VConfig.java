@@ -28,6 +28,7 @@ public class VConfig {
 		measureConfig.put("noteDistance",10d);
 		measureConfig.put("gapBeforeMeasure",20d);
 		measureConfig.put("gapBetweenElement",globalConfig.get("MinNoteDistance"));
+		measureConfig.put("gapBetweenGrace",5d);
 		configMap.put("measure",measureConfig);
 		HashMap<String,Double> dotConfig = new HashMap<>();
 		configMap.put("dot",dotConfig);

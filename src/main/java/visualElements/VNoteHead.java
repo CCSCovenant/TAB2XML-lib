@@ -22,12 +22,10 @@ public class VNoteHead extends VElement implements VConfigAble{
 	Rectangle background = new Rectangle();
 	Line line = new Line();
 	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("noteHead");
-	boolean isGrace = false;
 	int relative = 0;
 	double step = VConfig.getInstance().getGlobalConfig().get("Step");
 
-	public VNoteHead(String AssetName,int dots,int relative,boolean grace){
-		this.isGrace = grace;
+	public VNoteHead(String AssetName,int dots,int relative){
 		this.relative = relative;
 		List<Integer> staff = VConfig.getInstance().getStaffDetail();
 		if (relative<staff.get(0)||relative>staff.get(staff.size()-1)){
@@ -42,8 +40,7 @@ public class VNoteHead extends VElement implements VConfigAble{
 		W = group.getBoundsInLocal().getWidth();
 		initDots(dots);
 	}
-	public VNoteHead(int fret,int dots,int relative,boolean grace){
-		this.isGrace = grace;
+	public VNoteHead(int fret,int dots,int relative){
 		this.relative = relative-2; // double-spaced for tab
 		text.setText(fret+"");
 		text.setFont(new Font(step*2));

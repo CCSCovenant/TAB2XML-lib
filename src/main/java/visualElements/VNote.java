@@ -11,8 +11,7 @@ public class VNote extends VElement implements VConfigAble {
 	HashMap<String,Double> configMap = VConfig.getInstance().getDefaultConfigMap("note");
 	HashMap<Integer,Boolean> blockedPos = new HashMap<>();
 	List<VNoteHead> noteHeads = new ArrayList<>();
-	double graceOffset = configMap.get("graceOffset");
-	double internalOffset = 0;
+	boolean isGrace = false;
 	String type;
 	public VNote(int i){
 		this.number = i;
@@ -26,13 +25,7 @@ public class VNote extends VElement implements VConfigAble {
 			noteHead.getShapeGroups().setLayoutX(VConfig.getInstance().getGlobalConfig().get("Step"));
 			noteHead.setFlip(true);
 		}
-		System.out.println(internalOffset);
-		noteHead.getShapeGroups().setLayoutX(internalOffset);
 
-		if (noteHead.isGrace){
-			internalOffset += graceOffset + noteHead.getW();
-			noteHead.updateConfig("scale",0.7d);
-		}
 		noteHeads.add(noteHead);
 		noteHead.alignment();
 		group.getChildren().add(noteHead.getShapeGroups());
@@ -49,15 +42,17 @@ public class VNote extends VElement implements VConfigAble {
 
 	}
 
+	public void setGrace(boolean grace) {
+		isGrace = grace;
+	}
+
 	public void alignment(){
 		for(VNoteHead noteHead:noteHeads){
 			noteHead.alignment();
-			if (!noteHead.isGrace){
-				W = Math.max(W,noteHead.getW());
-			}
+			W = Math.max(W,noteHead.getW());
 			maxVPos = Math.max(maxVPos,noteHead.getShapeGroups().getLayoutY());
 		}
-		W += internalOffset;
+		W = group.getBoundsInLocal().getWidth();
 	}
 
 	@Override
