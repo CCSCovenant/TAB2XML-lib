@@ -44,6 +44,9 @@ public class VConfig {
 		configMap.put("noteHead",noteHeadConfig);
 		HashMap<String,Double> barlineConfig = new HashMap<>();
 		barlineConfig.put("distanceBetweenLine",5d);
+		barlineConfig.put("notationHeight",-20d);
+		barlineConfig.put("notationSize",15d);
+
 		configMap.put("barline",barlineConfig);
 		HashMap<String,Double> gNotationConfig = new HashMap<>();
 		gNotationConfig.put("GuitarNotationStartHeight",100d);

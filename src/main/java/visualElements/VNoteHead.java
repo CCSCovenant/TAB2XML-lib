@@ -34,8 +34,8 @@ public class VNoteHead extends VElement implements VConfigAble{
 			}
 		}
 		imageView.setImage(new Image(imageResourceHandler.getImage(AssetName)));
-		imageView.setFitHeight(step*2);
-		imageView.setFitWidth(step*2);
+		imageView.setFitHeight(step*2*config.get("scale"));
+		imageView.setFitWidth(step*2*config.get("scale"));
 		group.getChildren().add(imageView);
 		W = group.getBoundsInLocal().getWidth();
 		initDots(dots);
@@ -43,12 +43,12 @@ public class VNoteHead extends VElement implements VConfigAble{
 	public VNoteHead(int fret,int dots,int relative){
 		this.relative = relative-2; // double-spaced for tab
 		text.setText(fret+"");
-		text.setFont(new Font(step*2));
+		text.setFont(new Font(step*2*config.get("scale")*1.3));
 		Bounds bounds = text.getBoundsInLocal();
 		background.setWidth(bounds.getWidth());
-		background.setHeight(bounds.getHeight());
+		background.setHeight(bounds.getHeight()*0.75);
 		background.setFill(Color.WHITESMOKE);
-		background.setLayoutY(-bounds.getHeight());
+		background.setLayoutY(-bounds.getHeight()*0.75);
 		group.getChildren().add(background);
 		group.getChildren().add(text);
 		W = group.getBoundsInLocal().getWidth();
@@ -79,7 +79,7 @@ public class VNoteHead extends VElement implements VConfigAble{
 	public void alignment(){
 		step = VConfig.getInstance().getGlobalConfig().get("Step");
 		group.setLayoutY(relative*step);
-		W = step*2;
+		W = step*2*config.get("scale");
 		line.setLayoutY(step);
 		line.setEndX(W);
 		double dotGap = config.get("dotGap");
@@ -99,13 +99,23 @@ public class VNoteHead extends VElement implements VConfigAble{
 
 	@Override
 	public void updateConfig(String id, double value) {
+		config.put(id,value);
+
 		switch (id){
 			case "offsetX":
 				break;
 			case "offsetY":
 				break;
 			case "scale":
-				break;
+				imageView.setFitHeight(step*2*config.get("scale"));
+				imageView.setFitWidth(step*2*config.get("scale"));
+				text.setFont(new Font(step*2*config.get("scale")*1.3));
+				Bounds bounds = text.getBoundsInLocal();
+				background.setWidth(bounds.getWidth());
+				background.setHeight(bounds.getHeight()*0.75);
+				background.setFill(Color.WHITESMOKE);
+				background.setLayoutY(-bounds.getHeight()*0.75);
+			break;
 			case "color":
 				break;
 		}

@@ -1,7 +1,10 @@
 package visualElements;
 
 import javafx.scene.Group;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import models.measure.barline.Repeat;
 
 import java.util.HashMap;
@@ -9,6 +12,7 @@ import java.util.HashMap;
 public class VBarline extends VElement implements VConfigAble{
 	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("barline");
 	String location;
+	Text notation = new Text();
 	public VBarline(double length, String style, Repeat repeat,String location){
 		double offset = config.get("distanceBetweenLine");
 		this.location = location;
@@ -35,6 +39,43 @@ public class VBarline extends VElement implements VConfigAble{
 				Lightline = new Line(0,0,0,length);
 				Lightline.setStrokeWidth(1);
 				group.getChildren().add(Lightline);
+		}
+		if (repeat!=null){
+			if (repeat.getTimes()!=null){
+				double notationHeight = config.get("notationHeight");
+				double notationSize = config.get("notationSize");
+				notation.setText(repeat.getTimes()+"x");
+				notation.setFont(new Font(notationSize));
+				notation.setLayoutY(notationHeight);
+				group.getChildren().add(notation);
+			}
+			if (repeat.getDirection().equals("forward")){
+				Circle circle = new Circle(2);
+				Circle circle1 = new Circle(2);
+
+				circle.setLayoutX(offset*2);
+				circle1.setLayoutX(offset*2);
+				notation.setLayoutX(offset*2);
+
+				circle.setLayoutY(length*1/6);
+				circle1.setLayoutY(length*5/6);
+
+				group.getChildren().add(circle);
+				group.getChildren().add(circle1);
+			}else if (repeat.getDirection().equals("backward")){
+				Circle circle = new Circle(2);
+				Circle circle1 = new Circle(2);
+
+				circle.setLayoutX(-offset);
+				circle1.setLayoutX(-offset);
+				notation.setLayoutX(-offset-notation.getBoundsInLocal().getWidth());
+
+				circle.setLayoutY(length*1/6);
+				circle1.setLayoutY(length*5/6);
+
+				group.getChildren().add(circle);
+				group.getChildren().add(circle1);
+			}
 		}
 
 	}

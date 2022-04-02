@@ -47,7 +47,11 @@ public class VNote extends VElement implements VConfigAble {
 	}
 
 	public void alignment(){
+
 		for(VNoteHead noteHead:noteHeads){
+			if (isGrace){
+				noteHead.updateConfig("scale",0.7);
+			}
 			noteHead.alignment();
 			W = Math.max(W,noteHead.getW());
 			maxVPos = Math.max(maxVPos,noteHead.getShapeGroups().getLayoutY());
