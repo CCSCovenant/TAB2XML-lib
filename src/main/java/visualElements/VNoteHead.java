@@ -22,9 +22,12 @@ public class VNoteHead extends VElement implements VConfigAble{
 	Rectangle background = new Rectangle();
 	Line line = new Line();
 	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("noteHead");
+	boolean isGrace = false;
 	int relative = 0;
 	double step = VConfig.getInstance().getGlobalConfig().get("Step");
-	public VNoteHead(String AssetName,int dots,int relative){
+
+	public VNoteHead(String AssetName,int dots,int relative,boolean grace){
+		this.isGrace = grace;
 		this.relative = relative;
 		List<Integer> staff = VConfig.getInstance().getStaffDetail();
 		if (relative<staff.get(0)||relative>staff.get(staff.size()-1)){
@@ -36,11 +39,12 @@ public class VNoteHead extends VElement implements VConfigAble{
 		imageView.setFitHeight(step*2);
 		imageView.setFitWidth(step*2);
 		group.getChildren().add(imageView);
+		W = group.getBoundsInLocal().getWidth();
 		initDots(dots);
 	}
-	public VNoteHead(int fret,int dots,int relative){
+	public VNoteHead(int fret,int dots,int relative,boolean grace){
+		this.isGrace = grace;
 		this.relative = relative-2; // double-spaced for tab
-
 		text.setText(fret+"");
 		text.setFont(new Font(step*2));
 		Bounds bounds = text.getBoundsInLocal();
@@ -50,7 +54,7 @@ public class VNoteHead extends VElement implements VConfigAble{
 		background.setLayoutY(-bounds.getHeight());
 		group.getChildren().add(background);
 		group.getChildren().add(text);
-
+		W = group.getBoundsInLocal().getWidth();
 		initDots(dots);
 	}
 	public void setFlip(boolean states){

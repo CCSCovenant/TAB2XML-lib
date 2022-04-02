@@ -34,6 +34,7 @@ public class VConfig {
 		dotConfig.put("size",1.5d);
 		dotConfig.put("gap_with_last_element",5d);
 		HashMap<String,Double> noteConfig = new HashMap<>();
+		noteConfig.put("graceOffset",5d);
 		configMap.put("note",noteConfig);
 		HashMap<String,Double> noteHeadConfig = new HashMap<>();
 		noteHeadConfig.put("scale",1d);

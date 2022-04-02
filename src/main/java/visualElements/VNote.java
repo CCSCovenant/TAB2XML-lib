@@ -1,7 +1,5 @@
 package visualElements;
 
-import visualElements.Notations.VINotation;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -13,7 +11,8 @@ public class VNote extends VElement implements VConfigAble {
 	HashMap<String,Double> configMap = VConfig.getInstance().getDefaultConfigMap("note");
 	HashMap<Integer,Boolean> blockedPos = new HashMap<>();
 	List<VNoteHead> noteHeads = new ArrayList<>();
-	List<VINotation> notations;
+	double graceOffset = configMap.get("graceOffset");
+	double internalOffset = 0;
 	String type;
 	public VNote(int i){
 		this.number = i;
@@ -26,6 +25,13 @@ public class VNote extends VElement implements VConfigAble {
 		if (forward||backward){
 			noteHead.getShapeGroups().setLayoutX(VConfig.getInstance().getGlobalConfig().get("Step"));
 			noteHead.setFlip(true);
+		}
+		System.out.println(internalOffset);
+		noteHead.getShapeGroups().setLayoutX(internalOffset);
+
+		if (noteHead.isGrace){
+			internalOffset += graceOffset + noteHead.getW();
+			noteHead.updateConfig("scale",0.7d);
 		}
 		noteHeads.add(noteHead);
 		noteHead.alignment();
@@ -46,9 +52,12 @@ public class VNote extends VElement implements VConfigAble {
 	public void alignment(){
 		for(VNoteHead noteHead:noteHeads){
 			noteHead.alignment();
-			W = Math.max(W,noteHead.getW());
+			if (!noteHead.isGrace){
+				W = Math.max(W,noteHead.getW());
+			}
 			maxVPos = Math.max(maxVPos,noteHead.getShapeGroups().getLayoutY());
 		}
+		W += internalOffset;
 	}
 
 	@Override

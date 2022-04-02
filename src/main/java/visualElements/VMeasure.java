@@ -22,7 +22,6 @@ public class VMeasure extends VElement implements VConfigAble {
 	private List<VBarline> barlines = new ArrayList<>();
 	private HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("measure");
 
-
 	String instrument = "";
 	double gapCount = 0;
 	boolean showClef = false;
@@ -40,22 +39,34 @@ public class VMeasure extends VElement implements VConfigAble {
 		initBarlines(measure.getBarlines());
 		if (measure.getNotesBeforeBackup()!=null){
 			VNote vNote = null;
+			boolean hasKeyNote = true;
 			for (Note note:measure.getNotesBeforeBackup()){
 				if (note.getChord()==null){
-					if (vNote!=null){
-						Notes.add(vNote);
+					if (hasKeyNote) {
+						if (vNote != null) {
+							Notes.add(vNote);
+						}
+						vNote = new VNote(i);
+						hasKeyNote = false;
+						i++;
 					}
-					vNote = new VNote(i);
-					i++;
-					addNoteHead(note,vNote);
+					if (note.getGrace()==null){
+						hasKeyNote = true;
+					}
+					boolean isGrace = false;
+					if (note.getGrace()!=null){
+						isGrace = true;
+					}
+					addNoteHead(note,vNote,isGrace);
 				}else {
-					addNoteHead(note,vNote);
+					addNoteHead(note,vNote,false);
 				}
 			}
 			if (vNote!=null){
 				Notes.add(vNote);
 			}
 		}
+
 		initNoteGroups();
 		if (instrument.equals("TAB")){
 			initGuitarNotations();
@@ -63,7 +74,7 @@ public class VMeasure extends VElement implements VConfigAble {
 			initDrumNotations();
 		}
 	}
-
+	//  N / G G N C / N
 	public void initDrumNotations(){
 		double durationCounter = 0;
 		VGNotation notation;
@@ -132,7 +143,7 @@ public class VMeasure extends VElement implements VConfigAble {
 			group.getChildren().add(vNote.getShapeGroups());
 		}
 	}
-	public void addNoteHead(Note note,VNote vNote){
+	public void addNoteHead(Note note,VNote vNote,boolean grace){
 		int dots = 0;
 		if (note.getDots()!=null){
 			dots = note.getDots().size();
@@ -144,22 +155,24 @@ public class VMeasure extends VElement implements VConfigAble {
 		int relative = 3;
 		//TODO set relative to default rest position. calculate based on the staffline.
 		if (note.getRest()!=null){
-			noteHead = new VNoteHead(VUtility.getDrumAssetName(note),0,relative);
+			noteHead = new VNoteHead(VUtility.getDrumAssetName(note),0,relative,false);
 		}else {
 			if (instrument.equals("TAB")){
 				if (note.getNotations()!=null&&note.getNotations().getTechnical()!=null){
 					relative = note.getNotations().getTechnical().getString()*3; // since tab staff is double-space\
-					noteHead = new VNoteHead(note.getNotations().getTechnical().getFret(),dots,relative);
+					noteHead = new VNoteHead(note.getNotations().getTechnical().getFret(),dots,relative,grace);
 				}
 			}else {
 				String result = VUtility.getDrumAssetName(note);
 				step = note.getUnpitched().getDisplayStep();
 				octave = note.getUnpitched().getDisplayOctave();
 				relative = VUtility.getRelative(step,octave);
-				noteHead = new VNoteHead(result,dots,relative);
+				noteHead = new VNoteHead(result,dots,relative,grace);
 			}
 		}
-		vNote.setNoteType(note.getType());
+		if (!grace){
+			vNote.setNoteType(note.getType());
+		}
 		vNote.addNoteHead(noteHead);
 	}
 	@Override
@@ -233,7 +246,12 @@ public class VMeasure extends VElement implements VConfigAble {
 			List<Double> HPosition = new ArrayList<>();
 			for (Integer i:notation.getNotes()){
 				double offset = VConfig.getInstance().getGlobalConfig().get("Step")*2;
-				HPosition.add(Notes.get(i).getShapeGroups().getLayoutX()+offset);
+				if (instrument.equals("TAB")){
+					HPosition.add(Notes.get(i).getShapeGroups().getLayoutX()+offset/2+Notes.get(i).internalOffset);
+				}else {
+					HPosition.add(Notes.get(i).getShapeGroups().getLayoutX()+offset+Notes.get(i).internalOffset);
+
+				}
 			}
 			//H position for each note
 			List<Double> VPosition = new ArrayList<>();
