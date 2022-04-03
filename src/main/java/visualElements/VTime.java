@@ -20,7 +20,7 @@ public class VTime extends VSign{
 	@Override
 	public void alignment(){
 		List<Integer> staffDetail = VConfig.getInstance().getStaffDetail();
-		double step = VConfig.getInstance().getGlobalConfig().get("Step");
+		double step = VConfig.getInstance().getGlobalConfig("Step");
 		double start = staffDetail.get(0)*step;
 		double end = staffDetail.get(staffDetail.size()-1)*step;
 		upper.setFont(new Font((end-start)*1.25/2));

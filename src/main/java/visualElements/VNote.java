@@ -9,7 +9,7 @@ public class VNote extends VElement implements VConfigAble {
 	int noteHeadCount = 1;
 
 	double maxVPos = 0;
-	HashMap<String,Double> configMap = VConfig.getInstance().getDefaultConfigMap("note");
+	HashMap<String,Double> configMap = new HashMap<>();
 	double offsetX = 0;
 	HashMap<Integer,Boolean> blockedPos = new HashMap<>();
 	List<VNoteHead> noteHeads = new ArrayList<>();
@@ -17,6 +17,7 @@ public class VNote extends VElement implements VConfigAble {
 	String type;
 	public VNote(int i){
 		this.number = i;
+		initConfig();
 	}
 
 	public void addNoteHead(VNoteHead noteHead){
@@ -24,13 +25,16 @@ public class VNote extends VElement implements VConfigAble {
 		boolean forward = blockedPos.containsKey(noteHead.relative+1);
 		boolean backward = blockedPos.containsKey(noteHead.relative-1);
 		if (forward||backward){
-			noteHead.getShapeGroups().setLayoutX(VConfig.getInstance().getGlobalConfig().get("Step"));
+			noteHead.getShapeGroups().setLayoutX(VConfig.getInstance().getGlobalConfig("Step"));
 			noteHead.setFlip(true);
 		}
 
 		noteHeads.add(noteHead);
 		noteHead.alignment();
 		group.getChildren().add(noteHead.getShapeGroups());
+	}
+	public void initConfig(){
+		configMap.put("graceOffset",5d);
 	}
 	public void setNoteType(String type){
 		if (type==null){

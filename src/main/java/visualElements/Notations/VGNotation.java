@@ -17,9 +17,18 @@ public class VGNotation extends VElement implements VConfigAble {
 	List<String> types = new ArrayList<>(); // the type of note in current notation
 	List<Line> Vlines = new ArrayList<>();
 	List<Line> Hlines = new ArrayList<>();
-	HashMap<String,Double> configMap = VConfig.getInstance().getDefaultConfigMap("gNotation");
+	HashMap<String,Double> configMap = new HashMap<>();
 	public VGNotation(){
+		initConfig();
+	}
+	public void initConfig(){
+		configMap.put("GuitarNotationStartHeight",100d);
+		configMap.put("GuitarNotationEndHeight",120d);
 
+		configMap.put("DrumNotationHeight",-30d);
+
+		configMap.put("notationGap",10d);
+		configMap.put("thickness",5d);
 	}
 	public int getSize(){
 		return notes.size();

@@ -11,12 +11,12 @@ public class VPage extends VElement{
 	VTitle vTitle;
 	List<VLine> lines = new ArrayList<>();
 	Rectangle background = new Rectangle();
-	double MarginY = VConfig.getInstance().getGlobalConfig().get("MarginY");
-	double MarginX = VConfig.getInstance().getGlobalConfig().get("MarginX");
+	double MarginY = VConfig.getInstance().getGlobalConfig("MarginY");
+	double MarginX = VConfig.getInstance().getGlobalConfig("MarginX");
 
-	double PageX = VConfig.getInstance().getGlobalConfig().get("PageX");
-	double PageY = VConfig.getInstance().getGlobalConfig().get("PageY");
-	double measureDistance = VConfig.getInstance().getGlobalConfig().get("MeasureDistance");
+	double PageX = VConfig.getInstance().getGlobalConfig("PageX");
+	double PageY = VConfig.getInstance().getGlobalConfig("PageY");
+	double measureDistance = VConfig.getInstance().getGlobalConfig("MeasureDistance");
 	public VPage(){
 		H = MarginY+measureDistance;
 		background.setFill(Color.WHEAT);

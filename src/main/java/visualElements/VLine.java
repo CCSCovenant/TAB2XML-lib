@@ -1,14 +1,12 @@
 package visualElements;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class VLine extends VElement{
 	List<VMeasure> measures = new ArrayList<>();
-	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("global");
-	double MarginX = VConfig.getInstance().getGlobalConfig().get("MarginX");
-	double PageW = VConfig.getInstance().getGlobalConfig().get("PageX");
+	double MarginX = VConfig.getInstance().getGlobalConfig("MarginX");
+	double PageW = VConfig.getInstance().getGlobalConfig("PageX");
 	VClef vClef;
 	double gapCount = 0;
 	public VLine(String stafftype){

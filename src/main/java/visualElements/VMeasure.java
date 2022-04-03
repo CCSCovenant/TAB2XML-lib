@@ -25,12 +25,13 @@ public class VMeasure extends VElement implements VConfigAble {
 	private List<VBarline> barlines = new ArrayList<>();
 	private List<VNoteHead> tieNoteHead = new ArrayList<>();
 	private List<VNoteHead> slurNoteHead = new ArrayList<>();
- 	private HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("measure");
+ 	private HashMap<String,Double> config = new HashMap<>();
 	Rectangle background = new Rectangle();
 	String instrument = "";
 	double gapCount = 0;
 	boolean showClef = false;
 	public VMeasure(Measure measure,String instrument,List<Integer> staffInfo){
+		initConfig();
 		group.getChildren().add(background);
 		number = measure.getNumber();
 		if (measure.getAttributes().getTime()!=null){
@@ -72,6 +73,12 @@ public class VMeasure extends VElement implements VConfigAble {
 		}
 	}
 	//  N / G G N C / N
+	public void initConfig(){
+		config.put("noteDistance",10d);
+		config.put("gapBeforeMeasure",20d);
+		config.put("gapBetweenElement",VConfig.getInstance().getGlobalConfig("MinNoteDistance"));
+		config.put("gapBetweenGrace",5d);
+	}
 	public void initDrumNotations(){
 		double durationCounter = 0;
 		VGNotation notation;
@@ -220,7 +227,6 @@ public class VMeasure extends VElement implements VConfigAble {
 		for (VBarline barline:barlines){
 			barline.setHighLight(states);
 		}
-		System.out.println("Selected Measure");
 	}
 
 	public void setNumber(int number) {
@@ -235,7 +241,7 @@ public class VMeasure extends VElement implements VConfigAble {
 		//staffInfo contain offset of each staff
 		for (Integer i:staffInfo){
 			Line line = new Line(0,0,0,0);
-			double gap = VConfig.getInstance().getGlobalConfig().get("Step");
+			double gap = VConfig.getInstance().getGlobalConfig("Step");
 			line.setLayoutY(i*gap);//
 			staffLines.add(line);
 			group.getChildren().add(line);
@@ -276,7 +282,7 @@ public class VMeasure extends VElement implements VConfigAble {
 		for (VGNotation notation:Notations){
 			List<Double> HPosition = new ArrayList<>();
 			for (Integer i:notation.getNotes()){
-				double offset = VConfig.getInstance().getGlobalConfig().get("Step")*2;
+				double offset = VConfig.getInstance().getGlobalConfig("Step")*2;
 				if (instrument.equals("TAB")){
 					HPosition.add(Notes.get(i).getShapeGroups().getLayoutX()+offset/2);
 				}else {

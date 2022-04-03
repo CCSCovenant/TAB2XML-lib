@@ -22,13 +22,11 @@ public class Visualizer implements VConfigAble {
 	Score score;
 	ArrayList<Group> groups;
 	ArrayList<VPage> pages;
-	HashMap<String, Double> configMap;
 	List<VMeasure> VMeasures;
 	String staffType;
  	public Visualizer(Score score) throws TXMLException {
 		this.score = score;
 		VMeasures = new ArrayList<>();
-		configMap = VConfig.getInstance().getDefaultConfigMap("global");
 		setUpInitStaffLine(5,2);
 		initMeasures();
 		alignment();

@@ -24,11 +24,12 @@ public class VNoteHead extends VElement implements VConfigAble{
 	List<VDot> dots = new ArrayList<>();
 	Rectangle background = new Rectangle();
 	Line line = new Line();
-	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("noteHead");
+	HashMap<String,Double> config = new HashMap<>();
 	int relative = 0;
 	boolean isGrace = false;
-	double step = VConfig.getInstance().getGlobalConfig().get("Step");
+	double step = VConfig.getInstance().getGlobalConfig("Step");
 	public VNoteHead(String AssetName,int dots,int relative){
+		initConfig();
 		this.relative = relative;
 		List<Integer> staff = VConfig.getInstance().getStaffDetail();
 		if (relative<staff.get(0)||relative>staff.get(staff.size()-1)){
@@ -43,6 +44,7 @@ public class VNoteHead extends VElement implements VConfigAble{
 		initDots(dots);
 	}
 	public VNoteHead(int fret,int dots,int relative){
+		initConfig();
 		this.relative = relative-2; // double-spaced for tab
 		text.setText(fret+"");
 
@@ -50,6 +52,13 @@ public class VNoteHead extends VElement implements VConfigAble{
 		group.getChildren().add(text);
 		W = group.getBoundsInLocal().getWidth();
 		initDots(dots);
+	}
+	public void initConfig(){
+		config.put("scale",1d);
+		config.put("graceScale",0.7d);
+
+		config.put("defaultSize",10d);
+		config.put("dotGap",5d);
 	}
 	public void setFlip(boolean states){
 
@@ -88,7 +97,7 @@ public class VNoteHead extends VElement implements VConfigAble{
 	}
 
 	public void alignment(){
-		step = VConfig.getInstance().getGlobalConfig().get("Step");
+		step = VConfig.getInstance().getGlobalConfig("Step");
 		group.setLayoutY(relative*step);
 		double s = config.get("scale");
 		if (isGrace){

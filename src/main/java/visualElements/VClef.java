@@ -22,7 +22,7 @@ public class VClef extends VSign {
 		//staffInfo contain offset of each staff
 		for (Integer i:staffInfo){
 			Line line = new Line(0,0,0,0);
-			double gap = VConfig.getInstance().getGlobalConfig().get("Step");
+			double gap = VConfig.getInstance().getGlobalConfig("Step");
 			line.setLayoutY(i*gap);//
 			staffLines.add(line);
 			group.getChildren().add(line);
@@ -30,10 +30,10 @@ public class VClef extends VSign {
 	}
 	public void alignment(){
 		List<Integer> staffDetail = VConfig.getInstance().getStaffDetail();
-		double step = VConfig.getInstance().getGlobalConfig().get("Step");
+		double step = VConfig.getInstance().getGlobalConfig("Step");
 		double start = staffDetail.get(0)*step;
 		double end = staffDetail.get(staffDetail.size()-1)*step;
-		double min = VConfig.getInstance().getGlobalConfig().get("MinNoteDistance");
+		double min = VConfig.getInstance().getGlobalConfig("MinNoteDistance");
 
 		imageView.setFitHeight(end-start);
 		imageView.setFitWidth((end-start)/2);

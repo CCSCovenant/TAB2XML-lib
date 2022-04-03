@@ -11,7 +11,7 @@ import models.measure.barline.Repeat;
 import java.util.HashMap;
 
 public class VBarline extends VElement implements VConfigAble{
-	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("barline");
+	HashMap<String,Double> config = new HashMap<>();
 	String location;
 	Text notation = new Text();
 	Line Lightline;
@@ -19,6 +19,7 @@ public class VBarline extends VElement implements VConfigAble{
 	Circle circle = new Circle(2);
 	Circle circle1 = new Circle(2);
 	public VBarline(double length, String style, Repeat repeat,String location){
+		initConfig();
 		double offset = config.get("distanceBetweenLine");
 		this.location = location;
 
@@ -78,6 +79,11 @@ public class VBarline extends VElement implements VConfigAble{
 
 	}
 
+	public void initConfig(){
+		config.put("distanceBetweenLine",5d);
+		config.put("notationHeight",-20d);
+		config.put("notationSize",15d);
+	}
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
 		return config;

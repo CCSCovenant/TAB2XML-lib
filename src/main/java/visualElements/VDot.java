@@ -8,12 +8,15 @@ import java.util.HashMap;
 
 public class VDot extends VElement implements VConfigAble{
 	Circle circle = new Circle();
-	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("dot");
+	HashMap<String,Double> config = new HashMap<>();
 	public VDot(){
 		circle.setRadius(config.get("size"));
 		group.getChildren().add(circle);
 	}
-
+	public void initConfig(){
+		config.put("size",1.5d);
+		config.put("gap_with_last_element",5d);
+	}
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
 		return null;
