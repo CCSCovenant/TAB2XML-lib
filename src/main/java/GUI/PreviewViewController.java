@@ -58,7 +58,8 @@ public class PreviewViewController extends Application {
 	public void update() throws TXMLException, FileNotFoundException, URISyntaxException {
 		this.visualizer = new Visualizer(mvc.converter.getScore());
 		groups = visualizer.getElementGroups();
-		goToPage(pageNumber);
+		goToPage(0);
+		//goToPage(pageNumber);
 	}
 	private void initEvents(AnchorPane anchorPane){
 		KeyCombination zoomOut = new KeyCodeCombination(KeyCode.PAGE_DOWN,KeyCombination.CONTROL_DOWN);

@@ -7,8 +7,10 @@ import java.util.List;
 public class VNote extends VElement implements VConfigAble {
 	int number;
 	int noteHeadCount = 1;
+
 	double maxVPos = 0;
 	HashMap<String,Double> configMap = VConfig.getInstance().getDefaultConfigMap("note");
+	double offsetX = 0;
 	HashMap<Integer,Boolean> blockedPos = new HashMap<>();
 	List<VNoteHead> noteHeads = new ArrayList<>();
 	boolean isGrace = false;
@@ -53,7 +55,7 @@ public class VNote extends VElement implements VConfigAble {
 
 		for(VNoteHead noteHead:noteHeads){
 			if (isGrace){
-				noteHead.updateConfig("scale",0.7);
+				noteHead.setGrace(true);
 			}
 			noteHead.alignment();
 			W = Math.max(W,noteHead.getW());
@@ -69,6 +71,6 @@ public class VNote extends VElement implements VConfigAble {
 
 	@Override
 	public void updateConfig(String id, double value) {
-
+		configMap.put("id",value);
 	}
 }

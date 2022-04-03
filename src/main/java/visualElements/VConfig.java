@@ -45,6 +45,8 @@ public class VConfig {
 		configMap.put("note",noteConfig);
 		HashMap<String,Double> noteHeadConfig = new HashMap<>();
 		noteHeadConfig.put("scale",1d);
+		noteHeadConfig.put("graceScale",0.7d);
+
 		noteHeadConfig.put("defaultSize",10d);
 		noteHeadConfig.put("dotGap",5d);
 		configMap.put("noteHead",noteHeadConfig);

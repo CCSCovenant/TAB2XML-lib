@@ -61,7 +61,6 @@ public class VLine extends VElement{
 		for (VMeasure measure:measures){
 			measure.updateConfig("gapBetweenElement",measure.getConfigAbleList().get("gapBetweenElement")+ideaGapDiff);
 		}
-		System.out.println(W);
 		W = 0;
 		vClef.alignment();
 		W += vClef.getW();
@@ -72,7 +71,6 @@ public class VLine extends VElement{
 			W = W+measures.get(i).getW();
 		}
 		W += measures.get(measures.size()-1).getW();
-		System.out.println(W);
 	}
 
 }

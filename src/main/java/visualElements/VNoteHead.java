@@ -26,6 +26,7 @@ public class VNoteHead extends VElement implements VConfigAble{
 	Line line = new Line();
 	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("noteHead");
 	int relative = 0;
+	boolean isGrace = false;
 	double step = VConfig.getInstance().getGlobalConfig().get("Step");
 	public VNoteHead(String AssetName,int dots,int relative){
 		this.relative = relative;
@@ -36,13 +37,6 @@ public class VNoteHead extends VElement implements VConfigAble{
 			}
 		}
 		imageView.setImage(new Image(imageResourceHandler.getImage(AssetName)));
-		imageView.setFitHeight(step*2*config.get("scale"));
-		imageView.setFitWidth(step*2*config.get("scale"));
-
-		Bounds bounds = imageView.getBoundsInLocal();
-		background.setWidth(bounds.getWidth());
-		background.setHeight(bounds.getHeight());
-		background.setFill(Color.TRANSPARENT);
 		group.getChildren().add(background);
 		group.getChildren().add(imageView);
 		W = group.getBoundsInLocal().getWidth();
@@ -51,12 +45,7 @@ public class VNoteHead extends VElement implements VConfigAble{
 	public VNoteHead(int fret,int dots,int relative){
 		this.relative = relative-2; // double-spaced for tab
 		text.setText(fret+"");
-		text.setFont(new Font(step*2*config.get("scale")*1.3));
-		Bounds bounds = text.getBoundsInLocal();
-		background.setWidth(bounds.getWidth());
-		background.setHeight(bounds.getHeight()*0.75);
-		background.setFill(Color.WHITESMOKE);
-		background.setLayoutY(-bounds.getHeight()*0.75);
+
 		group.getChildren().add(background);
 		group.getChildren().add(text);
 		W = group.getBoundsInLocal().getWidth();
@@ -93,10 +82,35 @@ public class VNoteHead extends VElement implements VConfigAble{
 			group.getChildren().add(dots.get(i).getShapeGroups());
 		}
 	}
+
+	public void setGrace(boolean grace) {
+		isGrace = grace;
+	}
+
 	public void alignment(){
 		step = VConfig.getInstance().getGlobalConfig().get("Step");
 		group.setLayoutY(relative*step);
-		W = step*2*config.get("scale");
+		double s = config.get("scale");
+		if (isGrace){
+			s = config.get("graceScale");
+		}
+		imageView.setFitHeight(step*2*s);
+		imageView.setFitWidth(step*2*s);
+		Bounds bounds = imageView.getBoundsInLocal();
+		background.setWidth(bounds.getWidth());
+		background.setHeight(bounds.getHeight());
+		background.setFill(Color.TRANSPARENT);
+
+
+		text.setFont(new Font(step*2*s*1.3));
+		Bounds bounds1 = text.getBoundsInLocal();
+		background.setWidth(bounds1.getWidth());
+		background.setHeight(bounds1.getHeight()*0.75);
+		background.setFill(Color.WHITESMOKE);
+		background.setLayoutY(-bounds1.getHeight()*0.75);
+
+
+		W = step*2*s;
 		line.setLayoutY(step);
 		line.setEndX(W);
 		double dotGap = config.get("dotGap");
@@ -117,24 +131,5 @@ public class VNoteHead extends VElement implements VConfigAble{
 	@Override
 	public void updateConfig(String id, double value) {
 		config.put(id,value);
-
-		switch (id){
-			case "offsetX":
-				break;
-			case "offsetY":
-				break;
-			case "scale":
-				imageView.setFitHeight(step*2*config.get("scale"));
-				imageView.setFitWidth(step*2*config.get("scale"));
-				text.setFont(new Font(step*2*config.get("scale")*1.3));
-				Bounds bounds = text.getBoundsInLocal();
-				background.setWidth(bounds.getWidth());
-				background.setHeight(bounds.getHeight()*0.75);
-				background.setFill(Color.WHITESMOKE);
-				background.setLayoutY(-bounds.getHeight()*0.75);
-			break;
-			case "color":
-				break;
-		}
 	}
 }

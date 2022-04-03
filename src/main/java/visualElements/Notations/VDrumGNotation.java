@@ -25,26 +25,30 @@ public class VDrumGNotation extends VGNotation{
 			if (localHline>globalHLineNum){
 				int diff = localHline - globalHLineNum;
 				globalHLineNum = localHline;
-				for (int j=0;j<diff;j++){
+				if (notes.size()==1){
+					//TODO alignment notation with one note.
+				}else {
+				for (int j=0;j<diff;j++) {
 					lineStack.push(Hlines.get(HlinePointer));
 					double startX = 0;
-					if (i>0){
-						if (i<notes.size()-1){
-							if (VUtility.NoteType2Integer(types.get(i))<=VUtility.NoteType2Integer(types.get(i+1))){
-								startX = HPosition.get(i)+configMap.get("thickness")/2;
-							}else {
+					if (i > 0) {
+						if (i < notes.size() - 1) {
+							if (VUtility.NoteType2Integer(types.get(i)) <= VUtility.NoteType2Integer(types.get(i + 1))) {
+								startX = HPosition.get(i) + configMap.get("thickness") / 2;
+							} else {
 								startX = (HPosition.get(i) + HPosition.get(i - 1)) / 2;
 							}
-						}else {
+						} else {
 							startX = (HPosition.get(i) + HPosition.get(i - 1)) / 2;
 						}
-					}else {
-						startX = HPosition.get(i)+configMap.get("thickness")/2;
+					} else {
+						startX = HPosition.get(i) + configMap.get("thickness") / 2;
 					}
 					Hlines.get(HlinePointer).setStartX(startX);
 
 					Hlines.get(HlinePointer).setLayoutY(height + (lineStack.size() - 1) * gap);
 					HlinePointer++;
+					}
 				}
 			}else if (localHline<globalHLineNum){
 				int diff = globalHLineNum - localHline;

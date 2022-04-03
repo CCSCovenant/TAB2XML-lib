@@ -23,7 +23,9 @@ public class VMeasure extends VElement implements VConfigAble {
 	private List<VSign> Signs = new ArrayList<>();
 	private List<Line> staffLines = new ArrayList<>();
 	private List<VBarline> barlines = new ArrayList<>();
-	private HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("measure");
+	private List<VNoteHead> tieNoteHead = new ArrayList<>();
+	private List<VNoteHead> slurNoteHead = new ArrayList<>();
+ 	private HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("measure");
 	Rectangle background = new Rectangle();
 	String instrument = "";
 	double gapCount = 0;
@@ -168,6 +170,14 @@ public class VMeasure extends VElement implements VConfigAble {
 				noteHead = new VNoteHead(result,dots,relative);
 			}
 		}
+		if (note.getNotations()!=null){
+			if (note.getNotations().getTieds()!=null){
+				tieNoteHead.add(noteHead);
+			}
+			if (note.getNotations().getSlurs()!=null){
+				slurNoteHead.add(noteHead);
+			}
+		}
 		if (note.getGrace()!=null){
 			vNote.setGrace(true);
 		}
@@ -302,8 +312,9 @@ public class VMeasure extends VElement implements VConfigAble {
 		}
 		for (VNote note:Notes){
 			note.alignment();
-			note.getShapeGroups().setLayoutX(W);
-			W += note.getW();
+			double offsetX = note.offsetX;
+			note.getShapeGroups().setLayoutX(W+offsetX);
+			W += note.getW()+offsetX;
 			if (note.isGrace){
 				W += gapBetweenGrace;
 			}else {
