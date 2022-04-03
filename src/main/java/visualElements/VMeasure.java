@@ -170,7 +170,7 @@ public class VMeasure extends VElement implements VConfigAble {
 			if (instrument.equals("TAB")){
 				if (note.getNotations()!=null&&note.getNotations().getTechnical()!=null){
 					relative = note.getNotations().getTechnical().getString()*3; // since tab staff is double-space\
-					noteHead = new VNoteHead(note.getNotations().getTechnical().getFret(),dots,relative);
+					noteHead = new VNoteHead(note.getNotations().getTechnical().getFret(),dots,relative,note.getGrace()!=null);
 				}
 			}else {
 				String result = VUtility.getDrumAssetName(note);

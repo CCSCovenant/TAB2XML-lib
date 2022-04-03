@@ -1,7 +1,6 @@
 package visualElements;
 
 import javafx.scene.Group;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 import java.util.ArrayList;
@@ -19,7 +18,7 @@ public class VPage extends VElement{
 	double measureDistance = VConfig.getInstance().getGlobalConfig("MeasureDistance");
 	public VPage(){
 		H = MarginY+measureDistance;
-		background.setFill(Color.WHEAT);
+		background.setFill(VConfig.getInstance().backGroundColor);
 		background.setWidth(PageX);
 		background.setHeight(PageY);
 		group.getChildren().add(background);

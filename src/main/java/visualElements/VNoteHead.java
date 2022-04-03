@@ -27,9 +27,11 @@ public class VNoteHead extends VElement implements VConfigAble{
 	Line line = new Line();
 	HashMap<String,Double> config = new HashMap<>();
 	int relative = 0;
+	String instrument = "";
 	boolean isGrace = false;
 	double step = VConfig.getInstance().getGlobalConfig("Step");
 	public VNoteHead(String AssetName,int dots,int relative,boolean isGrace){
+		instrument = "";
 		this.isGrace = isGrace;
 		initConfig();
 		this.relative = relative;
@@ -45,7 +47,10 @@ public class VNoteHead extends VElement implements VConfigAble{
 		W = group.getBoundsInLocal().getWidth();
 		initDots(dots);
 	}
-	public VNoteHead(int fret,int dots,int relative){
+	public VNoteHead(int fret,int dots,int relative,boolean isGrace){
+		instrument = "TAB";
+
+		this.isGrace = isGrace;
 		initConfig();
 		this.relative = relative-2; // double-spaced for tab
 		text.setText(fret+"");
@@ -110,7 +115,11 @@ public class VNoteHead extends VElement implements VConfigAble{
 		if (isGrace){
 			imageView.setFitWidth(step*2*s*2);
 			Bounds bounds = group.getBoundsInLocal();
-			group.setLayoutY(relative*step-bounds.getHeight()/1.8);
+			if (instrument.equals("TAB")){
+
+			}else {
+				group.setLayoutY(relative*step-bounds.getHeight()/1.8);
+			}
 		}else {
 			imageView.setFitWidth(step*2*s);
 		}
@@ -125,7 +134,7 @@ public class VNoteHead extends VElement implements VConfigAble{
 		Bounds bounds1 = text.getBoundsInLocal();
 		background.setWidth(bounds1.getWidth());
 		background.setHeight(bounds1.getHeight()*0.75);
-		background.setFill(Color.WHITESMOKE);
+		background.setFill(VConfig.getInstance().backGroundColor);
 		background.setLayoutY(-bounds1.getHeight()*0.75);
 
 

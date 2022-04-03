@@ -10,6 +10,7 @@ public class VConfig {
 	public 		HashMap<String,Double> globalConfig = new HashMap<>();
 	public Color highLightColor;
 	public Color defaultColor;
+	public Color backGroundColor;
 	public List<Integer> staffDetail;
 	public String instrument;
 	private VConfig(){
@@ -17,6 +18,7 @@ public class VConfig {
 	}
 
 	private void initDefaultConfig(){
+		backGroundColor = Color.ALICEBLUE;
 		highLightColor = Color.BLUEVIOLET;
 		defaultColor = Color.BLACK;
 		globalConfig.put("PageX",1080d);
