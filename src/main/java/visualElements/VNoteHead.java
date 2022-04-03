@@ -1,6 +1,7 @@
 package visualElements;
 
 import javafx.geometry.Bounds;
+import javafx.geometry.Point3D;
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorInput;
@@ -61,8 +62,9 @@ public class VNoteHead extends VElement implements VConfigAble{
 		config.put("defaultSize",10d);
 		config.put("dotGap",5d);
 	}
-	public void setFlip(boolean states){
-
+	public void setFlip(){
+		imageView.setRotate(180);
+		imageView.setRotationAxis(new Point3D(0,1,0));
 	}
 	@Override
 	public void setHighLight(boolean states) {

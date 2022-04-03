@@ -26,8 +26,8 @@ public class VNote extends VElement implements VConfigAble {
 		boolean forward = blockedPos.containsKey(noteHead.relative+1);
 		boolean backward = blockedPos.containsKey(noteHead.relative-1);
 		if (forward||backward){
-			noteHead.getShapeGroups().setLayoutX(VConfig.getInstance().getGlobalConfig("Step"));
-			noteHead.setFlip(true);
+			noteHead.getShapeGroups().setLayoutX(VConfig.getInstance().getGlobalConfig("Step")*2);
+			noteHead.setFlip();
 		}
 
 		noteHeads.add(noteHead);
