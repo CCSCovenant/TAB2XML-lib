@@ -1,25 +1,25 @@
 package GUI;
 
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.layout.Document;
 import custom_exceptions.TXMLException;
 import javafx.application.Application;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
-import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
-import javafx.scene.control.Alert;
+import javafx.scene.Group;
+import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
+import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.rendering.PDFRenderer;
 import player.MXLPlayer;
 import player.ThreadPlayer;
 import visualizer.Visualizer;
@@ -27,48 +27,56 @@ import visualizer.Visualizer;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.ArrayList;
 
 public class PreviewViewController extends Application {
 	@FXML ImageView pdfViewer;
 	@FXML TextField gotoPageField;
 	@FXML ChoiceBox configs;
 	@FXML ChoiceBox values;
-	private final String temp_dest = "./tmp.pdf";
-	private final int scale = 2;
+	@FXML ScrollPane scrollView;
 	private static Window convertWindow = new Stage();
 
-	private ObservableList<String> configsList;
-	private ObservableList<Double> configsValueList;
+	private double scale = 1.0;
 	private String selected = "";
 	private PreviewConfig c = PreviewConfig.getInstance();
 	private MainViewController mvc;
-	private PdfDocument pdf;
 	private int pageNumber = 0;
 	private Visualizer visualizer;
 	private MXLPlayer player;
-	private PDDocument document;
-	private PDFRenderer renderer;
-	private File tempFile;
 	public static ThreadPlayer thp;
+	public Scene scene;
+	public Node currentSelected;
+	public ArrayList<Group> groups;
 	public void setMainViewController(MainViewController mvcInput) {
 		mvc = mvcInput;
 	}
-	public void update() throws TXMLException, FileNotFoundException {
-		this.player = new MXLPlayer(mvc.converter.getScore());
+	public void setScene(Scene scene){
+		this.scene = scene;
+	}
+	public void update() throws TXMLException, FileNotFoundException, URISyntaxException {
 		this.visualizer = new Visualizer(mvc.converter.getScore());
-		tempFile = new File(temp_dest);
-		pdf = visualizer.draw(tempFile);
-		Document document1 = new Document(pdf);
-		document1.close();
-		try {
-			 document = PDDocument.load(tempFile);
-			 renderer = new PDFRenderer(document);
-		}catch (IOException e){
-
-		}
-		initChoiceBox();
+		groups = visualizer.getElementGroups();
 		goToPage(0);
+		//goToPage(pageNumber);
+	}
+	private void initEvents(AnchorPane anchorPane){
+		KeyCombination zoomOut = new KeyCodeCombination(KeyCode.PAGE_DOWN,KeyCombination.CONTROL_DOWN);
+		KeyCombination zoomIn = new KeyCodeCombination(KeyCode.PAGE_UP,KeyCombination.CONTROL_DOWN);
+		scene.getAccelerators().put(zoomIn,()->{
+			scale = scale+scale*0.05;
+			anchorPane.setScaleX(scale);
+			anchorPane.setScaleY(scale);
+
+		});
+
+		scene.getAccelerators().put(zoomOut,()->{
+			scale = scale-scale*0.05;
+			anchorPane.setScaleX(scale);
+			anchorPane.setScaleY(scale);
+		});
+
 	}
 	@FXML
 	private void exportPDFHandler(){
@@ -79,9 +87,7 @@ public class PreviewViewController extends Application {
 
 		if (file!=null){
 			try {
-				pdf = visualizer.draw(file);
-				Document document1 = new Document(pdf);
-				document1.close();
+
 			}catch (Exception e){
 
 			}
@@ -104,45 +110,7 @@ public class PreviewViewController extends Application {
 	}
 	@FXML
 	private void apply(){
-		refreshPDF();
-	}
-	private void initChoiceBox(){
-		configs.setItems(c.getConfigList());
-		configsList = c.getConfigList();
-		configs.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				selected = configsList.get(newValue.intValue());
-				configsValueList = c.getValues(selected);
-				values.setItems(c.getValues(selected));
-			}
-		});
-		values.getSelectionModel().selectedIndexProperty().addListener(new ChangeListener<Number>() {
-			@Override
-			public void changed(ObservableValue<? extends Number> observable, Number oldValue, Number newValue) {
-				if (newValue.intValue()>=0&&newValue.intValue()<configsValueList.size()){
-					c.setConfig(selected,configsValueList.get(newValue.intValue()));
-				}
-			}
-		});
-	}
-	private void refreshPDF(){
-		long t = System.currentTimeMillis();
-		try {
-			this.visualizer = new Visualizer(mvc.converter.getScore());
-			pdf = visualizer.draw(tempFile);
-			System.out.println(System.currentTimeMillis()-t);
-			Document document1 = new Document(pdf);
-			document1.close();
-			System.out.println(System.currentTimeMillis()-t);
-			document = PDDocument.load(tempFile);
-			System.out.println(System.currentTimeMillis()-t);
-			renderer = new PDFRenderer(document);
-		}catch (Exception e){
-
-		}
-		goToPage(Integer.parseInt(gotoPageField.getText()));
-		System.out.println(System.currentTimeMillis()-t);
+		//refreshPDF();
 	}
 	@FXML
 	private void playHandler(){
@@ -151,20 +119,18 @@ public class PreviewViewController extends Application {
 		thp.start(s);
 	}
 	private void goToPage(int page)  {
-		if (page<document.getNumberOfPages()&&page>=0){
-			try {
-				BufferedImage img = renderer.renderImage(page,scale);
-				pdfViewer.setImage(convertToFxImage(img));
-				pageNumber = page;
-				gotoPageField.setText(pageNumber+"");
-			}catch (IOException e){
-
-			}
+		if (0<=page&&page<groups.size()){
+			AnchorPane anchorPane = new AnchorPane();
+			anchorPane.getChildren().add(groups.get(page));
+			Group group = new Group(anchorPane);
+			initEvents(anchorPane);
+			scrollView.setContent(group);
+			scrollView.setVvalue(0);
+			pageNumber = page;
 		}else {
-			Alert alert = new Alert(Alert.AlertType.WARNING);
-			alert.setContentText("This page number is out of range");
-			alert.show();
+
 		}
+
 	}
 
 	@Override
