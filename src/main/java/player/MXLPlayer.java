@@ -28,7 +28,6 @@ public class MXLPlayer{
 
 	/**
 	 * this method will play music from given duration.
-	 *
 	 * @param partID which part should player start
 	 * @param measureID which measure should player start
 	 * @param duration  when should player start in a measure.

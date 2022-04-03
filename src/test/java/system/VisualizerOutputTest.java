@@ -1,7 +1,5 @@
 package system;
 
-import com.itextpdf.kernel.pdf.PdfDocument;
-import com.itextpdf.layout.Document;
 import converter.Score;
 import custom_exceptions.TXMLException;
 import org.junit.jupiter.api.Test;
@@ -40,11 +38,8 @@ class VisualizerOutputTest {
 			Score score = new Score(inputEdit.toString());
 			Path outPath = outDirPath.resolve(input.getName()+".pdf");
 			File outFile = outPath.toFile();
-			System.out.println(outFile.getPath());
 			Visualizer visualizer = new Visualizer(score);
-			PdfDocument pdf = visualizer.draw(outFile);
-			Document document = new Document(pdf);
-			document.close();
+
 		}
 
 	}

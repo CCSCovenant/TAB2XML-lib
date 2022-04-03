@@ -24,6 +24,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.time.Duration;
@@ -91,7 +92,7 @@ public class MainViewController extends Application {
 			root = loader.load();
 			CurrentSongSettingsWindowController controller = loader.getController();
 			controller.setMainViewController(this);
-			settingsWindow = this.openNewWindow(root, "Current Song Settings");
+			settingsWindow = this.openNewWindow(root, "Current Song Settings",false);
 		} catch (IOException e) {
 			Logger logger = Logger.getLogger(getClass().getName());
 			logger.log(Level.SEVERE, "Failed to create new Window.", e);
@@ -106,7 +107,7 @@ public class MainViewController extends Application {
 			root = loader.load();
 			SystemDefaultSettingsWindowController controller = loader.getController();
 			controller.setMainViewController(this);
-			settingsWindow = this.openNewWindow(root, "System Default Settings");
+			settingsWindow = this.openNewWindow(root, "System Default Settings",false);
 		} catch (IOException e) {
 			Logger logger = Logger.getLogger(getClass().getName());
 			logger.log(Level.SEVERE, "Failed to create new Window.", e);
@@ -240,12 +241,12 @@ public class MainViewController extends Application {
 		return userOkToGoAhead;
 	}
 
-	private Window openNewWindow(Parent root, String windowName) {
+	private Window openNewWindow(Parent root, String windowName,boolean resizeAble) {
 		Stage stage = new Stage();
 		stage.setTitle(windowName);
 		stage.initModality(Modality.APPLICATION_MODAL);
 		stage.initOwner(MainApp.STAGE);
-		stage.setResizable(false);
+		stage.setResizable(resizeAble);
 		Scene scene = new Scene(root);
 		stage.setScene(scene);
 		stage.show();
@@ -260,7 +261,7 @@ public class MainViewController extends Application {
 			root = loader.load();
 			SaveMXLController controller = loader.getController();
 			controller.setMainViewController(this);
-			convertWindow = this.openNewWindow(root, "ConversionOptions");
+			convertWindow = this.openNewWindow(root, "ConversionOptions",false);
 		} catch (IOException e) {
 			Logger logger = Logger.getLogger(getClass().getName());
 			logger.log(Level.SEVERE, "Failed to create new Window.", e);
@@ -275,7 +276,7 @@ public class MainViewController extends Application {
 			root = loader.load();
 			SaveMXLController controller = loader.getController();
 			controller.setMainViewController(this);
-			convertWindow = this.openNewWindow(root, "Save MusicXML");
+			convertWindow = this.openNewWindow(root, "Save MusicXML",false);
 		} catch (IOException e) {
 			Logger logger = Logger.getLogger(getClass().getName());
 			logger.log(Level.SEVERE, "Failed to create new Window.", e);
@@ -291,7 +292,7 @@ public class MainViewController extends Application {
 			ShowMXLController controller = loader.getController();
 			controller.setMainViewController(this);
 			controller.update();
-			convertWindow = this.openNewWindow(root, "MusicXML output");
+			convertWindow = this.openNewWindow(root, "MusicXML output",false);
 		} catch (IOException e) {
 			Logger logger = Logger.getLogger(getClass().getName());
 			logger.log(Level.SEVERE, "Failed to create new Window.", e);
@@ -304,10 +305,22 @@ public class MainViewController extends Application {
 		try {
 			FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("GUI/previewMXL.fxml"));
 			root = loader.load();
+			Stage stage = new Stage();
+			stage.setTitle("preview musicXML");
+			stage.initModality(Modality.APPLICATION_MODAL);
+			stage.initOwner(MainApp.STAGE);
+			stage.setResizable(true);
+			Scene scene = new Scene(root);
+			stage.setScene(scene);
+			stage.show();
+			stage.setMinWidth(1000);
+			stage.setMinHeight(700);
+
 			previewViewController = loader.getController();
 			previewViewController.setMainViewController(this);
+			previewViewController.setScene(scene);
 			previewViewController.update();
-			convertWindow = this.openNewWindow(root, "preview musicXML");
+			convertWindow = scene.getWindow();
 			convertWindow.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				@Override
 				public void handle(WindowEvent event) {
@@ -323,6 +336,8 @@ public class MainViewController extends Application {
 			logger.log(Level.SEVERE, "Failed to create new Window.", e);
 		} catch (TXMLException e) {
 			e.printStackTrace();
+		} catch (URISyntaxException e){
+
 		}
 	}
 
@@ -387,9 +402,6 @@ public class MainViewController extends Application {
                 	saveMXLButton.setDisable(false);
                 	previewButton.setDisable(false);
                 	showMXLButton.setDisable(false);
-					if (previewViewController!=null){
-						previewViewController.update();
-					}
                 }
                 return highlighter.computeHighlighting(text);
             }
