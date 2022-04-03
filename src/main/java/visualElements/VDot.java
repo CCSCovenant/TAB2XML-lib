@@ -10,6 +10,7 @@ public class VDot extends VElement implements VConfigAble{
 	Circle circle = new Circle();
 	HashMap<String,Double> config = new HashMap<>();
 	public VDot(){
+		initConfig();
 		circle.setRadius(config.get("size"));
 		group.getChildren().add(circle);
 	}

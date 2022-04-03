@@ -14,6 +14,7 @@ public class VNote extends VElement implements VConfigAble {
 	HashMap<Integer,Boolean> blockedPos = new HashMap<>();
 	List<VNoteHead> noteHeads = new ArrayList<>();
 	boolean isGrace = false;
+	boolean isRest = false;
 	String type;
 	public VNote(int i){
 		this.number = i;
@@ -55,12 +56,13 @@ public class VNote extends VElement implements VConfigAble {
 		isGrace = grace;
 	}
 
+	public void setRest(boolean rest) {
+		isRest = rest;
+	}
+
 	public void alignment(){
 
 		for(VNoteHead noteHead:noteHeads){
-			if (isGrace){
-				noteHead.setGrace(true);
-			}
 			noteHead.alignment();
 			W = Math.max(W,noteHead.getW());
 			maxVPos = Math.max(maxVPos,noteHead.getShapeGroups().getLayoutY());

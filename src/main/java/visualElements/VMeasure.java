@@ -92,7 +92,7 @@ public class VMeasure extends VElement implements VConfigAble {
 			if (VUtility.NoteType2Integer(type)<=2){ // do not create notation for whole and half notes.
 
 			}else {
-				if (!note.isGrace){
+				if (!note.isGrace&&!note.isRest){
 					notation.addNote(note.number, type);
 				}
 			}
@@ -124,7 +124,7 @@ public class VMeasure extends VElement implements VConfigAble {
 			if (note.type!=null){
 				type = note.type;
 			}
-			if (!note.isGrace){
+			if (!note.isGrace&&!note.isRest){
 				notation.addNote(note.number, type);
 			}
 
@@ -159,10 +159,13 @@ public class VMeasure extends VElement implements VConfigAble {
 		VNoteHead noteHead = null;
 		String step;
 		int octave;
-		int relative = 3;
+		int relative = 1;
 		//TODO set relative to default rest position. calculate based on the staffline.
 		if (note.getRest()!=null){
-			noteHead = new VNoteHead(VUtility.getDrumAssetName(note),0,relative);
+
+			noteHead = new VNoteHead(VUtility.getDrumAssetName(note),0,relative,false);
+			noteHead.updateConfig("scale",3);
+			vNote.setRest(true);
 		}else {
 			if (instrument.equals("TAB")){
 				if (note.getNotations()!=null&&note.getNotations().getTechnical()!=null){
@@ -174,7 +177,7 @@ public class VMeasure extends VElement implements VConfigAble {
 				step = note.getUnpitched().getDisplayStep();
 				octave = note.getUnpitched().getDisplayOctave();
 				relative = VUtility.getRelative(step,octave);
-				noteHead = new VNoteHead(result,dots,relative);
+				noteHead = new VNoteHead(result,dots,relative,note.getGrace()!=null);
 			}
 		}
 		if (note.getNotations()!=null){

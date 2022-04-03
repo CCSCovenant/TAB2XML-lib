@@ -23,6 +23,23 @@ public class VUtility {
 	public static String getDrumAssetName(Note note){
 		if (note.getRest()!=null){
 			return note.getType()+"_rest";
+		}else if (note.getGrace()!=null){
+			switch (NoteType2Integer(note.getType())){
+				case 1:
+					return "whole_normal";
+				case 2:
+					return "half_full";
+				case 4:
+					return "quarter_full";
+				case 8:
+					return "eighth_full";
+				case 16:
+					return "16th_full";
+				case 32:
+					return "32th_full";
+				default:
+					return "64th_full";
+			}
 		}else {
 			if (note.getNotehead()!=null){
 				switch (NoteType2Integer(note.getType())){

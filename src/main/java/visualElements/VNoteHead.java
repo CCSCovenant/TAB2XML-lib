@@ -28,12 +28,13 @@ public class VNoteHead extends VElement implements VConfigAble{
 	int relative = 0;
 	boolean isGrace = false;
 	double step = VConfig.getInstance().getGlobalConfig("Step");
-	public VNoteHead(String AssetName,int dots,int relative){
+	public VNoteHead(String AssetName,int dots,int relative,boolean isGrace){
+		this.isGrace = isGrace;
 		initConfig();
 		this.relative = relative;
 		List<Integer> staff = VConfig.getInstance().getStaffDetail();
 		if (relative<staff.get(0)||relative>staff.get(staff.size()-1)){
-			if (Math.abs(relative-staff.get(0))%2==0){
+			if (Math.abs(relative-staff.get(0))%2==1){
 				group.getChildren().add(line);
 			}
 		}
@@ -103,8 +104,15 @@ public class VNoteHead extends VElement implements VConfigAble{
 		if (isGrace){
 			s = config.get("graceScale");
 		}
-		imageView.setFitHeight(step*2*s);
-		imageView.setFitWidth(step*2*s);
+
+		if (isGrace){
+			imageView.setFitWidth(step*2*s*2);
+			Bounds bounds = group.getBoundsInLocal();
+			group.setLayoutY(relative*step-bounds.getHeight()/1.8);
+		}else {
+			imageView.setFitWidth(step*2*s);
+		}
+		imageView.setPreserveRatio(true);
 		Bounds bounds = imageView.getBoundsInLocal();
 		background.setWidth(bounds.getWidth());
 		background.setHeight(bounds.getHeight());
@@ -121,7 +129,8 @@ public class VNoteHead extends VElement implements VConfigAble{
 
 		W = step*2*s;
 		line.setLayoutY(step);
-		line.setEndX(W);
+		line.setEndX(1.25*W);
+		line.setStartX(-0.25*W);
 		double dotGap = config.get("dotGap");
 		if (dots.size()>0){
 			for (int i = 0; i < dots.size(); i++) {

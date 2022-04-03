@@ -26,12 +26,12 @@
   },
   {
     "name": "whole_x_note_head",
-    "url": "graphic/x_note_head.png",
+    "url": "graphic/x_note_head_full.png",
     "id": "whole_x"
   },
   {
     "name": "half_x_note_head",
-    "url": "graphic/x_note_head.png",
+    "url": "graphic/x_note_head_full.png",
     "id": "half_x"
   },
   {
@@ -69,6 +69,37 @@
     "url": "graphic/percussion.png",
     "id": "percussion"
   },
+  {
+    "name": "grace_full",
+    "url": "graphic/half_full.png",
+    "id": "half_full"
+  },
+  {
+    "name": "grace_full",
+    "url": "graphic/quarter_full.png",
+    "id": "quarter_full"
+  },
+  {
+    "name": "grace_full",
+    "url": "graphic/eighth_full.png",
+    "id": "eighth_full"
+  },
+  {
+    "name": "grace_full",
+    "url": "graphic/16th_full.png",
+    "id": "16th_full"
+  },
+  {
+    "name": "grace_full",
+    "url": "graphic/32th_full.png",
+    "id": "32th_full"
+  },
+  {
+    "name": "grace_full",
+    "url": "graphic/64th_full.png",
+    "id": "64th_full"
+  },
+
   {
     "name": "tab clef",
     "url": "graphic/TAB.png",
