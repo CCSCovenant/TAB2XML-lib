@@ -1,6 +1,9 @@
 package visualElements;
 
 import javafx.geometry.Bounds;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorInput;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
@@ -24,7 +27,6 @@ public class VNoteHead extends VElement implements VConfigAble{
 	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("noteHead");
 	int relative = 0;
 	double step = VConfig.getInstance().getGlobalConfig().get("Step");
-
 	public VNoteHead(String AssetName,int dots,int relative){
 		this.relative = relative;
 		List<Integer> staff = VConfig.getInstance().getStaffDetail();
@@ -36,6 +38,12 @@ public class VNoteHead extends VElement implements VConfigAble{
 		imageView.setImage(new Image(imageResourceHandler.getImage(AssetName)));
 		imageView.setFitHeight(step*2*config.get("scale"));
 		imageView.setFitWidth(step*2*config.get("scale"));
+
+		Bounds bounds = imageView.getBoundsInLocal();
+		background.setWidth(bounds.getWidth());
+		background.setHeight(bounds.getHeight());
+		background.setFill(Color.TRANSPARENT);
+		group.getChildren().add(background);
 		group.getChildren().add(imageView);
 		W = group.getBoundsInLocal().getWidth();
 		initDots(dots);
@@ -60,10 +68,19 @@ public class VNoteHead extends VElement implements VConfigAble{
 	@Override
 	public void setHighLight(boolean states) {
 
+		Color color;
 		if (states){
-			// add color fiter into image view
-			
+			color	= VConfig.getInstance().getHighLightColor();
+		}else {
+			color = VConfig.getInstance().getDefaultColor();
 		}
+		Blend blend = new Blend();
+		Bounds bounds = imageView.getBoundsInLocal();
+		ColorInput colorinput = new ColorInput(bounds.getMinX(),bounds.getMinY(),bounds.getWidth(),bounds.getHeight(),color);
+		blend.setTopInput(colorinput);
+		blend.setMode(BlendMode.SRC_ATOP);
+		imageView.setEffect(blend);
+		text.setFill(color);
 		for (VDot dot:dots){
 			dot.setHighLight(states);
 		}

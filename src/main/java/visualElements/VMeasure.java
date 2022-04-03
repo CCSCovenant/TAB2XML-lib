@@ -1,6 +1,9 @@
 package visualElements;
 
+import javafx.geometry.Bounds;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.Rectangle;
 import models.measure.Measure;
 import models.measure.attributes.Time;
 import models.measure.barline.BarLine;
@@ -21,11 +24,13 @@ public class VMeasure extends VElement implements VConfigAble {
 	private List<Line> staffLines = new ArrayList<>();
 	private List<VBarline> barlines = new ArrayList<>();
 	private HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("measure");
-
+	Rectangle background = new Rectangle();
 	String instrument = "";
 	double gapCount = 0;
 	boolean showClef = false;
 	public VMeasure(Measure measure,String instrument,List<Integer> staffInfo){
+		group.getChildren().add(background);
+		number = measure.getNumber();
 		if (measure.getAttributes().getTime()!=null){
 			Time time = measure.getAttributes().getTime();
 			VTime vTime = new VTime(time.getBeats(),time.getBeatType());
@@ -185,7 +190,27 @@ public class VMeasure extends VElement implements VConfigAble {
 
 	@Override
 	public void setHighLight(boolean states) {
-
+		Color color;
+		if (states){
+			color	= VConfig.getInstance().getHighLightColor();
+			//background.setStroke(color);
+		}else {
+			color = VConfig.getInstance().getDefaultColor();
+			//background.setStroke(Color.TRANSPARENT);
+		}
+		for (VGNotation notation:Notations){
+			notation.setHighLight(states);
+		}
+		for (Line line:staffLines){
+			line.setStroke(color);
+		}
+		for (VNote note:Notes){
+			note.setHighLight(states);
+		}
+		for (VBarline barline:barlines){
+			barline.setHighLight(states);
+		}
+		System.out.println("Selected Measure");
 	}
 
 	public void setNumber(int number) {
@@ -288,6 +313,13 @@ public class VMeasure extends VElement implements VConfigAble {
 		addGapBetweenElements(gapBetweenElement);
 		//update the staffline.
 		updateStaffLine(W);
+		Bounds bounds = group.getBoundsInLocal();
+		background.setLayoutX(bounds.getMinX());
+		background.setLayoutY(bounds.getMinY());
+		background.setHeight(bounds.getHeight());
+		background.setWidth(bounds.getWidth());
+		background.setFill(Color.TRANSPARENT);
+		background.toBack();
 		alignmentBarlines();
 		alignmentNotations();
 	}

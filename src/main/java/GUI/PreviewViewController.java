@@ -2,7 +2,6 @@ package GUI;
 
 import custom_exceptions.TXMLException;
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.Node;
@@ -14,7 +13,6 @@ import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
-import javafx.scene.input.DragEvent;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -60,21 +58,16 @@ public class PreviewViewController extends Application {
 	public void update() throws TXMLException, FileNotFoundException, URISyntaxException {
 		this.visualizer = new Visualizer(mvc.converter.getScore());
 		groups = visualizer.getElementGroups();
-		AnchorPane anchorPane = new AnchorPane();
-		anchorPane.getChildren().add(groups.get(0));
-		initEvents(anchorPane);
-		scrollView.setContent(anchorPane);
-
-
+		goToPage(pageNumber);
 	}
 	private void initEvents(AnchorPane anchorPane){
-
 		KeyCombination zoomOut = new KeyCodeCombination(KeyCode.PAGE_DOWN,KeyCombination.CONTROL_DOWN);
 		KeyCombination zoomIn = new KeyCodeCombination(KeyCode.PAGE_UP,KeyCombination.CONTROL_DOWN);
 		scene.getAccelerators().put(zoomIn,()->{
 			scale = scale+scale*0.05;
 			anchorPane.setScaleX(scale);
 			anchorPane.setScaleY(scale);
+
 		});
 
 		scene.getAccelerators().put(zoomOut,()->{
@@ -82,12 +75,7 @@ public class PreviewViewController extends Application {
 			anchorPane.setScaleX(scale);
 			anchorPane.setScaleY(scale);
 		});
-		scrollView.setOnDragDropped(new EventHandler<DragEvent>() {
-			@Override
-			public void handle(DragEvent event) {
 
-			}
-		});
 	}
 	@FXML
 	private void exportPDFHandler(){
@@ -107,17 +95,17 @@ public class PreviewViewController extends Application {
 	}
 	@FXML
 	private void LastPageHandler(){
-		//goToPage(pageNumber-1);
+		goToPage(pageNumber-1);
 
 	}
 	@FXML
 	private void NextPageHandler(){
-		//goToPage(pageNumber+1);
+		goToPage(pageNumber+1);
 	}
 	@FXML
 	private void goToPageHandler(){
-		//int pageNumber = Integer.parseInt(gotoPageField.getText());
-		//goToPage(pageNumber);
+		int pageNumber = Integer.parseInt(gotoPageField.getText());
+		goToPage(pageNumber);
 	}
 	@FXML
 	private void apply(){
@@ -130,6 +118,17 @@ public class PreviewViewController extends Application {
 		thp.start(s);
 	}
 	private void goToPage(int page)  {
+		if (0<=page&&page<groups.size()){
+			AnchorPane anchorPane = new AnchorPane();
+			anchorPane.getChildren().add(groups.get(page));
+			Group group = new Group(anchorPane);
+			initEvents(anchorPane);
+			scrollView.setContent(group);
+			scrollView.setVvalue(0);
+			pageNumber = page;
+		}else {
+
+		}
 
 	}
 

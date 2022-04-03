@@ -1,6 +1,7 @@
 package visualElements;
 
 import javafx.geometry.Bounds;
+import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 
@@ -33,6 +34,13 @@ public class VTime extends VSign{
 
 	@Override
 	public void setHighLight(boolean states) {
-
+		Color color;
+		if (states){
+		 	color	= VConfig.getInstance().getHighLightColor();
+		}else {
+			color = VConfig.getInstance().getDefaultColor();
+		}
+		upper.setFill(color);
+		lower.setFill(color);
 	}
 }

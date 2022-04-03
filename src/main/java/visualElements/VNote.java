@@ -36,10 +36,13 @@ public class VNote extends VElement implements VConfigAble {
 		}else {
 			this.type = type;
 		}
+
 	}
 	@Override
 	public void setHighLight(boolean states) {
-
+		for (VNoteHead noteHead:noteHeads){
+			noteHead.setHighLight(states);
+		}
 	}
 
 	public void setGrace(boolean grace) {

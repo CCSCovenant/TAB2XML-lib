@@ -35,11 +35,13 @@ public class VDot extends VElement implements VConfigAble{
 
 	@Override
 	public void setHighLight(boolean states) {
+		Color color;
 		if (states){
-			circle.setFill(Color.BLUE);
+			color	= VConfig.getInstance().getHighLightColor();
 		}else {
-			circle.setFill(Color.BLACK);
+			color = VConfig.getInstance().getDefaultColor();
 		}
+		circle.setStroke(color);
 	}
 
 	@Override

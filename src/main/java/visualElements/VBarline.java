@@ -1,6 +1,7 @@
 package visualElements;
 
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -13,11 +14,14 @@ public class VBarline extends VElement implements VConfigAble{
 	HashMap<String,Double> config = VConfig.getInstance().getDefaultConfigMap("barline");
 	String location;
 	Text notation = new Text();
+	Line Lightline;
+	Line Hevayline;
+	Circle circle = new Circle(2);
+	Circle circle1 = new Circle(2);
 	public VBarline(double length, String style, Repeat repeat,String location){
 		double offset = config.get("distanceBetweenLine");
 		this.location = location;
-		Line Lightline;
-		Line Hevayline;
+
 		switch (style){
 			case "heavy-light":
 				Hevayline = new Line(0,0,0,length);
@@ -50,9 +54,6 @@ public class VBarline extends VElement implements VConfigAble{
 				group.getChildren().add(notation);
 			}
 			if (repeat.getDirection().equals("forward")){
-				Circle circle = new Circle(2);
-				Circle circle1 = new Circle(2);
-
 				circle.setLayoutX(offset*2);
 				circle1.setLayoutX(offset*2);
 				notation.setLayoutX(offset*2);
@@ -63,9 +64,6 @@ public class VBarline extends VElement implements VConfigAble{
 				group.getChildren().add(circle);
 				group.getChildren().add(circle1);
 			}else if (repeat.getDirection().equals("backward")){
-				Circle circle = new Circle(2);
-				Circle circle1 = new Circle(2);
-
 				circle.setLayoutX(-offset);
 				circle1.setLayoutX(-offset);
 				notation.setLayoutX(-offset-notation.getBoundsInLocal().getWidth());
@@ -92,7 +90,21 @@ public class VBarline extends VElement implements VConfigAble{
 
 	@Override
 	public void setHighLight(boolean states) {
-
+		Color color;
+		if (states){
+			color	= VConfig.getInstance().getHighLightColor();
+		}else {
+			color = VConfig.getInstance().getDefaultColor();
+		}
+		notation.setFill(color);
+		circle.setFill(color);
+		circle1.setFill(color);
+		if (Lightline!=null){
+			Lightline.setFill(color);
+		}
+		if (Hevayline!=null){
+			Hevayline.setFill(color);
+		}
 	}
 
 	@Override

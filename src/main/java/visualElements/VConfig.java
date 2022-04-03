@@ -1,11 +1,15 @@
 package visualElements;
 
+import javafx.scene.paint.Color;
+
 import java.util.HashMap;
 import java.util.List;
 
 public class VConfig {
 	private static VConfig config = new VConfig();;
 	public HashMap<String,HashMap<String,Double>>configMap = new HashMap<>();
+	public Color highLightColor;
+	public Color defaultColor;
 	public List<Integer> staffDetail;
 	public String instrument;
 	private VConfig(){
@@ -13,6 +17,8 @@ public class VConfig {
 	}
 
 	private void initDefaultConfig(){
+		highLightColor = Color.BLUEVIOLET;
+		defaultColor = Color.BLACK;
 		HashMap<String,Double> globalConfig = new HashMap<>();
 		globalConfig.put("PageX",1080d);
 		globalConfig.put("PageY",1920d);
@@ -91,4 +97,21 @@ public class VConfig {
 	public String getInstrument() {
 		return instrument;
 	}
+
+	public Color getHighLightColor() {
+		return highLightColor;
+	}
+
+	public Color getDefaultColor() {
+		return defaultColor;
+	}
+
+	public void setHighLightColor(Color highLightColor) {
+		this.highLightColor = highLightColor;
+	}
+
+	public void setDefaultColor(Color defaultColor) {
+		this.defaultColor = defaultColor;
+	}
 }
+

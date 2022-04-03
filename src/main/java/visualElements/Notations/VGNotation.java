@@ -1,6 +1,7 @@
 package visualElements.Notations;
 
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import visualElements.VConfig;
 import visualElements.VConfigAble;
@@ -32,7 +33,20 @@ public class VGNotation extends VElement implements VConfigAble {
 	}
 	@Override
 	public void setHighLight(boolean states) {
+		Color color;
+		if (states){
+			color	= VConfig.getInstance().getHighLightColor();
+		}else {
+			color = VConfig.getInstance().getDefaultColor();
+		}
+		for (Line line:Vlines){
+			line.setStroke(color);
+		}
+		for (Line line:Hlines){
+			line.setStroke(color);
+		}
 
+		System.out.println("selected Lines");
 	}
 
 	@Override
@@ -68,10 +82,14 @@ public class VGNotation extends VElement implements VConfigAble {
 			if (localHline>globalHLineNum){
 				int diff =  localHline - globalHLineNum;
 				globalHLineNum = localHline;
-				for (int j=0;j<diff;j++){
-					Line line = new Line();
-					line.setStrokeWidth(configMap.get("thickness"));
-					Hlines.add(line);
+				if (notes.size()==1){
+					//TODO add flag for only one note.
+				}else {
+					for (int j=0;j<diff;j++){
+						Line line = new Line();
+						line.setStrokeWidth(configMap.get("thickness"));
+						Hlines.add(line);
+					}
 				}
 			}else if (localHline<globalHLineNum){
 				globalHLineNum = localHline;
