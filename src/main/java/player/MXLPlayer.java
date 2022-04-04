@@ -18,15 +18,16 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MXLPlayer{
-	private ScorePartwise score;
+	private ScorePartwise score; private List<Note> notes= new ArrayList<>();
 	private String clef;
 	private Player player = new Player();
 	private HashMap<String,ScorePart> scorePartMap = new HashMap<>();
 	public MXLPlayer(Score score) throws TXMLException {
-		this.score = score.getModel();
+		this.score = score.getModel();						
 		initPartList();
 	}
-
+	public MXLPlayer(){ }
+	public List<Note> getNotes(){ return notes; }
 	/**
 	 * this method will play music from given duration.
 	 *
@@ -34,7 +35,6 @@ public class MXLPlayer{
 	 * @param measureID which measure should player start
 	 * @param duration  when should player start in a measure.
 	 * */
-
 	public void play(int partID,int measureID, int duration){
 		StringBuilder musicString = new StringBuilder();
 		int partCount = 0;
@@ -67,30 +67,30 @@ public class MXLPlayer{
 		for (ScorePart scorePart:list){
 			scorePartMap.put(scorePart.getId(),scorePart);
 		}
-	}
+	}private int measures=0;boolean partOfRepeat = false;
 	public String getPart(Part part,int measureID, int duration){
 		StringBuilder musicString = new StringBuilder(); 
 		List<Measure> repeats = new ArrayList<>(); 
-		boolean partOfRepeat = false;
-			int measureCount = 0; 
+		
+			int measureCount = 0; 								measures=part.getMeasures().size();
 			for (Measure measure:part.getMeasures()){
 				if (measureCount>measureID){
 					musicString.append(getMeasure(measure,part.getId(),-1));
-					musicString.append(getRepeats(part, measure, -1,repeats,partOfRepeat));
+					musicString.append(getRepeats(part, measure, -1,repeats));
 				}else if (measureCount==measureID){
 					musicString.append(getMeasure(measure,part.getId(),duration));
-					musicString.append(getRepeats(part, measure, duration,repeats,partOfRepeat));
+					musicString.append(getRepeats(part, measure, duration,repeats));
 				}
 				measureCount++;
 			}
 
 		return musicString.toString();
-	}
+	}private int m_count = 0;
 	public String getMeasure(Measure measure,String partID,int duration){
 		StringBuilder musicString = new StringBuilder();
 		int durationCount = 0;
-		if (measure.getNotesBeforeBackup()!=null){
-			for(Note note: measure.getNotesBeforeBackup()) {
+		if (measure.getNotesBeforeBackup()!=null){m_count++;
+			for(Note note: measure.getNotesBeforeBackup()) {if(m_count<=measures) {notes.add(note);}
 				if (durationCount < duration) {
 					durationCount += note.getDuration();
 				} else {
@@ -117,12 +117,13 @@ public class MXLPlayer{
 								musicString.deleteCharAt(musicString.length() - 1);
 								musicString.append(getNoteDuration(note));
 							}
-						//	musicString.append(getDots(note)); 
-						//	addTies(musicString, note); 
+							musicString.append(getDots(note)); 
+							addTies(musicString, note); 
 						} 
 						else if (clef.equals("TAB")) {
 							if (note.getRest() != null) {
 								musicString.append("R");
+								musicString.append(getNoteDuration(note));
 							} else {
 								musicString.append(note.getPitch().getStep());
 								
@@ -137,7 +138,11 @@ public class MXLPlayer{
 								musicString.append(bendNote(note, false));
 								}
 								else if(note.getGrace() != null) {
-									musicString.append("s");
+									if(note.getNotations() != null && note.getNotations().getSlurs() != null) {
+										musicString.append("o");
+									}else {
+										musicString.append("s");
+									}
 									addSlur(musicString,note);
 								} else {
 									musicString.append(getNoteDuration(note));
@@ -266,7 +271,7 @@ public class MXLPlayer{
 			
 		}
 	}
-	private String getRepeats(Part part,Measure measure, int duration, List<Measure> repeats, boolean partOfRepeat) {
+	private String getRepeats(Part part,Measure measure, int duration, List<Measure> repeats) {
 		/* Method checks whether the measure or group of measures is repeated then 
 		 * appends the repeats to the musicString
 		 */
@@ -297,7 +302,7 @@ public class MXLPlayer{
 						//'times' is the number of times the measure is played. It is a string so it needs to be converted to integer
 						int times = Integer.parseInt(barline.getRepeat().getTimes());
 						for(int i = 1; i < times; i++) {
-							for(Measure currentMeasure: repeats) {
+							for(Measure currentMeasure: repeats) {measures++;
 								musicString.append(getMeasure(currentMeasure,part.getId(),duration));
 							}
 						}
