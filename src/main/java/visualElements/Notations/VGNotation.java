@@ -3,6 +3,7 @@ package visualElements.Notations;
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.StrokeLineCap;
 import visualElements.VConfig;
 import visualElements.VElement;
 import visualElements.VUtility;
@@ -107,6 +108,7 @@ public class VGNotation extends VElement {
 			group.getChildren().add(line);
 		}
 		for (Line line:Hlines){
+			line.setStrokeLineCap(StrokeLineCap.BUTT);
 			group.getChildren().add(line);
 		}
 	}

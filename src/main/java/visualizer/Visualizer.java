@@ -68,13 +68,13 @@ public class Visualizer implements VConfigAble {
 			if (tmpLine.addNewMeasure(measure)){ // if this measure can fit into this line, do nothing
 
 			}else {    //if this measure fail to fit into this line
+				tmpLine.initCurvedNotations();
 				if (tmpPage.addNewLine(tmpLine)){ //try to add this line into the page. if success, create a new line(in line 79)
 
 				}else { //else create a new page to add current line.
 					pages.add(tmpPage);
 					tmpPage = new VPage();
 					tmpPage.addNewLine(tmpLine);
-					tmpLine.initCurvedNotations();
 				}
 				tmpLine = new VLine(staffType);
 				tmpLine.addNewMeasure(measure);

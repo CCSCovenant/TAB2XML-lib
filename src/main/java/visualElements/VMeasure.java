@@ -181,11 +181,11 @@ public class VMeasure extends VElement{
 			}
 		}
 		if (note.getNotations()!=null){
-			if (note.getNotations().getTieds()!=null){
+			if (note.getNotations().getTieds()!=null&&note.getRest()==null){
 				noteHead.setTieds(note.getNotations().getTieds());
 				tieNoteHead.add(noteHead);
 			}
-			if (note.getNotations().getSlurs()!=null){
+			if (note.getNotations().getSlurs()!=null&&note.getRest()==null){
 				noteHead.setSlurs(note.getNotations().getSlurs());
 				slurNoteHead.add(noteHead);
 			}

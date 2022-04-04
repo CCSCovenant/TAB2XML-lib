@@ -34,7 +34,7 @@ public class VDrumGNotation extends VGNotation{
 					if (i > 0) {
 						if (i < notes.size() - 1) {
 							if (VUtility.NoteType2Integer(types.get(i)) <= VUtility.NoteType2Integer(types.get(i + 1))) {
-								startX = HPosition.get(i) + configMap.get("thickness") / 2;
+								startX = HPosition.get(i);
 							} else {
 								startX = (HPosition.get(i) + HPosition.get(i - 1)) / 2;
 							}
@@ -42,7 +42,7 @@ public class VDrumGNotation extends VGNotation{
 							startX = (HPosition.get(i) + HPosition.get(i - 1)) / 2;
 						}
 					} else {
-						startX = HPosition.get(i) + configMap.get("thickness") / 2;
+						startX = HPosition.get(i);
 					}
 					Hlines.get(HlinePointer).setStartX(startX);
 
@@ -58,14 +58,14 @@ public class VDrumGNotation extends VGNotation{
 					if (i==1) {
 						line.setEndX((HPosition.get(i) + HPosition.get(i - 1)) / 2);
 					}else {
-						line.setEndX(HPosition.get(i-1)-configMap.get("thickness")/2);
+						line.setEndX(HPosition.get(i-1));
 					}
 				}
 			}
 		}
 		while (!lineStack.isEmpty()){
 			Line line = lineStack.pop();
-			line.setEndX(HPosition.get(HPosition.size()-1)-configMap.get("thickness")/2);
+			line.setEndX(HPosition.get(HPosition.size()-1));
 		}
 	}
 }

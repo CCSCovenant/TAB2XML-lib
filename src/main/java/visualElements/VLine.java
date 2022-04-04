@@ -107,11 +107,17 @@ public class VLine extends VElement{
 						start = slurMap.get(slur.getNumber());
 						slurMap.remove(slur.getNumber());
 					}
+
 					VCurvedNotation curvedNotation = new VCurvedNotation("Slur");
 					curvedNotation.setStartID(start);
 					curvedNotation.setEndID(i);
 					curvedNotations.add(curvedNotation);
 					group.getChildren().add(curvedNotation.getShapeGroups());
+					if (slur.getPlacement()!=null){
+						if (slur.getPlacement().equals("above")){
+							curvedNotation.setPositive(true);
+						}
+					}
 				}
 			}
 		}
@@ -134,19 +140,22 @@ public class VLine extends VElement{
 				double startX = lineStart;
 				double endX = lineEnd;
 				double Y = 0;
-				if (curvedNotation.getStartID()>0){
+				if (curvedNotation.getStartID()>=0){
 					VNoteHead noteHead = tiedElements.get(curvedNotation.getStartID());
-					Y = noteHead.getShapeGroups().getLayoutY();
+					Y = noteHead.relative* noteHead.step;
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
-					startX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
+					startX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX()+ noteHead.getW();
 				}
-				if (curvedNotation.getEndID()>0){
+				if (curvedNotation.getEndID()>=0){
 					VNoteHead noteHead = tiedElements.get(curvedNotation.getEndID());
-					Y = noteHead.getShapeGroups().getLayoutY();
+					Y = noteHead.relative* noteHead.step;
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
 					endX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
+				}
+				if (Y<0){
+					curvedNotation.setPositive(true);
 				}
 				curvedNotation.Alignment(startX,endX,Y);
 
@@ -154,21 +163,22 @@ public class VLine extends VElement{
 				double startX = lineStart;
 				double endX = lineEnd;
 				double Y = 0;
-				if (curvedNotation.getStartID()>0){
+				if (curvedNotation.getStartID()>=0){
 					VNoteHead noteHead = slurElements.get(curvedNotation.getStartID());
-					Y = noteHead.getShapeGroups().getLayoutY();
+					Y = noteHead.relative* noteHead.step;
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
-					startX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
+					startX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX()+ noteHead.getW();
 				}
-				if (curvedNotation.getEndID()>0){
+				if (curvedNotation.getEndID()>=0){
 					VNoteHead noteHead = slurElements.get(curvedNotation.getEndID());
-					Y = noteHead.getShapeGroups().getLayoutY();
+					Y = noteHead.relative* noteHead.step;
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
 					endX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
 				}
 				curvedNotation.Alignment(startX,endX,Y);
+
 			}
 		}
 	}
@@ -189,6 +199,7 @@ public class VLine extends VElement{
 			W = W+measures.get(i).getW();
 		}
 		W += measures.get(measures.size()-1).getW();
+		alignmentCurved();
 	}
 
 }

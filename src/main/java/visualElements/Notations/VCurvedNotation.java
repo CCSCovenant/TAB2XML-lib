@@ -1,6 +1,9 @@
 package visualElements.Notations;
 
-import javafx.scene.shape.QuadCurve;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.MoveTo;
+import javafx.scene.shape.Path;
+import javafx.scene.shape.QuadCurveTo;
 import visualElements.VConfig;
 import visualElements.VConfigAble;
 import visualElements.VElement;
@@ -8,18 +11,49 @@ import visualElements.VElement;
 import java.util.HashMap;
 
 public class VCurvedNotation extends VElement implements VConfigAble {
-	boolean positive;
+	boolean positive = false;
 	String type;
 	public HashMap<String,Double> configMap = new HashMap<>();
 	int startID = -2; // measure start
 	int endID = -1; // measure end
-	QuadCurve quadCurve = new QuadCurve();
+	MoveTo moveTo = new MoveTo();
+	QuadCurveTo quadCurveTop = new QuadCurveTo();
+	QuadCurveTo quadCurveDown = new QuadCurveTo();
+	Path path;
+
 	public VCurvedNotation(String type){
+		initConfig();
 		this.type = type;
-		group.getChildren().add(quadCurve);
+		path = new Path(moveTo,quadCurveTop,quadCurveDown);
+		group.getChildren().add(path);
 	}
 	public void Alignment(double x1,double x2,double y){
+		double adjustedY = y;
+		double adjustedControlY = y;
+		double adjustDownControlY = y;
 
+		if (positive){
+			adjustedControlY -= configMap.get("defaultControlPoint");
+			adjustDownControlY -= configMap.get("defaultControlPoint")*2/3;
+		}else {
+			adjustedY += VConfig.getInstance().getGlobalConfig("Step")*2;
+			adjustedControlY = adjustedY+configMap.get("defaultControlPoint");
+			adjustDownControlY = adjustedY+configMap.get("defaultControlPoint")*2/3;
+
+		}
+		moveTo.setX(x1);
+		moveTo.setY(adjustedY);
+		setUpCurve(quadCurveTop,x2,((x1+x2)/2),adjustedY,adjustedControlY);
+		setUpCurve(quadCurveDown,x1,(x1+x2)/2,adjustedY,adjustDownControlY);
+		path.setFill(Color.BLACK);
+
+
+	}
+	public void setUpCurve(QuadCurveTo quadCurve,double x1,double x2,double y1,double y2){
+		quadCurve.setX(x1);
+		quadCurve.setY(y1);
+		quadCurve.setControlX(x2);
+		quadCurve.setControlY(y2);
 	}
 	public void setStartID(int i){
 		startID = i;
@@ -42,7 +76,7 @@ public class VCurvedNotation extends VElement implements VConfigAble {
 	}
 
 	public void initConfig(){
-		configMap.put("defaultControlPoint", VConfig.getInstance().getGlobalConfig("Step"));
+		configMap.put("defaultControlPoint", VConfig.getInstance().getGlobalConfig("Step")*2);
 	}
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
@@ -52,5 +86,9 @@ public class VCurvedNotation extends VElement implements VConfigAble {
 	@Override
 	public void updateConfig(String id, double value) {
 
+	}
+
+	public void setPositive(boolean positive) {
+		this.positive = positive;
 	}
 }
