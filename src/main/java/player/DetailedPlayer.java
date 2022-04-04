@@ -2,6 +2,7 @@ package player;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ListIterator;
@@ -9,12 +10,14 @@ import java.util.ListIterator;
 import javax.sound.midi.InvalidMidiDataException;
 import javax.sound.midi.MidiUnavailableException;
 import javax.sound.midi.Sequence;
+import javax.sound.midi.Sequencer;
 
 import org.jfugue.midi.MidiFileManager;
 import org.jfugue.midi.MidiParserListener;
 import org.jfugue.pattern.Pattern;
 import org.jfugue.player.ManagedPlayer;
 import org.jfugue.player.Player;
+import org.jfugue.player.SequencerManager;
 import org.staccato.StaccatoParser;
 
 import models.measure.note.Dot;
@@ -31,10 +34,11 @@ public class DetailedPlayer {
 	private ManagedPlayer player;
 	private Sequence sequence;
 	private List<List<Double>> time;
+	private int BPM = 120;
 	
 	public DetailedPlayer(String musicString,List<Note> notes, ManagedPlayer p) {
 		this.musicString = musicString;
-	//	Player p = new Player();
+		setTempo();	
 		player = p;
 		musicNotes = notes;
 		initialize();
@@ -82,7 +86,6 @@ public class DetailedPlayer {
 			time.get(i).add(stop);
 			i++;
 		}
-	
 //		System.out.println("\n" +totaltime);
 //		System.out.println(elapsedtime);
 //		for(int j = 0; j<time.size(); j++) {
@@ -243,6 +246,27 @@ public class DetailedPlayer {
 		Sequence sequence = midiParserListener.getSequence();
 		
 		return sequence;
+	}
+	private void setTempo() {
+		
+//		if(/*BPM is set by user*/) {
+//			
+//		}else { BPM = 120;}
+		
+		try {
+			Field field = ManagedPlayer.class.getDeclaredField("common");
+			field.setAccessible(true);
+			
+			SequencerManager manager = (SequencerManager)field.get(player);
+			Sequencer sequencer = manager.getSequencer();
+			sequencer.setTempoInBPM(BPM);
+			
+		}catch(NoSuchFieldException e) {
+			System.out.println("NOT FOUND");
+		}
+		catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 //	try {
 //	File file = new File("C:\\Users\\kidim\\Desktop\\m\\musik.mid");
