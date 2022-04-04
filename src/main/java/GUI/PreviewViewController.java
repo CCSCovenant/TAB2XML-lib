@@ -14,14 +14,12 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
 import player.MXLPlayer;
 import player.ThreadPlayer;
 import visualizer.Visualizer;
 
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -75,7 +73,11 @@ public class PreviewViewController extends Application {
 
 	}
 	@FXML
-	private void exportPDFHandler(){
+	private void exportPDFHandler() throws TXMLException {
+		visualizer.alignment();
+		groups = visualizer.getElementGroups();
+		goToPage(pageNumber);
+		/*
 		FileChooser fileChooser = new FileChooser();
 		File file = fileChooser.showSaveDialog(convertWindow);
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("pdf files", "*.pdf");
@@ -87,8 +89,7 @@ public class PreviewViewController extends Application {
 			}catch (Exception e){
 
 			}
-		}
-
+		}*/
 	}
 	@FXML
 	private void LastPageHandler(){

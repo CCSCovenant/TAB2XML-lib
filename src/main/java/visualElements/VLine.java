@@ -35,10 +35,12 @@ public class VLine extends VElement{
 		// otherwise, add this measure into this line.
 
 			newMeasure.alignment();
-			if (W+newMeasure.getW()>PageW-MarginX){
+			double minW = newMeasure.getW();
+			if (W+minW>PageW-MarginX){
 				if (measures.size()==0){
 					//TODO give user a warning that this line is squeezed under current setting. please adjust the setting.
 					measures.add(newMeasure);
+					group.getChildren().add(newMeasure.getShapeGroups());
 					return true;
 				}else {
 					return false;
@@ -51,8 +53,7 @@ public class VLine extends VElement{
 					newMeasure.setShowClef(false);
 				}
 				measures.add(newMeasure);
-				gapCount += newMeasure.getGapCount();
-				W += newMeasure.getW();
+				W += newMeasure.getWInMinWidth();
 				group.getChildren().add(newMeasure.getShapeGroups());
 				return true;
 			}
@@ -182,13 +183,27 @@ public class VLine extends VElement{
 			}
 		}
 	}
-	public void alignment(){
-		double idealLengthDiff = PageW-MarginX-W;
-		double ideaGapDiff = idealLengthDiff/gapCount;
-		//find the gap that fit into the page
-		for (VMeasure measure:measures){
-			measure.updateConfig("gapBetweenElement",measure.getConfigAbleList().get("gapBetweenElement")+ideaGapDiff);
+	public void alignment() {
+		W = MarginX + vClef.getW();
+		gapCount = 0;
+		for (VMeasure measure : measures) {
+			W += measure.getW();
+			gapCount += measure.getGapCount();
 		}
+		double idealLengthDiff = PageW - MarginX - W;
+		double ideaGapDiff = idealLengthDiff / gapCount;
+
+			//find the gap that fit into the page
+			for (VMeasure measure : measures) {
+				double changed = measure.getConfigAbleList().get("gapBetweenElement") + ideaGapDiff;
+				if (changed < VConfig.getInstance().getGlobalConfig("MinNoteDistance")){
+					changed = VConfig.getInstance().getGlobalConfig("MinNoteDistance");
+				}
+				measure.updateConfig("gapBetweenElement",changed );
+			}
+
+
+
 		W = 0;
 		vClef.alignment();
 		W += vClef.getW();
@@ -197,8 +212,9 @@ public class VLine extends VElement{
 			measures.get(i).getShapeGroups().setLayoutX(W);
 			measures.get(i).alignment();
 			W = W+measures.get(i).getW();
+			System.out.print(W+" ");
 		}
-		W += measures.get(measures.size()-1).getW();
+
 		alignmentCurved();
 	}
 

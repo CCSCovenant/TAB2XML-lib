@@ -66,6 +66,7 @@ public class VNoteHead extends VElement{
 		W = group.getBoundsInLocal().getWidth();
 		initDots(dots);
 	}
+	
 	public void initConfig(){
 		config.put("scale",1d);
 		config.put("graceScale",0.7d);

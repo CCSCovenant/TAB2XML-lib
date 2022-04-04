@@ -345,7 +345,28 @@ public class VMeasure extends VElement{
 		alignmentBarlines();
 		alignmentNotations();
 	}
-
+	public double getWInMinWidth(){
+		double minW = 0;
+		minW += config.get("gapBeforeMeasure");
+		double gapBetweenElement = VConfig.getInstance().getGlobalConfig("MinNoteDistance");
+		double gapBetweenGrace = config.get("gapBetweenGrace");
+		for (VSign sign:Signs){
+			sign.alignment();
+			minW += sign.getW();
+			minW += gapBetweenElement;
+		}
+		for (VNote note:Notes){
+			note.alignment();
+			double offsetX = note.offsetX;
+			minW += note.getW()+offsetX;
+			if (note.isGrace){
+				minW += gapBetweenGrace;
+			}else {
+				minW += gapBetweenElement;
+			}
+		}
+		return minW;
+	}
 	public List<VNoteHead> getTieNoteHead() {
 		return tieNoteHead;
 	}

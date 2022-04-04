@@ -1,5 +1,7 @@
 package visualElements.Notations;
 
-public class VINotation {
-	//bend
+import visualElements.VElement;
+
+public class VINotation extends VElement {
+
 }

@@ -30,7 +30,6 @@ public class Visualizer implements VConfigAble {
 		setUpInitStaffLine(5,2);
 		initMeasures();
 		alignment();
-		initGroups();
 	}
 
 	public ArrayList<Group> getElementGroups(){
@@ -89,6 +88,7 @@ public class Visualizer implements VConfigAble {
 			tmpPage.addNewLine(tmpLine);
 			pages.add(tmpPage);
 		}
+		initGroups();
 	}
 	public void initGroups(){
 		 groups = new ArrayList<>();
