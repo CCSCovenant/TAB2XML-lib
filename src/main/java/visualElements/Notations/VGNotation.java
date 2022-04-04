@@ -4,7 +4,6 @@ import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import visualElements.VConfig;
-import visualElements.VConfigAble;
 import visualElements.VElement;
 import visualElements.VUtility;
 
@@ -12,7 +11,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class VGNotation extends VElement implements VConfigAble {
+public class VGNotation extends VElement {
 	List<Integer> notes = new ArrayList<>(); // how much note in current notation
 	List<String> types = new ArrayList<>(); // the type of note in current notation
 	List<Line> Vlines = new ArrayList<>();

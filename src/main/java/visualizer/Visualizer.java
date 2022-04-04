@@ -74,11 +74,13 @@ public class Visualizer implements VConfigAble {
 					pages.add(tmpPage);
 					tmpPage = new VPage();
 					tmpPage.addNewLine(tmpLine);
+					tmpLine.initCurvedNotations();
 				}
 				tmpLine = new VLine(staffType);
 				tmpLine.addNewMeasure(measure);
 			}
 		}
+		tmpLine.initCurvedNotations();
 		if (tmpPage.addNewLine(tmpLine)){
 			pages.add(tmpPage);
 		}else {

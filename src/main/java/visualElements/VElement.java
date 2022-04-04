@@ -4,7 +4,9 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
 
-public class VElement {
+import java.util.HashMap;
+
+public class VElement implements VConfigAble {
 	public Group group = new Group();
 	double W = 0;
 	double H = 0;
@@ -44,5 +46,15 @@ public class VElement {
 	}
 	public VElement getCurrentElement(){
 		return this;
+	}
+
+	@Override
+	public HashMap<String, Double> getConfigAbleList() {
+		return null;
+	}
+
+	@Override
+	public void updateConfig(String id, double value) {
+
 	}
 }

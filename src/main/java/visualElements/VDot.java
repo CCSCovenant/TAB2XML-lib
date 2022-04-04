@@ -6,7 +6,7 @@ import javafx.scene.shape.Circle;
 
 import java.util.HashMap;
 
-public class VDot extends VElement implements VConfigAble{
+public class VDot extends VElement{
 	Circle circle = new Circle();
 	HashMap<String,Double> config = new HashMap<>();
 	public VDot(){

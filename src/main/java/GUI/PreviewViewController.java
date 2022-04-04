@@ -9,10 +9,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
@@ -24,7 +21,6 @@ import player.MXLPlayer;
 import player.ThreadPlayer;
 import visualizer.Visualizer;
 
-import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
@@ -136,21 +132,5 @@ public class PreviewViewController extends Application {
 	@Override
 	public void start(Stage primaryStage) throws Exception {}
 
-	/**
-	 *
-	 * */
-	private static Image convertToFxImage(BufferedImage image) {
-		WritableImage wr = null;
-		if (image != null) {
-			wr = new WritableImage(image.getWidth(), image.getHeight());
-			PixelWriter pw = wr.getPixelWriter();
-			for (int x = 0; x < image.getWidth(); x++) {
-				for (int y = 0; y < image.getHeight(); y++) {
-					pw.setArgb(x, y, image.getRGB(x, y));
-				}
-			}
-		}
-		return new ImageView(wr).getImage();
-	}
 }
 

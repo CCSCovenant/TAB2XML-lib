@@ -2,7 +2,7 @@ package visualElements;
 
 import java.util.HashMap;
 
-public class VSign extends VElement implements VConfigAble {
+public class VSign extends VElement{
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
 		return null;

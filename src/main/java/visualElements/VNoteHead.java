@@ -12,13 +12,15 @@ import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import models.measure.note.notations.Slur;
+import models.measure.note.notations.Tied;
 import visualizer.ImageResourceHandler;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class VNoteHead extends VElement implements VConfigAble{
+public class VNoteHead extends VElement{
 	ImageView imageView = new ImageView();
 	Text text = new Text();
 	ImageResourceHandler imageResourceHandler = ImageResourceHandler.getInstance();
@@ -30,7 +32,11 @@ public class VNoteHead extends VElement implements VConfigAble{
 	String instrument = "";
 	boolean isGrace = false;
 	double step = VConfig.getInstance().getGlobalConfig("Step");
-	public VNoteHead(String AssetName,int dots,int relative,boolean isGrace){
+	List<Tied> tieds;
+	List<Slur> slurs;
+	VNote parentNote;
+	public VNoteHead(String AssetName,int dots,int relative,boolean isGrace,VNote parentNote){
+		this.parentNote = parentNote;
 		instrument = "";
 		this.isGrace = isGrace;
 		initConfig();
@@ -47,9 +53,9 @@ public class VNoteHead extends VElement implements VConfigAble{
 		W = group.getBoundsInLocal().getWidth();
 		initDots(dots);
 	}
-	public VNoteHead(int fret,int dots,int relative,boolean isGrace){
+	public VNoteHead(int fret,int dots,int relative,boolean isGrace,VNote parentNote){
+		this.parentNote = parentNote;
 		instrument = "TAB";
-
 		this.isGrace = isGrace;
 		initConfig();
 		this.relative = relative-2; // double-spaced for tab
@@ -102,6 +108,14 @@ public class VNoteHead extends VElement implements VConfigAble{
 
 	public void setGrace(boolean grace) {
 		isGrace = grace;
+	}
+
+	public void setTieds(List<Tied> tieds) {
+		this.tieds = tieds;
+	}
+
+	public void setSlurs(List<Slur> slurs) {
+		this.slurs = slurs;
 	}
 
 	public void alignment(){
@@ -160,5 +174,9 @@ public class VNoteHead extends VElement implements VConfigAble{
 	@Override
 	public void updateConfig(String id, double value) {
 		config.put(id,value);
+	}
+
+	public VNote getParentNote() {
+		return parentNote;
 	}
 }

@@ -1,10 +1,16 @@
 package visualElements;
 
-import java.util.ArrayList;
-import java.util.List;
+import models.measure.note.notations.Slur;
+import models.measure.note.notations.Tied;
+import visualElements.Notations.VCurvedNotation;
+
+import java.util.*;
 
 public class VLine extends VElement{
 	List<VMeasure> measures = new ArrayList<>();
+	List<VCurvedNotation> curvedNotations = new ArrayList<>();
+	ArrayList<VNoteHead> tiedElements = new ArrayList<>();
+	ArrayList<VNoteHead> slurElements = new ArrayList<>();
 	double MarginX = VConfig.getInstance().getGlobalConfig("MarginX");
 	double PageW = VConfig.getInstance().getGlobalConfig("PageX");
 	VClef vClef;
@@ -51,6 +57,120 @@ public class VLine extends VElement{
 				return true;
 			}
 
+	}
+	public void initCurvedNotations(){
+
+
+		for (VMeasure measure:measures){
+			for (VNoteHead noteHead:measure.getTieNoteHead()){
+				tiedElements.add(noteHead);
+			}
+		}
+		for (VMeasure measure:measures){
+			for (VNoteHead noteHead:measure.getSlurNoteHead()){
+				slurElements.add(noteHead);
+			}
+		}
+		Queue<Integer> queue = new LinkedList<>();
+		for (int i=0;i<tiedElements.size();i++){
+			VNoteHead noteHead = tiedElements.get(i);
+			for (Tied tied:noteHead.tieds){
+				if (tied.getType().equals("start")){
+					queue.add(i);
+				}else {
+					VCurvedNotation curvedNotation = new VCurvedNotation("Tied");
+					curvedNotation.setEndID(i);
+					if (queue.size()<1){;
+					}else {
+						curvedNotation.setStartID(queue.poll());
+					}
+					curvedNotations.add(curvedNotation);
+					group.getChildren().add(curvedNotation.getShapeGroups());
+				}
+			}
+		}
+		while (queue.size()>0){
+			VCurvedNotation curvedNotation = new VCurvedNotation("Tied");
+			curvedNotation.setStartID(queue.poll());
+			curvedNotations.add(curvedNotation);
+			group.getChildren().add(curvedNotation.getShapeGroups());
+		}
+		HashMap<Integer,Integer> slurMap = new HashMap<>();
+		for (int i=0;i<slurElements.size();i++){
+			VNoteHead noteHead = slurElements.get(i);
+			for (Slur slur:noteHead.slurs){
+				if (slur.getType().equals("start")){
+					slurMap.put(slur.getNumber(),i);
+				}else {
+					int start = -2;
+					if (slurMap.containsKey(slur.getNumber())){
+						start = slurMap.get(slur.getNumber());
+						slurMap.remove(slur.getNumber());
+					}
+					VCurvedNotation curvedNotation = new VCurvedNotation("Slur");
+					curvedNotation.setStartID(start);
+					curvedNotation.setEndID(i);
+					curvedNotations.add(curvedNotation);
+					group.getChildren().add(curvedNotation.getShapeGroups());
+				}
+			}
+		}
+		for (Integer i:slurMap.keySet()){
+			VCurvedNotation curvedNotation = new VCurvedNotation("Slur");
+			curvedNotation.setStartID(slurMap.get(i));
+			curvedNotations.add(curvedNotation);
+			group.getChildren().add(curvedNotation.getShapeGroups());
+		}
+
+
+	}
+	public void alignmentCurved(){
+		double lineStart = 0;
+		double lineEnd = 0;
+		lineStart = vClef.getW();
+		lineEnd = W;
+		for (VCurvedNotation curvedNotation:curvedNotations){
+			if (curvedNotation.getType().equals("Tied")){
+				double startX = lineStart;
+				double endX = lineEnd;
+				double Y = 0;
+				if (curvedNotation.getStartID()>0){
+					VNoteHead noteHead = tiedElements.get(curvedNotation.getStartID());
+					Y = noteHead.getShapeGroups().getLayoutY();
+					VNote pNote = noteHead.getParentNote();
+					VMeasure pMeasure = pNote.getParentMeasure();
+					startX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
+				}
+				if (curvedNotation.getEndID()>0){
+					VNoteHead noteHead = tiedElements.get(curvedNotation.getEndID());
+					Y = noteHead.getShapeGroups().getLayoutY();
+					VNote pNote = noteHead.getParentNote();
+					VMeasure pMeasure = pNote.getParentMeasure();
+					endX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
+				}
+				curvedNotation.Alignment(startX,endX,Y);
+
+			}else if (curvedNotation.getType().equals("Slur")){
+				double startX = lineStart;
+				double endX = lineEnd;
+				double Y = 0;
+				if (curvedNotation.getStartID()>0){
+					VNoteHead noteHead = slurElements.get(curvedNotation.getStartID());
+					Y = noteHead.getShapeGroups().getLayoutY();
+					VNote pNote = noteHead.getParentNote();
+					VMeasure pMeasure = pNote.getParentMeasure();
+					startX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
+				}
+				if (curvedNotation.getEndID()>0){
+					VNoteHead noteHead = slurElements.get(curvedNotation.getEndID());
+					Y = noteHead.getShapeGroups().getLayoutY();
+					VNote pNote = noteHead.getParentNote();
+					VMeasure pMeasure = pNote.getParentMeasure();
+					endX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
+				}
+				curvedNotation.Alignment(startX,endX,Y);
+			}
+		}
 	}
 	public void alignment(){
 		double idealLengthDiff = PageW-MarginX-W;

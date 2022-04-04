@@ -10,7 +10,7 @@ import models.measure.barline.Repeat;
 
 import java.util.HashMap;
 
-public class VBarline extends VElement implements VConfigAble{
+public class VBarline extends VElement{
 	HashMap<String,Double> config = new HashMap<>();
 	String location;
 	Text notation = new Text();

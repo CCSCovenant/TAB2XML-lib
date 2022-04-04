@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class VMeasure extends VElement implements VConfigAble {
+public class VMeasure extends VElement{
 	private int number;
 	private List<VNote> Notes;
 	private List<VGNotation> Notations = new ArrayList<>();
@@ -53,7 +53,7 @@ public class VMeasure extends VElement implements VConfigAble {
 						if (vNote!=null){
 							Notes.add(vNote);
 						}
-						vNote = new VNote(i);
+						vNote = new VNote(i,this);
 						i++;
 						addNoteHead(note,vNote);
 					}else {
@@ -163,28 +163,30 @@ public class VMeasure extends VElement implements VConfigAble {
 		//TODO set relative to default rest position. calculate based on the staffline.
 		if (note.getRest()!=null){
 
-			noteHead = new VNoteHead(VUtility.getDrumAssetName(note),0,relative,false);
+			noteHead = new VNoteHead(VUtility.getDrumAssetName(note),0,relative,false,vNote);
 			noteHead.updateConfig("scale",3);
 			vNote.setRest(true);
 		}else {
 			if (instrument.equals("TAB")){
 				if (note.getNotations()!=null&&note.getNotations().getTechnical()!=null){
 					relative = note.getNotations().getTechnical().getString()*3; // since tab staff is double-space\
-					noteHead = new VNoteHead(note.getNotations().getTechnical().getFret(),dots,relative,note.getGrace()!=null);
+					noteHead = new VNoteHead(note.getNotations().getTechnical().getFret(),dots,relative,note.getGrace()!=null,vNote);
 				}
 			}else {
 				String result = VUtility.getDrumAssetName(note);
 				step = note.getUnpitched().getDisplayStep();
 				octave = note.getUnpitched().getDisplayOctave();
 				relative = VUtility.getRelative(step,octave);
-				noteHead = new VNoteHead(result,dots,relative,note.getGrace()!=null);
+				noteHead = new VNoteHead(result,dots,relative,note.getGrace()!=null,vNote);
 			}
 		}
 		if (note.getNotations()!=null){
 			if (note.getNotations().getTieds()!=null){
+				noteHead.setTieds(note.getNotations().getTieds());
 				tieNoteHead.add(noteHead);
 			}
 			if (note.getNotations().getSlurs()!=null){
+				noteHead.setSlurs(note.getNotations().getSlurs());
 				slurNoteHead.add(noteHead);
 			}
 		}
@@ -342,5 +344,13 @@ public class VMeasure extends VElement implements VConfigAble {
 		background.toBack();
 		alignmentBarlines();
 		alignmentNotations();
+	}
+
+	public List<VNoteHead> getTieNoteHead() {
+		return tieNoteHead;
+	}
+
+	public List<VNoteHead> getSlurNoteHead() {
+		return slurNoteHead;
 	}
 }

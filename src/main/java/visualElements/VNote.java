@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class VNote extends VElement implements VConfigAble {
+public class VNote extends VElement {
 	int number;
 	int noteHeadCount = 1;
 
@@ -15,8 +15,10 @@ public class VNote extends VElement implements VConfigAble {
 	List<VNoteHead> noteHeads = new ArrayList<>();
 	boolean isGrace = false;
 	boolean isRest = false;
+	VMeasure parentMeasure;
 	String type;
-	public VNote(int i){
+	public VNote(int i,VMeasure parentMeasure){
+		this.parentMeasure = parentMeasure;
 		this.number = i;
 		initConfig();
 	}
@@ -78,5 +80,9 @@ public class VNote extends VElement implements VConfigAble {
 	@Override
 	public void updateConfig(String id, double value) {
 		configMap.put("id",value);
+	}
+
+	public VMeasure getParentMeasure() {
+		return parentMeasure;
 	}
 }
