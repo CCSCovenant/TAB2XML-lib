@@ -161,7 +161,7 @@ public class VLine extends VElement{
 					VMeasure pMeasure = pNote.getParentMeasure();
 					endX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
 				}
-				if (Y<0){
+				if (Y<3*VConfig.getInstance().getGlobalConfig("Step")){
 					curvedNotation.setPositive(true);
 				}
 				curvedNotation.Alignment(startX,endX,Y);
@@ -189,6 +189,9 @@ public class VLine extends VElement{
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
 					endX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
+				}
+				if (Y<3*VConfig.getInstance().getGlobalConfig("Step")){
+					curvedNotation.setPositive(true);
 				}
 				curvedNotation.Alignment(startX,endX,Y);
 

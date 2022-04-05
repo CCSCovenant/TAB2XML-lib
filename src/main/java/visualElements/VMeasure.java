@@ -366,6 +366,7 @@ public class VMeasure extends VElement{
 				minW += gapBetweenElement;
 			}
 		}
+		minW += gapBetweenElement;
 		return minW;
 	}
 	public List<VNoteHead> getTieNoteHead() {
