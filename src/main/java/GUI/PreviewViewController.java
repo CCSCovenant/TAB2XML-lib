@@ -7,20 +7,27 @@ import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
 import player.MXLPlayer;
 import player.ThreadPlayer;
 import visualizer.Visualizer;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -100,21 +107,33 @@ public class PreviewViewController extends Application {
 
 	}
 	@FXML
-	private void exportPDFHandler() throws TXMLException {
-		apply();
-		/*
+	private void exportPDFHandler() {
 		FileChooser fileChooser = new FileChooser();
 		File file = fileChooser.showSaveDialog(convertWindow);
 		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("pdf files", "*.pdf");
 		fileChooser.getExtensionFilters().add(extFilter);
 
+
+
 		if (file!=null){
 			try {
+				PDDocument document = new PDDocument();
+				for (Group group:groups){
+					WritableImage image = group.snapshot(new SnapshotParameters(),null);
+					ByteArrayOutputStream output = new ByteArrayOutputStream();
+					PDPage page = new PDPage();
+					document.addPage(page);
+					group.snapshot(null,null);
 
+
+				}
+				document.save(file);
+				document.close();
 			}catch (Exception e){
 
 			}
-		}*/
+		}
+
 	}
 	@FXML
 	private void apply() throws TXMLException {
