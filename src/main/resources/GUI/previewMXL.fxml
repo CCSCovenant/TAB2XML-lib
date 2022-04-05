@@ -77,12 +77,12 @@
                   </HBox>
                     </children>
                 </AnchorPane>
-            <JFXHamburger fx:id="hamburger" layoutX="962.0" layoutY="30.0">
+            <JFXHamburger fx:id="hamburger" layoutX="962.0" layoutY="30.0" AnchorPane.rightAnchor="7.600000000000001" AnchorPane.topAnchor="30.0">
                <effect>
                   <ColorAdjust brightness="1.0" />
                </effect>
             </JFXHamburger>
-            <JFXDrawer fx:id="drawer" defaultDrawerSize="260.0" direction="RIGHT" layoutX="739.0" layoutY="61.0" prefHeight="589.0" prefWidth="260.0" />
+            <JFXDrawer fx:id="drawer" defaultDrawerSize="260.0" direction="RIGHT" layoutX="739.0" layoutY="61.0" overLayVisible="false" prefHeight="589.0" prefWidth="260.0" snapToPixel="false" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="61.0" />
             </children>
         </AnchorPane>
     </center>
