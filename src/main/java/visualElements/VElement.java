@@ -39,10 +39,10 @@ public class VElement implements VConfigAble {
 		return group;
 	}
 	public double getH(){
-		return H;
+		return group.getBoundsInLocal().getHeight();
 	}
 	public double getW(){
-		return W;
+		return group.getBoundsInLocal().getWidth();
 	}
 	public VElement getCurrentElement(){
 		return this;

@@ -93,7 +93,7 @@ public class VMeasure extends VElement{
 
 			}else {
 				if (!note.isGrace&&!note.isRest){
-					notation.addNote(note.number, type);
+					notation.addNote(note.number, type, note.dots);
 				}
 			}
 			durationCounter += (1d/VUtility.NoteType2Integer(type));
@@ -124,7 +124,7 @@ public class VMeasure extends VElement{
 				type = note.type;
 			}
 			if (!note.isGrace&&!note.isRest){
-				notation.addNote(note.number, type);
+				notation.addNote(note.number, type,note.dots);
 			}
 
 			durationCounter += (1d/VUtility.NoteType2Integer(type));
@@ -161,7 +161,6 @@ public class VMeasure extends VElement{
 		int relative = 1;
 		//TODO set relative to default rest position. calculate based on the staffline.
 		if (note.getRest()!=null){
-
 			noteHead = new VNoteHead(VUtility.getDrumAssetName(note),0,relative,false,vNote);
 			noteHead.updateConfig("scale",3);
 			vNote.setRest(true);
@@ -170,6 +169,9 @@ public class VMeasure extends VElement{
 				if (note.getNotations()!=null&&note.getNotations().getTechnical()!=null){
 					relative = note.getNotations().getTechnical().getString()*3; // since tab staff is double-space\
 					noteHead = new VNoteHead(note.getNotations().getTechnical().getFret(),dots,relative,note.getGrace()!=null,vNote);
+					if (note.getNotations().getTechnical().getBend()!=null){
+						noteHead.addBend(note.getNotations().getTechnical().getBend().getBendAlter());
+					}
 				}
 			}else {
 				String result = VUtility.getDrumAssetName(note);

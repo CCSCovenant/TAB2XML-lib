@@ -7,7 +7,7 @@ import java.util.List;
 public class VNote extends VElement {
 	int number;
 	int noteHeadCount = 1;
-
+	int dots = 0;
 	double maxVPos = 0;
 	HashMap<String,Double> configMap = new HashMap<>();
 	double offsetX = 0;
@@ -34,6 +34,7 @@ public class VNote extends VElement {
 
 		noteHeads.add(noteHead);
 		noteHead.alignment();
+		dots = noteHead.getDotC();
 		group.getChildren().add(noteHead.getShapeGroups());
 	}
 	public void initConfig(){

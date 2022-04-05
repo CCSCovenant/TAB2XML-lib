@@ -48,12 +48,12 @@ public class Visualizer implements VConfigAble {
 					if (measure.getAttributes().getClef()!=null){
 						if (measure.getAttributes().getClef().getSign().equals("TAB")){
 							setUpInitStaffLine(measure.getAttributes().getStaffDetails().getStaffLines(),3);
-							VConfig.getInstance().setInstrument(staffType);
 							staffType = "TAB";
+							VConfig.getInstance().setInstrument(staffType);
 						}else {
 							setUpInitStaffLine(measure.getAttributes().getStaffDetails().getStaffLines(),2);
-							VConfig.getInstance().setInstrument(staffType);
 							staffType = "percussion";
+							VConfig.getInstance().setInstrument(staffType);
 						}
 					}
 				}

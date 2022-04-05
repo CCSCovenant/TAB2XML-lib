@@ -144,6 +144,9 @@ public class VLine extends VElement{
 				if (curvedNotation.getStartID()>=0){
 					VNoteHead noteHead = tiedElements.get(curvedNotation.getStartID());
 					Y = noteHead.relative* noteHead.step;
+					if (VConfig.getInstance().getInstrument().equals("TAB")){
+						Y -= 2*noteHead.step;
+					}
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
 					startX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX()+ noteHead.getW();
@@ -151,6 +154,9 @@ public class VLine extends VElement{
 				if (curvedNotation.getEndID()>=0){
 					VNoteHead noteHead = tiedElements.get(curvedNotation.getEndID());
 					Y = noteHead.relative* noteHead.step;
+					if (VConfig.getInstance().getInstrument().equals("TAB")){
+						Y -= 2*noteHead.step;
+					}
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
 					endX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
@@ -167,6 +173,9 @@ public class VLine extends VElement{
 				if (curvedNotation.getStartID()>=0){
 					VNoteHead noteHead = slurElements.get(curvedNotation.getStartID());
 					Y = noteHead.relative* noteHead.step;
+					if (VConfig.getInstance().getInstrument().equals("TAB")){
+						Y -= 2*noteHead.step;
+					}
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
 					startX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX()+ noteHead.getW();
@@ -174,6 +183,9 @@ public class VLine extends VElement{
 				if (curvedNotation.getEndID()>=0){
 					VNoteHead noteHead = slurElements.get(curvedNotation.getEndID());
 					Y = noteHead.relative* noteHead.step;
+					if (VConfig.getInstance().getInstrument().equals("TAB")){
+						Y -= 2*noteHead.step;
+					}
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
 					endX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
