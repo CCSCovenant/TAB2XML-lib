@@ -37,7 +37,11 @@ public class VGuitarGNotation extends VGNotation{
 				for (int k=0;k<dots.get(i);k++){
 					Circle circle = circles.get(dotPointer);
 					circle.setLayoutX(HPosition.get(i)+(k+1)*dotOffset);
-					circle.setLayoutY(start);
+					if (types.get(i).equals("half")||types.get(i).equals("whole")){
+						circle.setLayoutY(start+(end-start)/2);
+					}else {
+						circle.setLayoutY(start);
+					}
 					circle.setRadius(dotSize);
 					circle.setFill(Color.BLACK);
 					dotPointer++;
