@@ -22,10 +22,16 @@ import javafx.stage.Stage;
 import javafx.stage.Window;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import player.MXLPlayer;
 import player.ThreadPlayer;
+import utility.SwingFXUtils;
+import visualElements.VConfig;
 import visualizer.Visualizer;
 
+import javax.imageio.ImageIO;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -109,31 +115,38 @@ public class PreviewViewController extends Application {
 	@FXML
 	private void exportPDFHandler() {
 		FileChooser fileChooser = new FileChooser();
-		File file = fileChooser.showSaveDialog(convertWindow);
-		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("pdf files", "*.pdf");
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("pdf files (*.pdf)", "*.pdf","*.PDF");
 		fileChooser.getExtensionFilters().add(extFilter);
+		File file = fileChooser.showSaveDialog(convertWindow);
 
+		try {
+			PDDocument document = new PDDocument();
+			for (Group group:groups) {
+				WritableImage image = group.snapshot(new SnapshotParameters(), null);
 
+				ByteArrayOutputStream output = new ByteArrayOutputStream();
+				ImageIO.write(SwingFXUtils.fromFXImage(image,null),"png",output);
+				output.close();
 
-		if (file!=null){
-			try {
-				PDDocument document = new PDDocument();
-				for (Group group:groups){
-					WritableImage image = group.snapshot(new SnapshotParameters(),null);
-					ByteArrayOutputStream output = new ByteArrayOutputStream();
-					PDPage page = new PDPage();
-					document.addPage(page);
-					group.snapshot(null,null);
+				PDPage page = new PDPage();
+				document.addPage(page);
+				PDImageXObject pdfimage = PDImageXObject.createFromByteArray(document,output.toByteArray(),"png");
+				PDPageContentStream contentStream = new PDPageContentStream(document,page);
 
+				PDRectangle box = page.getMediaBox();
+				double w =VConfig.getInstance().getGlobalConfig("PageX");
+				double h = VConfig.getInstance().getGlobalConfig("PageY");
+				double factor = Math.min(box.getWidth() / w, box.getHeight() / h);
+				contentStream.drawImage(pdfimage,  0,0,(float)(w*factor),(float)(h*factor));
+				contentStream.close();
 
-				}
 				document.save(file);
 				document.close();
-			}catch (Exception e){
-
 			}
-		}
+		}catch (Exception e){
+			System.out.println("E");
 
+		}
 	}
 	@FXML
 	private void apply() throws TXMLException {
