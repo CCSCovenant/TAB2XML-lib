@@ -25,6 +25,7 @@ public class Visualizer implements VConfigAble {
 	ArrayList<VPage> pages;
 	List<VMeasure> VMeasures;
 	String staffType;
+	int measureCounter = 0;
  	public Visualizer(Score score) throws TXMLException {
 		this.score = score;
 		VMeasures = new ArrayList<>();
@@ -59,6 +60,7 @@ public class Visualizer implements VConfigAble {
 				VMeasures.add(getVMeasure(measure));
 			}
 		}
+		measureCounter = VMeasures.size();
 	}
 	public void alignment() throws TXMLException {
 		pages = new ArrayList<>();
@@ -116,5 +118,9 @@ public class Visualizer implements VConfigAble {
 	@Override
 	public void updateConfig(String id, double value) {
 
+	}
+
+	public int getMeasureCounter() {
+		return measureCounter;
 	}
 }

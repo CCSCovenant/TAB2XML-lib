@@ -2,13 +2,14 @@ package GUI;
 
 import custom_exceptions.TXMLException;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
@@ -26,22 +27,19 @@ import java.util.ArrayList;
 
 public class PreviewViewController extends Application {
 	@FXML ImageView pdfViewer;
-	@FXML TextField gotoPageField;
-	@FXML ChoiceBox configs;
-	@FXML ChoiceBox values;
+	@FXML Spinner<Integer> pageSpinner;
+	@FXML Spinner<Integer> measureSpinner;
 	@FXML ScrollPane scrollView;
 	private static Window convertWindow = new Stage();
 
 	private double scale = 1.0;
-	private String selected = "";
-	private PreviewConfig c = PreviewConfig.getInstance();
 	private MainViewController mvc;
 	private int pageNumber = 0;
 	private Visualizer visualizer;
 	private MXLPlayer player;
+
 	public static ThreadPlayer thp;
 	public Scene scene;
-	public Node currentSelected;
 	public ArrayList<Group> groups;
 	public void setMainViewController(MainViewController mvcInput) {
 		mvc = mvcInput;
@@ -53,7 +51,36 @@ public class PreviewViewController extends Application {
 		this.visualizer = new Visualizer(mvc.converter.getScore());
 		groups = visualizer.getElementGroups();
 		goToPage(0);
+
+		initPageHandler(groups.size()-1);
+		initMeasureHandler(visualizer.getMeasureCounter()-1);
+		System.out.println(visualizer.getMeasureCounter());
 		//goToPage(pageNumber);
+	}
+	private void initPageHandler(int max_page){
+		pageSpinner.setEditable(true);
+		pageSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max_page, 0));
+		pageSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
+			@Override
+			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+				goToPage(newValue);
+			}
+		});
+
+	}
+	private void initMeasureHandler(int max_measures){
+		measureSpinner.setEditable(true);
+		measureSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max_measures, 0));
+		measureSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
+			@Override
+			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+				goToMeasure(newValue);
+			}
+		});
+	}
+	private void goToMeasure(int measureNumber){
+		//TODO goto measure
+		System.out.println(measureNumber);
 	}
 	private void initEvents(AnchorPane anchorPane){
 		KeyCombination zoomOut = new KeyCodeCombination(KeyCode.PAGE_DOWN,KeyCombination.CONTROL_DOWN);
@@ -74,9 +101,7 @@ public class PreviewViewController extends Application {
 	}
 	@FXML
 	private void exportPDFHandler() throws TXMLException {
-		visualizer.alignment();
-		groups = visualizer.getElementGroups();
-		goToPage(pageNumber);
+		apply();
 		/*
 		FileChooser fileChooser = new FileChooser();
 		File file = fileChooser.showSaveDialog(convertWindow);
@@ -92,22 +117,11 @@ public class PreviewViewController extends Application {
 		}*/
 	}
 	@FXML
-	private void LastPageHandler(){
-		goToPage(pageNumber-1);
-
-	}
-	@FXML
-	private void NextPageHandler(){
-		goToPage(pageNumber+1);
-	}
-	@FXML
-	private void goToPageHandler(){
-		int pageNumber = Integer.parseInt(gotoPageField.getText());
+	private void apply() throws TXMLException {
+		visualizer.alignment();
+		groups = visualizer.getElementGroups();
 		goToPage(pageNumber);
-	}
-	@FXML
-	private void apply(){
-		//refreshPDF();
+		initPageHandler(groups.size());
 	}
 	@FXML
 	private void playHandler(){
