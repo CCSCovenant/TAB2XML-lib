@@ -1,5 +1,7 @@
 package GUI;
 
+import com.jfoenix.controls.JFXDrawer;
+import com.jfoenix.controls.JFXHamburger;
 import custom_exceptions.TXMLException;
 import javafx.application.Application;
 import javafx.fxml.FXML;
@@ -30,6 +32,9 @@ public class PreviewViewController extends Application {
 	@FXML ChoiceBox configs;
 	@FXML ChoiceBox values;
 	@FXML ScrollPane scrollView;
+	@FXML private JFXHamburger hamburger;
+	@FXML private JFXDrawer drawer;
+	sidebar sb1 = new sidebar();
 	private static Window convertWindow = new Stage();
 
 	private double scale = 1.0;
@@ -70,7 +75,7 @@ public class PreviewViewController extends Application {
 			anchorPane.setScaleX(scale);
 			anchorPane.setScaleY(scale);
 		});
-
+		sb1.initialize(drawer, hamburger);
 	}
 	@FXML
 	private void exportPDFHandler() throws TXMLException {
