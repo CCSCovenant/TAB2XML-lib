@@ -1,6 +1,5 @@
 package visualElements;
 
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.shape.Line;
 import visualizer.ImageResourceHandler;
@@ -16,7 +15,7 @@ public class VClef extends VSign {
 	public VClef(String instrument){
 		group.getChildren().add(imageView);
 		initStaffLines(VConfig.getInstance().getStaffDetail());
-		imageView.setImage(new Image(imageResourceHandler.getImage(instrument)));
+		imageView.setImage(imageResourceHandler.getImage(instrument));
 	}
 	public void initStaffLines(List<Integer> staffInfo){
 		//staffInfo contain offset of each staff

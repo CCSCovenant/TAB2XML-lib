@@ -5,7 +5,6 @@ import javafx.geometry.Point3D;
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorInput;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -52,7 +51,7 @@ public class VNoteHead extends VElement{
 				group.getChildren().add(line);
 			}
 		}
-		imageView.setImage(new Image(imageResourceHandler.getImage(AssetName)));
+		imageView.setImage(imageResourceHandler.getImage(AssetName));
 		group.getChildren().add(background);
 		group.getChildren().add(imageView);
 		W = group.getBoundsInLocal().getWidth();
@@ -82,7 +81,7 @@ public class VNoteHead extends VElement{
 		}
 		quadCurve = new QuadCurve();
 		arrow = new ImageView();
-		arrow.setImage(new Image(imageResourceHandler.getImage("arrow")));
+		arrow.setImage(imageResourceHandler.getImage("arrow"));
 		group.getChildren().add(arrow);
 		group.getChildren().add(quadCurve);
 		group.getChildren().add(bendText);

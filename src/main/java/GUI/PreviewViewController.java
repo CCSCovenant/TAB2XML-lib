@@ -67,7 +67,6 @@ public class PreviewViewController extends Application {
 
 		initPageHandler(groups.size()-1);
 		initMeasureHandler(visualizer.getMeasureCounter()-1);
-		System.out.println(visualizer.getMeasureCounter());
 		//goToPage(pageNumber);
 	}
 	private void initPageHandler(int max_page){
@@ -93,7 +92,6 @@ public class PreviewViewController extends Application {
 	}
 	private void goToMeasure(int measureNumber){
 		//TODO goto measure
-		System.out.println(measureNumber);
 	}
 	private void initEvents(AnchorPane anchorPane){
 		KeyCombination zoomOut = new KeyCodeCombination(KeyCode.PAGE_DOWN,KeyCombination.CONTROL_DOWN);

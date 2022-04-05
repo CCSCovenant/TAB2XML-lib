@@ -225,7 +225,6 @@ public class VLine extends VElement{
 			measures.get(i).getShapeGroups().setLayoutX(W);
 			measures.get(i).alignment();
 			W = W+measures.get(i).getW();
-			System.out.print(W+" ");
 		}
 
 		alignmentCurved();

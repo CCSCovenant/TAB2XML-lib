@@ -45,7 +45,6 @@ public class VGuitarGNotation extends VGNotation{
 					circle.setRadius(dotSize);
 					circle.setFill(Color.BLACK);
 					dotPointer++;
-					System.out.println("circle");
 				}
 			}
 			if (localHline>globalHLineNum){
