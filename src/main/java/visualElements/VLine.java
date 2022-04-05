@@ -35,7 +35,7 @@ public class VLine extends VElement{
 		// otherwise, add this measure into this line.
 
 			newMeasure.alignment();
-			double minW = newMeasure.getW();
+			double minW = newMeasure.getWInMinWidth();
 			if (W+minW>PageW-MarginX){
 				if (measures.size()==0){
 					//TODO give user a warning that this line is squeezed under current setting. please adjust the setting.
@@ -144,6 +144,9 @@ public class VLine extends VElement{
 				if (curvedNotation.getStartID()>=0){
 					VNoteHead noteHead = tiedElements.get(curvedNotation.getStartID());
 					Y = noteHead.relative* noteHead.step;
+					if (VConfig.getInstance().getInstrument().equals("TAB")){
+						Y -= 2*noteHead.step;
+					}
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
 					startX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX()+ noteHead.getW();
@@ -151,11 +154,14 @@ public class VLine extends VElement{
 				if (curvedNotation.getEndID()>=0){
 					VNoteHead noteHead = tiedElements.get(curvedNotation.getEndID());
 					Y = noteHead.relative* noteHead.step;
+					if (VConfig.getInstance().getInstrument().equals("TAB")){
+						Y -= 2*noteHead.step;
+					}
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
 					endX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
 				}
-				if (Y<0){
+				if (Y<3*VConfig.getInstance().getGlobalConfig("Step")){
 					curvedNotation.setPositive(true);
 				}
 				curvedNotation.Alignment(startX,endX,Y);
@@ -167,6 +173,9 @@ public class VLine extends VElement{
 				if (curvedNotation.getStartID()>=0){
 					VNoteHead noteHead = slurElements.get(curvedNotation.getStartID());
 					Y = noteHead.relative* noteHead.step;
+					if (VConfig.getInstance().getInstrument().equals("TAB")){
+						Y -= 2*noteHead.step;
+					}
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
 					startX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX()+ noteHead.getW();
@@ -174,9 +183,15 @@ public class VLine extends VElement{
 				if (curvedNotation.getEndID()>=0){
 					VNoteHead noteHead = slurElements.get(curvedNotation.getEndID());
 					Y = noteHead.relative* noteHead.step;
+					if (VConfig.getInstance().getInstrument().equals("TAB")){
+						Y -= 2*noteHead.step;
+					}
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
 					endX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
+				}
+				if (Y<3*VConfig.getInstance().getGlobalConfig("Step")){
+					curvedNotation.setPositive(true);
 				}
 				curvedNotation.Alignment(startX,endX,Y);
 
@@ -202,8 +217,6 @@ public class VLine extends VElement{
 				measure.updateConfig("gapBetweenElement",changed );
 			}
 
-
-
 		W = 0;
 		vClef.alignment();
 		W += vClef.getW();
@@ -212,7 +225,6 @@ public class VLine extends VElement{
 			measures.get(i).getShapeGroups().setLayoutX(W);
 			measures.get(i).alignment();
 			W = W+measures.get(i).getW();
-			System.out.print(W+" ");
 		}
 
 		alignmentCurved();

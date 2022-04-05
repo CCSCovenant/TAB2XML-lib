@@ -4,33 +4,46 @@ import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
 import custom_exceptions.TXMLException;
 import javafx.application.Application;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
 import javafx.scene.Group;
-import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.ChoiceBox;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.ScrollPane;
-import javafx.scene.control.TextField;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.SpinnerValueFactory;
 import javafx.scene.image.ImageView;
+import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDPage;
+import org.apache.pdfbox.pdmodel.PDPageContentStream;
+import org.apache.pdfbox.pdmodel.common.PDRectangle;
+import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import player.MXLPlayer;
 import player.ThreadPlayer;
+import utility.SwingFXUtils;
+import visualElements.VConfig;
 import visualizer.Visualizer;
 
+import javax.imageio.ImageIO;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class PreviewViewController extends Application {
 	@FXML ImageView pdfViewer;
-	@FXML TextField gotoPageField;
-	@FXML ChoiceBox configs;
-	@FXML ChoiceBox values;
+	@FXML Spinner<Integer> pageSpinner;
+	@FXML Spinner<Integer> measureSpinner;
 	@FXML ScrollPane scrollView;
 	@FXML private JFXHamburger hamburger;
 	@FXML private JFXDrawer drawer;
@@ -38,15 +51,13 @@ public class PreviewViewController extends Application {
 	private static Window convertWindow = new Stage();
 
 	private double scale = 1.0;
-	private String selected = "";
-	private PreviewConfig c = PreviewConfig.getInstance();
 	private MainViewController mvc;
 	private int pageNumber = 0;
 	private Visualizer visualizer;
 	private MXLPlayer player;
+
 	public static ThreadPlayer thp;
 	public Scene scene;
-	public Node currentSelected;
 	public ArrayList<Group> groups;
 	public void setMainViewController(MainViewController mvcInput) {
 		mvc = mvcInput;
@@ -58,7 +69,34 @@ public class PreviewViewController extends Application {
 		this.visualizer = new Visualizer(mvc.converter.getScore());
 		groups = visualizer.getElementGroups();
 		goToPage(0);
+
+		initPageHandler(groups.size()-1);
+		initMeasureHandler(visualizer.getMeasureCounter()-1);
 		//goToPage(pageNumber);
+	}
+	private void initPageHandler(int max_page){
+		pageSpinner.setEditable(true);
+		pageSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max_page, 0));
+		pageSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
+			@Override
+			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+				goToPage(newValue);
+			}
+		});
+
+	}
+	private void initMeasureHandler(int max_measures){
+		measureSpinner.setEditable(true);
+		measureSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max_measures, 0));
+		measureSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
+			@Override
+			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+				goToMeasure(newValue);
+			}
+		});
+	}
+	private void goToMeasure(int measureNumber){
+		//TODO goto measure
 	}
 	private void initEvents(AnchorPane anchorPane){
 		KeyCombination zoomOut = new KeyCodeCombination(KeyCode.PAGE_DOWN,KeyCombination.CONTROL_DOWN);
@@ -78,41 +116,47 @@ public class PreviewViewController extends Application {
 		sb1.initialize(drawer, hamburger);
 	}
 	@FXML
-	private void exportPDFHandler() throws TXMLException {
+	private void exportPDFHandler() {
+		FileChooser fileChooser = new FileChooser();
+		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("pdf files (*.pdf)", "*.pdf","*.PDF");
+		fileChooser.getExtensionFilters().add(extFilter);
+		File file = fileChooser.showSaveDialog(convertWindow);
+
+		try {
+			PDDocument document = new PDDocument();
+			for (Group group:groups) {
+				WritableImage image = group.snapshot(new SnapshotParameters(), null);
+
+				ByteArrayOutputStream output = new ByteArrayOutputStream();
+				ImageIO.write(SwingFXUtils.fromFXImage(image,null),"png",output);
+				output.close();
+
+				PDPage page = new PDPage();
+				document.addPage(page);
+				PDImageXObject pdfimage = PDImageXObject.createFromByteArray(document,output.toByteArray(),"png");
+				PDPageContentStream contentStream = new PDPageContentStream(document,page);
+
+				PDRectangle box = page.getMediaBox();
+				double w =VConfig.getInstance().getGlobalConfig("PageX");
+				double h = VConfig.getInstance().getGlobalConfig("PageY");
+				double factor = Math.min(box.getWidth() / w, box.getHeight() / h);
+				contentStream.drawImage(pdfimage,  0,0,(float)(w*factor),(float)(h*factor));
+				contentStream.close();
+
+				document.save(file);
+				document.close();
+			}
+		}catch (Exception e){
+			System.out.println("E");
+
+		}
+	}
+	@FXML
+	private void apply() throws TXMLException {
 		visualizer.alignment();
 		groups = visualizer.getElementGroups();
 		goToPage(pageNumber);
-		/*
-		FileChooser fileChooser = new FileChooser();
-		File file = fileChooser.showSaveDialog(convertWindow);
-		FileChooser.ExtensionFilter extFilter = new FileChooser.ExtensionFilter("pdf files", "*.pdf");
-		fileChooser.getExtensionFilters().add(extFilter);
-
-		if (file!=null){
-			try {
-
-			}catch (Exception e){
-
-			}
-		}*/
-	}
-	@FXML
-	private void LastPageHandler(){
-		goToPage(pageNumber-1);
-
-	}
-	@FXML
-	private void NextPageHandler(){
-		goToPage(pageNumber+1);
-	}
-	@FXML
-	private void goToPageHandler(){
-		int pageNumber = Integer.parseInt(gotoPageField.getText());
-		goToPage(pageNumber);
-	}
-	@FXML
-	private void apply(){
-		//refreshPDF();
+		initPageHandler(groups.size());
 	}
 	@FXML
 	private void playHandler(){

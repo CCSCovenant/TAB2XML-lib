@@ -13,7 +13,6 @@ import visualElements.Notations.VGNotation;
 import visualElements.Notations.VGuitarGNotation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class VMeasure extends VElement{
@@ -25,7 +24,6 @@ public class VMeasure extends VElement{
 	private List<VBarline> barlines = new ArrayList<>();
 	private List<VNoteHead> tieNoteHead = new ArrayList<>();
 	private List<VNoteHead> slurNoteHead = new ArrayList<>();
- 	private HashMap<String,Double> config = new HashMap<>();
 	Rectangle background = new Rectangle();
 	String instrument = "";
 	double gapCount = 0;
@@ -74,10 +72,10 @@ public class VMeasure extends VElement{
 	}
 	//  N / G G N C / N
 	public void initConfig(){
-		config.put("noteDistance",10d);
-		config.put("gapBeforeMeasure",20d);
-		config.put("gapBetweenElement",VConfig.getInstance().getGlobalConfig("MinNoteDistance"));
-		config.put("gapBetweenGrace",5d);
+		configMap.put("noteDistance",10d);
+		configMap.put("gapBeforeMeasure",20d);
+		configMap.put("gapBetweenElement",VConfig.getInstance().getGlobalConfig("MinNoteDistance"));
+		configMap.put("gapBetweenGrace",5d);
 	}
 	public void initDrumNotations(){
 		double durationCounter = 0;
@@ -93,7 +91,7 @@ public class VMeasure extends VElement{
 
 			}else {
 				if (!note.isGrace&&!note.isRest){
-					notation.addNote(note.number, type);
+					notation.addNote(note.number, type, note.dots);
 				}
 			}
 			durationCounter += (1d/VUtility.NoteType2Integer(type));
@@ -113,7 +111,6 @@ public class VMeasure extends VElement{
 			group.getChildren().add(notationf.getShapeGroups());
 		}
 	}
-
 	public void initGuitarNotations(){
 		double durationCounter = 0;
 		VGNotation notation;
@@ -125,7 +122,7 @@ public class VMeasure extends VElement{
 				type = note.type;
 			}
 			if (!note.isGrace&&!note.isRest){
-				notation.addNote(note.number, type);
+				notation.addNote(note.number, type,note.dots);
 			}
 
 			durationCounter += (1d/VUtility.NoteType2Integer(type));
@@ -162,7 +159,6 @@ public class VMeasure extends VElement{
 		int relative = 1;
 		//TODO set relative to default rest position. calculate based on the staffline.
 		if (note.getRest()!=null){
-
 			noteHead = new VNoteHead(VUtility.getDrumAssetName(note),0,relative,false,vNote);
 			noteHead.updateConfig("scale",3);
 			vNote.setRest(true);
@@ -171,6 +167,9 @@ public class VMeasure extends VElement{
 				if (note.getNotations()!=null&&note.getNotations().getTechnical()!=null){
 					relative = note.getNotations().getTechnical().getString()*3; // since tab staff is double-space\
 					noteHead = new VNoteHead(note.getNotations().getTechnical().getFret(),dots,relative,note.getGrace()!=null,vNote);
+					if (note.getNotations().getTechnical().getBend()!=null){
+						noteHead.addBend(note.getNotations().getTechnical().getBend().getBendAlter());
+					}
 				}
 			}else {
 				String result = VUtility.getDrumAssetName(note);
@@ -198,17 +197,9 @@ public class VMeasure extends VElement{
 		}
 		vNote.addNoteHead(noteHead);
 	}
-	@Override
-	public HashMap<String, Double> getConfigAbleList() {
-		return config;
-	}
 
-	@Override
-	public void updateConfig(String id, double value) {
-		if (config.containsKey(id)){
-			config.put(id,value);
-		}
-	}
+
+
 
 	@Override
 	public void setHighLight(boolean states) {
@@ -310,10 +301,10 @@ public class VMeasure extends VElement{
 	}
 	public void alignment(){
 		W = 0;
-		W += config.get("gapBeforeMeasure");
+		W += configMap.get("gapBeforeMeasure");
 		gapCount = 0;
-		double gapBetweenElement = config.get("gapBetweenElement");
-		double gapBetweenGrace = config.get("gapBetweenGrace");
+		double gapBetweenElement = configMap.get("gapBetweenElement");
+		double gapBetweenGrace = configMap.get("gapBetweenGrace");
 
 		for (VSign sign:Signs){
 			sign.alignment();
@@ -347,9 +338,9 @@ public class VMeasure extends VElement{
 	}
 	public double getWInMinWidth(){
 		double minW = 0;
-		minW += config.get("gapBeforeMeasure");
+		minW += configMap.get("gapBeforeMeasure");
 		double gapBetweenElement = VConfig.getInstance().getGlobalConfig("MinNoteDistance");
-		double gapBetweenGrace = config.get("gapBetweenGrace");
+		double gapBetweenGrace = configMap.get("gapBetweenGrace");
 		for (VSign sign:Signs){
 			sign.alignment();
 			minW += sign.getW();
@@ -365,13 +356,16 @@ public class VMeasure extends VElement{
 				minW += gapBetweenElement;
 			}
 		}
+		minW += gapBetweenElement;
 		return minW;
 	}
 	public List<VNoteHead> getTieNoteHead() {
 		return tieNoteHead;
 	}
-
 	public List<VNoteHead> getSlurNoteHead() {
 		return slurNoteHead;
+	}
+	public List<VNote> getNotes() {
+		return Notes;
 	}
 }

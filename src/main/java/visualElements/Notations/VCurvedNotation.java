@@ -66,6 +66,15 @@ public class VCurvedNotation extends VElement implements VConfigAble {
 		return type;
 	}
 
+	@Override
+	public HashMap<String, Double> getConfigAbleList() {
+		return configMap;
+	}
+
+	@Override
+	public void updateConfig(String id, double value) {
+		configMap.put(id,value);
+	}
 
 	public int getStartID() {
 		return startID;
@@ -78,15 +87,7 @@ public class VCurvedNotation extends VElement implements VConfigAble {
 	public void initConfig(){
 		configMap.put("defaultControlPoint", VConfig.getInstance().getGlobalConfig("Step")*2);
 	}
-	@Override
-	public HashMap<String, Double> getConfigAbleList() {
-		return null;
-	}
 
-	@Override
-	public void updateConfig(String id, double value) {
-
-	}
 
 	public void setPositive(boolean positive) {
 		this.positive = positive;

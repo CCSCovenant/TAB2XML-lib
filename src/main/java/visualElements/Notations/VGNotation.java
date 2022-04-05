@@ -2,6 +2,7 @@ package visualElements.Notations;
 
 import javafx.scene.Group;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
 import visualElements.VConfig;
@@ -15,8 +16,10 @@ import java.util.List;
 public class VGNotation extends VElement {
 	List<Integer> notes = new ArrayList<>(); // how much note in current notation
 	List<String> types = new ArrayList<>(); // the type of note in current notation
+	List<Integer> dots = new ArrayList<>();
 	List<Line> Vlines = new ArrayList<>();
 	List<Line> Hlines = new ArrayList<>();
+	List<Circle> circles = new ArrayList<>();
 	HashMap<String,Double> configMap = new HashMap<>();
 	public VGNotation(){
 		initConfig();
@@ -29,13 +32,18 @@ public class VGNotation extends VElement {
 
 		configMap.put("notationGap",10d);
 		configMap.put("thickness",5d);
+
+		configMap.put("dotSize",2d);
+		configMap.put("dotOffset",6d);
+
 	}
 	public int getSize(){
 		return notes.size();
 	}
-	public void addNote(int noteID, String type){
+	public void addNote(int noteID, String type, int dotC){
 		notes.add(noteID);
 		types.add(type);
+		dots.add(dotC);
 	}
 	public List<Integer> getNotes(){
 		return notes;
@@ -76,16 +84,21 @@ public class VGNotation extends VElement {
 
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
-		return null;
+		return configMap;
 	}
 
 	@Override
 	public void updateConfig(String id, double value) {
-
+		configMap.put(id,value);
 	}
 	public void initElements(){
 		int globalHLineNum = 0;
 		for (int i =0;i<notes.size();i++){
+			if (dots.get(i)>0){
+				for (int k=0;k<dots.get(i);k++){
+					circles.add(new Circle());
+				}
+			}
 			Vlines.add(new Line());
 			int localHline = (int)(Math.log(VUtility.NoteType2Integer(types.get(i)))/Math.log(2))-2;
 			if (localHline>globalHLineNum){
@@ -103,6 +116,9 @@ public class VGNotation extends VElement {
 			}else if (localHline<globalHLineNum){
 				globalHLineNum = localHline;
 			}
+		}
+		for (Circle circle:circles){
+			group.getChildren().add(circle);
 		}
 		for (Line line:Vlines){
 			group.getChildren().add(line);

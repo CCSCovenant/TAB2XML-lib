@@ -21,8 +21,8 @@ public class VConfig {
 		backGroundColor = Color.ALICEBLUE;
 		highLightColor = Color.BLUEVIOLET;
 		defaultColor = Color.BLACK;
-		globalConfig.put("PageX",1080d);
-		globalConfig.put("PageY",1920d);
+		globalConfig.put("PageX",1224d);
+		globalConfig.put("PageY",1584d);
 		globalConfig.put("MarginX",20d);
 		globalConfig.put("MarginY",20d);
 		globalConfig.put("Step",5d);

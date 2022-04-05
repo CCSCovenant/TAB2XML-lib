@@ -8,10 +8,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import models.measure.barline.Repeat;
 
-import java.util.HashMap;
-
 public class VBarline extends VElement{
-	HashMap<String,Double> config = new HashMap<>();
 	String location;
 	Text notation = new Text();
 	Line Lightline;
@@ -20,7 +17,7 @@ public class VBarline extends VElement{
 	Circle circle1 = new Circle(2);
 	public VBarline(double length, String style, Repeat repeat,String location){
 		initConfig();
-		double offset = config.get("distanceBetweenLine");
+		double offset = configMap.get("distanceBetweenLine");
 		this.location = location;
 
 		switch (style){
@@ -47,8 +44,8 @@ public class VBarline extends VElement{
 		}
 		if (repeat!=null){
 			if (repeat.getTimes()!=null){
-				double notationHeight = config.get("notationHeight");
-				double notationSize = config.get("notationSize");
+				double notationHeight = configMap.get("notationHeight");
+				double notationSize = configMap.get("notationSize");
 				notation.setText(repeat.getTimes()+"x");
 				notation.setFont(new Font(notationSize));
 				notation.setLayoutY(notationHeight);
@@ -80,20 +77,10 @@ public class VBarline extends VElement{
 	}
 
 	public void initConfig(){
-		config.put("distanceBetweenLine",5d);
-		config.put("notationHeight",-20d);
-		config.put("notationSize",15d);
+		configMap.put("distanceBetweenLine",5d);
+		configMap.put("notationHeight",-20d);
+		configMap.put("notationSize",15d);
 	}
-	@Override
-	public HashMap<String, Double> getConfigAbleList() {
-		return config;
-	}
-
-	@Override
-	public void updateConfig(String id, double value) {
-		config.put(id,value);
-	}
-
 	@Override
 	public void setHighLight(boolean states) {
 		Color color;

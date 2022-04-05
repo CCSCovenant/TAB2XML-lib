@@ -1,6 +1,7 @@
 package visualizer;
 
 import com.google.gson.Gson;
+import javafx.scene.image.Image;
 
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -10,7 +11,9 @@ public class ImageResourceHandler {
 	private static ImageResourceHandler imageResourceHandler = new ImageResourceHandler();
 	String imageList = "./graphic/imageList.json";
 	private Gson gson = new Gson();
+	public HashMap<String,Image> imageMap = new HashMap<>();
 	public HashMap<String,String> ImageResources;
+
 
 	private ImageResourceHandler(){
 		ImageResources = new HashMap<>();
@@ -23,6 +26,8 @@ public class ImageResourceHandler {
 			ImageResource[] resources = gson.fromJson(reader, ImageResource[].class);
 			for (ImageResource imageResource:resources){
 				ImageResources.put(imageResource.getId(),imageResource.getUrl());
+				InputStream inputStream = getClass().getClassLoader().getResourceAsStream(imageResource.getUrl());
+				imageMap.put(imageResource.getId(),new Image(inputStream));
 			}
 			System.out.println("resources have been read");
 		} catch (IllegalStateException e){
@@ -36,11 +41,9 @@ public class ImageResourceHandler {
 		return imageResourceHandler;
 	}
 
-	public InputStream getImage(String id) {
+	public Image getImage(String id) {
 		try {
-			String s = ImageResources.get(id);
-			InputStream inputStream = getClass().getClassLoader().getResourceAsStream(s);
-			return inputStream;
+			return imageMap.get(id);
 		}catch (Exception e){
 			return null;
 		}

@@ -5,10 +5,10 @@ import javafx.geometry.Point3D;
 import javafx.scene.effect.Blend;
 import javafx.scene.effect.BlendMode;
 import javafx.scene.effect.ColorInput;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
+import javafx.scene.shape.QuadCurve;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -27,7 +27,6 @@ public class VNoteHead extends VElement{
 	List<VDot> dots = new ArrayList<>();
 	Rectangle background = new Rectangle();
 	Line line = new Line();
-	HashMap<String,Double> config = new HashMap<>();
 	int relative = 0;
 	String instrument = "";
 	boolean isGrace = false;
@@ -35,6 +34,10 @@ public class VNoteHead extends VElement{
 	List<Tied> tieds;
 	List<Slur> slurs;
 	VNote parentNote;
+	QuadCurve quadCurve;
+	Text bendText;
+	ImageView arrow;
+	int dotC = 0;
 	public VNoteHead(String AssetName,int dots,int relative,boolean isGrace,VNote parentNote){
 		this.parentNote = parentNote;
 		instrument = "";
@@ -47,7 +50,7 @@ public class VNoteHead extends VElement{
 				group.getChildren().add(line);
 			}
 		}
-		imageView.setImage(new Image(imageResourceHandler.getImage(AssetName)));
+		imageView.setImage(imageResourceHandler.getImage(AssetName));
 		group.getChildren().add(background);
 		group.getChildren().add(imageView);
 		W = group.getBoundsInLocal().getWidth();
@@ -64,15 +67,35 @@ public class VNoteHead extends VElement{
 		group.getChildren().add(background);
 		group.getChildren().add(text);
 		W = group.getBoundsInLocal().getWidth();
-		initDots(dots);
-	}
-	
-	public void initConfig(){
-		config.put("scale",1d);
-		config.put("graceScale",0.7d);
 
-		config.put("defaultSize",10d);
-		config.put("dotGap",5d);
+		dotC = dots;
+	}
+
+	public void addBend(double bendAlter){
+		bendText = new Text();
+		if (bendAlter==2.0){
+			bendText.setText("full");
+		}else {
+			bendText.setText((int)bendAlter+"/2");
+		}
+		quadCurve = new QuadCurve();
+		arrow = new ImageView();
+		arrow.setImage(imageResourceHandler.getImage("arrow"));
+		group.getChildren().add(arrow);
+		group.getChildren().add(quadCurve);
+		group.getChildren().add(bendText);
+	}
+	public void initConfig(){
+		configMap.put("scale",1d);
+		configMap.put("graceScale",0.7d);
+
+		configMap.put("defaultSize",10d);
+		configMap.put("dotGap",5d);
+
+		configMap.put("blendHeight",-20d);
+		configMap.put("blendOffsetX",15d);
+		configMap.put("blendTextOffsetY",-3d);
+
 	}
 	public void setFlip(){
 		imageView.setRotate(180);
@@ -97,6 +120,16 @@ public class VNoteHead extends VElement{
 		for (VDot dot:dots){
 			dot.setHighLight(states);
 		}
+		if (quadCurve!=null){
+			quadCurve.setStroke(color);
+			bendText.setFill(color);
+			bounds = arrow.getBoundsInLocal();
+			colorinput = new ColorInput(bounds.getMinX(),bounds.getMinY(),bounds.getWidth(),bounds.getHeight(),color);
+			blend = new Blend();
+			blend.setTopInput(colorinput);
+			blend.setMode(BlendMode.SRC_ATOP);
+			arrow.setEffect(blend);
+		}
 	}
 
 
@@ -105,6 +138,10 @@ public class VNoteHead extends VElement{
 			dots.add(new VDot());
 			group.getChildren().add(dots.get(i).getShapeGroups());
 		}
+	}
+
+	public int getDotC() {
+		return dotC;
 	}
 
 	public void setGrace(boolean grace) {
@@ -122,9 +159,9 @@ public class VNoteHead extends VElement{
 	public void alignment(){
 		step = VConfig.getInstance().getGlobalConfig("Step");
 		group.setLayoutY(relative*step);
-		double s = config.get("scale");
+		double s = configMap.get("scale");
 		if (isGrace){
-			s = config.get("graceScale");
+			s = configMap.get("graceScale");
 		}
 
 		if (isGrace){
@@ -144,20 +181,42 @@ public class VNoteHead extends VElement{
 		background.setHeight(bounds.getHeight());
 		background.setFill(Color.TRANSPARENT);
 
-
+		//alignment text
 		text.setFont(new Font(step*2*s*1.3));
 		Bounds bounds1 = text.getBoundsInLocal();
 		background.setWidth(bounds1.getWidth());
 		background.setHeight(bounds1.getHeight()*0.75);
 		background.setFill(VConfig.getInstance().backGroundColor);
 		background.setLayoutY(-bounds1.getHeight()*0.75);
+		//alignment bend
+		if (quadCurve!=null){
+			double blendHeight = configMap.get("blendHeight");
+			double blendOffsetX = configMap.get("blendOffsetX");
+			double textOffset = configMap.get("blendTextOffsetY");
 
+			double notePosRight = step*2*s;
+			double ajustedY = -step*relative+blendHeight;
+			quadCurve.setStartX(notePosRight);
+			quadCurve.setEndX(notePosRight+blendOffsetX);
+			quadCurve.setStartY(-step);
+			quadCurve.setEndY(ajustedY+step);
+			quadCurve.setControlX(notePosRight+blendOffsetX);
+			quadCurve.setControlY(-step);
+			quadCurve.setFill(Color.TRANSPARENT);
+			quadCurve.setStroke(Color.BLACK);
+			arrow.setLayoutX(step+blendOffsetX);
+			arrow.setFitWidth(step*2);
+			arrow.setFitHeight(step*2);
+			arrow.setLayoutY(ajustedY);
+			bendText.setLayoutY(ajustedY+textOffset);
+			bendText.setLayoutX(notePosRight+step);
+		}
 
 		W = step*2*s;
 		line.setLayoutY(step);
 		line.setEndX(1.25*W);
 		line.setStartX(-0.25*W);
-		double dotGap = config.get("dotGap");
+		double dotGap = configMap.get("dotGap");
 		if (dots.size()>0){
 			for (int i = 0; i < dots.size(); i++) {
 				W += dotGap;
@@ -172,10 +231,6 @@ public class VNoteHead extends VElement{
 		return null;
 	}
 
-	@Override
-	public void updateConfig(String id, double value) {
-		config.put(id,value);
-	}
 
 	public VNote getParentNote() {
 		return parentNote;

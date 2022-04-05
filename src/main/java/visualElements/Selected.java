@@ -13,6 +13,7 @@ public class Selected {
 
 	public void setSElement(VElement vElement) {
 		this.vElement = vElement;
+
 	}
 
 	public VElement getSElement() {

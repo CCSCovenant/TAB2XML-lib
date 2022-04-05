@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * This Class is use for visualize musicXML file.
+ * Visualizer will read score and output
  *
  * @author Kuimou
  * */
@@ -24,6 +25,7 @@ public class Visualizer implements VConfigAble {
 	ArrayList<VPage> pages;
 	List<VMeasure> VMeasures;
 	String staffType;
+	int measureCounter = 0;
  	public Visualizer(Score score) throws TXMLException {
 		this.score = score;
 		VMeasures = new ArrayList<>();
@@ -46,18 +48,19 @@ public class Visualizer implements VConfigAble {
 					if (measure.getAttributes().getClef()!=null){
 						if (measure.getAttributes().getClef().getSign().equals("TAB")){
 							setUpInitStaffLine(measure.getAttributes().getStaffDetails().getStaffLines(),3);
-							VConfig.getInstance().setInstrument(staffType);
 							staffType = "TAB";
+							VConfig.getInstance().setInstrument(staffType);
 						}else {
 							setUpInitStaffLine(measure.getAttributes().getStaffDetails().getStaffLines(),2);
-							VConfig.getInstance().setInstrument(staffType);
 							staffType = "percussion";
+							VConfig.getInstance().setInstrument(staffType);
 						}
 					}
 				}
 				VMeasures.add(getVMeasure(measure));
 			}
 		}
+		measureCounter = VMeasures.size();
 	}
 	public void alignment() throws TXMLException {
 		pages = new ArrayList<>();
@@ -100,9 +103,6 @@ public class Visualizer implements VConfigAble {
 		VMeasure vMeasure = new VMeasure(measure,staffType,VConfig.getInstance().getStaffDetail());
 		return vMeasure;
 	}
-
-
-
 	public void setUpInitStaffLine(int lines,int gap){
 		List<Integer> list= new ArrayList<>();
 		for (int i=0;i<lines*gap;i+=gap){
@@ -118,5 +118,9 @@ public class Visualizer implements VConfigAble {
 	@Override
 	public void updateConfig(String id, double value) {
 
+	}
+
+	public int getMeasureCounter() {
+		return measureCounter;
 	}
 }
