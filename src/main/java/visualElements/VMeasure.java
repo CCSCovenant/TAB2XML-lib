@@ -113,7 +113,6 @@ public class VMeasure extends VElement{
 			group.getChildren().add(notationf.getShapeGroups());
 		}
 	}
-
 	public void initGuitarNotations(){
 		double durationCounter = 0;
 		VGNotation notation;
@@ -370,8 +369,10 @@ public class VMeasure extends VElement{
 	public List<VNoteHead> getTieNoteHead() {
 		return tieNoteHead;
 	}
-
 	public List<VNoteHead> getSlurNoteHead() {
 		return slurNoteHead;
+	}
+	public List<VNote> getNotes() {
+		return Notes;
 	}
 }

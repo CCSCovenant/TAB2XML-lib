@@ -35,7 +35,7 @@ public class VLine extends VElement{
 		// otherwise, add this measure into this line.
 
 			newMeasure.alignment();
-			double minW = newMeasure.getW();
+			double minW = newMeasure.getWInMinWidth();
 			if (W+minW>PageW-MarginX){
 				if (measures.size()==0){
 					//TODO give user a warning that this line is squeezed under current setting. please adjust the setting.
@@ -201,8 +201,6 @@ public class VLine extends VElement{
 				}
 				measure.updateConfig("gapBetweenElement",changed );
 			}
-
-
 
 		W = 0;
 		vClef.alignment();

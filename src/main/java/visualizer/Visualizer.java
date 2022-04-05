@@ -15,6 +15,7 @@ import java.util.List;
 
 /**
  * This Class is use for visualize musicXML file.
+ * Visualizer will read score and output
  *
  * @author Kuimou
  * */
@@ -100,9 +101,6 @@ public class Visualizer implements VConfigAble {
 		VMeasure vMeasure = new VMeasure(measure,staffType,VConfig.getInstance().getStaffDetail());
 		return vMeasure;
 	}
-
-
-
 	public void setUpInitStaffLine(int lines,int gap){
 		List<Integer> list= new ArrayList<>();
 		for (int i=0;i<lines*gap;i+=gap){
