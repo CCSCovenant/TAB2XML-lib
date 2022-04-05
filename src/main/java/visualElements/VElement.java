@@ -10,6 +10,7 @@ public class VElement implements VConfigAble {
 	public Group group = new Group();
 	double W = 0;
 	double H = 0;
+	HashMap<String,Double> configMap = new HashMap<>();
 	public VElement(){
 		group.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
@@ -50,11 +51,13 @@ public class VElement implements VConfigAble {
 
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
-		return null;
+		return configMap;
 	}
 
 	@Override
 	public void updateConfig(String id, double value) {
-
+		if (configMap.containsKey(id)){
+			configMap.put(id,value);
+		}
 	}
 }

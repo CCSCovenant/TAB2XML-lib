@@ -84,12 +84,12 @@ public class VGNotation extends VElement {
 
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
-		return null;
+		return configMap;
 	}
 
 	@Override
 	public void updateConfig(String id, double value) {
-
+		configMap.put(id,value);
 	}
 	public void initElements(){
 		int globalHLineNum = 0;

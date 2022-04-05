@@ -4,37 +4,16 @@ import javafx.scene.Group;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 
-import java.util.HashMap;
-
 public class VDot extends VElement{
 	Circle circle = new Circle();
-	HashMap<String,Double> config = new HashMap<>();
 	public VDot(){
 		initConfig();
-		circle.setRadius(config.get("size"));
+		circle.setRadius(configMap.get("size"));
 		group.getChildren().add(circle);
 	}
 	public void initConfig(){
-		config.put("size",1.5d);
-		config.put("gap_with_last_element",5d);
-	}
-	@Override
-	public HashMap<String, Double> getConfigAbleList() {
-		return null;
-	}
-
-	@Override
-	public void updateConfig(String id, double value) {
-		switch (id){
-			case "size":
-				config.put("size",value);
-				circle.setRadius(config.get("size"));
-				break;
-			case "gap_with_last_element":
-				config.put("gap_with_last_element",value);
-				circle.setLayoutX(config.get("gap_with_last_element"));
-				break;
-		}
+		configMap.put("size",1.5d);
+		configMap.put("gap_with_last_element",5d);
 	}
 
 	@Override

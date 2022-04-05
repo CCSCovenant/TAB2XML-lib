@@ -27,7 +27,6 @@ public class VNoteHead extends VElement{
 	List<VDot> dots = new ArrayList<>();
 	Rectangle background = new Rectangle();
 	Line line = new Line();
-	HashMap<String,Double> config = new HashMap<>();
 	int relative = 0;
 	String instrument = "";
 	boolean isGrace = false;
@@ -87,15 +86,15 @@ public class VNoteHead extends VElement{
 		group.getChildren().add(bendText);
 	}
 	public void initConfig(){
-		config.put("scale",1d);
-		config.put("graceScale",0.7d);
+		configMap.put("scale",1d);
+		configMap.put("graceScale",0.7d);
 
-		config.put("defaultSize",10d);
-		config.put("dotGap",5d);
+		configMap.put("defaultSize",10d);
+		configMap.put("dotGap",5d);
 
-		config.put("blendHeight",-20d);
-		config.put("blendOffsetX",15d);
-		config.put("blendTextOffsetY",-3d);
+		configMap.put("blendHeight",-20d);
+		configMap.put("blendOffsetX",15d);
+		configMap.put("blendTextOffsetY",-3d);
 
 	}
 	public void setFlip(){
@@ -160,9 +159,9 @@ public class VNoteHead extends VElement{
 	public void alignment(){
 		step = VConfig.getInstance().getGlobalConfig("Step");
 		group.setLayoutY(relative*step);
-		double s = config.get("scale");
+		double s = configMap.get("scale");
 		if (isGrace){
-			s = config.get("graceScale");
+			s = configMap.get("graceScale");
 		}
 
 		if (isGrace){
@@ -191,9 +190,9 @@ public class VNoteHead extends VElement{
 		background.setLayoutY(-bounds1.getHeight()*0.75);
 		//alignment bend
 		if (quadCurve!=null){
-			double blendHeight = config.get("blendHeight");
-			double blendOffsetX = config.get("blendOffsetX");
-			double textOffset = config.get("blendTextOffsetY");
+			double blendHeight = configMap.get("blendHeight");
+			double blendOffsetX = configMap.get("blendOffsetX");
+			double textOffset = configMap.get("blendTextOffsetY");
 
 			double notePosRight = step*2*s;
 			double ajustedY = -step*relative+blendHeight;
@@ -217,7 +216,7 @@ public class VNoteHead extends VElement{
 		line.setLayoutY(step);
 		line.setEndX(1.25*W);
 		line.setStartX(-0.25*W);
-		double dotGap = config.get("dotGap");
+		double dotGap = configMap.get("dotGap");
 		if (dots.size()>0){
 			for (int i = 0; i < dots.size(); i++) {
 				W += dotGap;
@@ -232,10 +231,6 @@ public class VNoteHead extends VElement{
 		return null;
 	}
 
-	@Override
-	public void updateConfig(String id, double value) {
-		config.put(id,value);
-	}
 
 	public VNote getParentNote() {
 		return parentNote;

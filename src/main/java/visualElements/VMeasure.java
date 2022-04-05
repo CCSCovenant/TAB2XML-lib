@@ -13,7 +13,6 @@ import visualElements.Notations.VGNotation;
 import visualElements.Notations.VGuitarGNotation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class VMeasure extends VElement{
@@ -25,7 +24,6 @@ public class VMeasure extends VElement{
 	private List<VBarline> barlines = new ArrayList<>();
 	private List<VNoteHead> tieNoteHead = new ArrayList<>();
 	private List<VNoteHead> slurNoteHead = new ArrayList<>();
- 	private HashMap<String,Double> config = new HashMap<>();
 	Rectangle background = new Rectangle();
 	String instrument = "";
 	double gapCount = 0;
@@ -74,10 +72,10 @@ public class VMeasure extends VElement{
 	}
 	//  N / G G N C / N
 	public void initConfig(){
-		config.put("noteDistance",10d);
-		config.put("gapBeforeMeasure",20d);
-		config.put("gapBetweenElement",VConfig.getInstance().getGlobalConfig("MinNoteDistance"));
-		config.put("gapBetweenGrace",5d);
+		configMap.put("noteDistance",10d);
+		configMap.put("gapBeforeMeasure",20d);
+		configMap.put("gapBetweenElement",VConfig.getInstance().getGlobalConfig("MinNoteDistance"));
+		configMap.put("gapBetweenGrace",5d);
 	}
 	public void initDrumNotations(){
 		double durationCounter = 0;
@@ -199,17 +197,9 @@ public class VMeasure extends VElement{
 		}
 		vNote.addNoteHead(noteHead);
 	}
-	@Override
-	public HashMap<String, Double> getConfigAbleList() {
-		return config;
-	}
 
-	@Override
-	public void updateConfig(String id, double value) {
-		if (config.containsKey(id)){
-			config.put(id,value);
-		}
-	}
+
+
 
 	@Override
 	public void setHighLight(boolean states) {
@@ -311,10 +301,10 @@ public class VMeasure extends VElement{
 	}
 	public void alignment(){
 		W = 0;
-		W += config.get("gapBeforeMeasure");
+		W += configMap.get("gapBeforeMeasure");
 		gapCount = 0;
-		double gapBetweenElement = config.get("gapBetweenElement");
-		double gapBetweenGrace = config.get("gapBetweenGrace");
+		double gapBetweenElement = configMap.get("gapBetweenElement");
+		double gapBetweenGrace = configMap.get("gapBetweenGrace");
 
 		for (VSign sign:Signs){
 			sign.alignment();
@@ -348,9 +338,9 @@ public class VMeasure extends VElement{
 	}
 	public double getWInMinWidth(){
 		double minW = 0;
-		minW += config.get("gapBeforeMeasure");
+		minW += configMap.get("gapBeforeMeasure");
 		double gapBetweenElement = VConfig.getInstance().getGlobalConfig("MinNoteDistance");
-		double gapBetweenGrace = config.get("gapBetweenGrace");
+		double gapBetweenGrace = configMap.get("gapBetweenGrace");
 		for (VSign sign:Signs){
 			sign.alignment();
 			minW += sign.getW();

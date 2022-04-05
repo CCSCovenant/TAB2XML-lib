@@ -9,7 +9,6 @@ public class VNote extends VElement {
 	int noteHeadCount = 1;
 	int dots = 0;
 	double maxVPos = 0;
-	HashMap<String,Double> configMap = new HashMap<>();
 	double offsetX = 0;
 	HashMap<Integer,Boolean> blockedPos = new HashMap<>();
 	List<VNoteHead> noteHeads = new ArrayList<>();
@@ -71,16 +70,6 @@ public class VNote extends VElement {
 			maxVPos = Math.max(maxVPos,noteHead.getShapeGroups().getLayoutY());
 		}
 		W = group.getBoundsInLocal().getWidth();
-	}
-
-	@Override
-	public HashMap<String, Double> getConfigAbleList() {
-		return configMap;
-	}
-
-	@Override
-	public void updateConfig(String id, double value) {
-		configMap.put("id",value);
 	}
 
 	public VMeasure getParentMeasure() {
