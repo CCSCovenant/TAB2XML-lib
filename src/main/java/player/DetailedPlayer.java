@@ -38,9 +38,9 @@ public class DetailedPlayer {
 	
 	public DetailedPlayer(String musicString,List<Note> notes, ManagedPlayer p) {
 		this.musicString = musicString;
-		setTempo();	
 		player = p;
 		musicNotes = notes;
+		setTempo();	
 		initialize();
 	}
 	
@@ -100,7 +100,6 @@ public class DetailedPlayer {
 	private List<Note> tiednotes = new ArrayList<Note>(); private int ch=0;private int tie=0;
 	
 	public double getNoteDuration(Note note, int position) {
-		int BPM = 120;
 		double beat = 60000/BPM; // duration of quarter note in milliseconds
 		double duration = 0;
 		boolean hasChord = note.getChord() != null;
