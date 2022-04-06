@@ -159,5 +159,10 @@
     "name": "arrow",
     "url": "graphic/arrow.png",
     "id": "arrow"
+  },
+  {
+    "name": "refresh",
+    "url": "graphic/Refresh_icon.png",
+    "id": "refresh"
   }
 ]

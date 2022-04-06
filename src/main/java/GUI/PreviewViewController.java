@@ -1,6 +1,9 @@
 package GUI;
 
 import custom_exceptions.TXMLException;
+import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
+import javafx.animation.RotateTransition;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
@@ -9,6 +12,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -21,6 +25,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.Duration;
 import javafx.util.Pair;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
@@ -33,6 +38,7 @@ import utility.SwingFXUtils;
 import visualElements.Selected;
 import visualElements.VConfig;
 import visualElements.VMeasure;
+import visualizer.ImageResourceHandler;
 import visualizer.Visualizer;
 
 import javax.imageio.ImageIO;
@@ -48,6 +54,7 @@ public class PreviewViewController extends Application {
 	@FXML Spinner<Integer> pageSpinner;
 	@FXML Spinner<Integer> measureSpinner;
 	@FXML ScrollPane scrollView;
+	@FXML Button refresh;
 	private static Window convertWindow = new Stage();
 
 	private double scale = 1.0;
@@ -74,7 +81,26 @@ public class PreviewViewController extends Application {
 
 		initPageHandler(groups.size()-1);
 		initMeasureHandler(visualizer.getMeasureCounter()-1);
+		initRefresh();
 		//goToPage(pageNumber);
+	}
+	private void initRefresh(){
+		ImageView refreshView = new ImageView(ImageResourceHandler.getInstance().getImage("refresh"));
+		refreshView.setFitWidth(40);
+		refreshView.setFitHeight(40);
+		refresh.setGraphic(refreshView);
+		RotateTransition rotate = new RotateTransition(Duration.seconds(2),refresh);
+		rotate.setCycleCount(Animation.INDEFINITE);
+		rotate.setByAngle(360);
+
+		FadeTransition fade = new FadeTransition(Duration.seconds(0.2),refresh);
+		fade.setFromValue(1.0);
+		fade.setToValue(0.2);
+		fade.setCycleCount(2);
+		fade.setAutoReverse(true);
+		refresh.setOnMouseEntered(e->rotate.play());
+		refresh.setOnMouseExited(e->rotate.pause());
+		refresh.setOnMouseClicked(e->fade.play());
 	}
 	private void initPageHandler(int max_page){
 		pageSpinner.setEditable(true);

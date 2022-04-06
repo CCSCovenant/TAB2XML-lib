@@ -49,7 +49,20 @@ public class VCurvedNotation extends VElement implements VConfigAble {
 
 
 	}
-	public void setUpCurve(QuadCurveTo quadCurve,double x1,double x2,double y1,double y2){
+
+	@Override
+	public void setHighLight(boolean states) {
+		Color color;
+		if (states) {
+			color = VConfig.getInstance().getHighLightColor();
+		} else {
+			color = VConfig.getInstance().getDefaultColor();
+		}
+		path.setFill(color);
+		path.setStroke(color);
+	}
+
+	public void setUpCurve(QuadCurveTo quadCurve, double x1, double x2, double y1, double y2){
 		quadCurve.setX(x1);
 		quadCurve.setY(y1);
 		quadCurve.setControlX(x2);

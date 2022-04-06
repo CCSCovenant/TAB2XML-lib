@@ -138,6 +138,7 @@ public class VLine extends VElement{
 		double lineEnd = 0;
 		lineStart = vClef.getW();
 		lineEnd = W;
+		double step =VConfig.getInstance().getGlobalConfig("Step");
 		for (VCurvedNotation curvedNotation:curvedNotations){
 			if (curvedNotation.getType().equals("Tied")){
 				double startX = lineStart;
@@ -151,7 +152,7 @@ public class VLine extends VElement{
 					}
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
-					startX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX()+ noteHead.getW();
+					startX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX()+step ;
 				}
 				if (curvedNotation.getEndID()>=0){
 					VNoteHead noteHead = tiedElements.get(curvedNotation.getEndID());
@@ -163,7 +164,7 @@ public class VLine extends VElement{
 					VMeasure pMeasure = pNote.getParentMeasure();
 					endX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
 				}
-				if (Y<3*VConfig.getInstance().getGlobalConfig("Step")){
+				if (Y<3*step){
 					curvedNotation.setPositive(true);
 				}
 				curvedNotation.Alignment(startX,endX,Y);
@@ -180,7 +181,7 @@ public class VLine extends VElement{
 					}
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
-					startX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX()+ noteHead.getW();
+					startX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX()+step;
 				}
 				if (curvedNotation.getEndID()>=0){
 					VNoteHead noteHead = slurElements.get(curvedNotation.getEndID());
@@ -191,9 +192,6 @@ public class VLine extends VElement{
 					VNote pNote = noteHead.getParentNote();
 					VMeasure pMeasure = pNote.getParentMeasure();
 					endX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
-				}
-				if (Y<3*VConfig.getInstance().getGlobalConfig("Step")){
-					curvedNotation.setPositive(true);
 				}
 				curvedNotation.Alignment(startX,endX,Y);
 
