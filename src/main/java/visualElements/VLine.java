@@ -40,6 +40,7 @@ public class VLine extends VElement{
 				if (measures.size()==0){
 					//TODO give user a warning that this line is squeezed under current setting. please adjust the setting.
 					measures.add(newMeasure);
+					newMeasure.setVLine(this);
 					group.getChildren().add(newMeasure.getShapeGroups());
 					return true;
 				}else {
@@ -53,6 +54,7 @@ public class VLine extends VElement{
 					newMeasure.setShowClef(false);
 				}
 				measures.add(newMeasure);
+				newMeasure.setVLine(this);
 				W += newMeasure.getWInMinWidth();
 				group.getChildren().add(newMeasure.getShapeGroups());
 				return true;
@@ -198,6 +200,11 @@ public class VLine extends VElement{
 			}
 		}
 	}
+
+	public List<VMeasure> getMeasures() {
+		return measures;
+	}
+
 	public void alignment() {
 		W = MarginX + vClef.getW();
 		gapCount = 0;

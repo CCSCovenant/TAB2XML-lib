@@ -56,4 +56,8 @@ public class VPage extends VElement{
 		this.vTitle = vTitle;
 		H += vTitle.getH();
 	}
+
+	public List<VLine> getLines() {
+		return lines;
+	}
 }

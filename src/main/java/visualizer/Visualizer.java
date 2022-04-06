@@ -4,6 +4,7 @@ package visualizer;
 import converter.Score;
 import custom_exceptions.TXMLException;
 import javafx.scene.Group;
+import javafx.util.Pair;
 import models.Part;
 import models.ScorePartwise;
 import models.measure.Measure;
@@ -26,6 +27,8 @@ public class Visualizer implements VConfigAble {
 	List<VMeasure> VMeasures;
 	String staffType;
 	int measureCounter = 0;
+
+	HashMap<Integer, Pair<Integer,Integer>> measureMapping = new HashMap<>();
  	public Visualizer(Score score) throws TXMLException {
 		this.score = score;
 		VMeasures = new ArrayList<>();
@@ -66,6 +69,7 @@ public class Visualizer implements VConfigAble {
 		pages = new ArrayList<>();
 		VPage tmpPage = new VPage();
 		VLine tmpLine = new VLine(staffType);
+
 		for (VMeasure measure:VMeasures){
 			if (tmpLine.addNewMeasure(measure)){ // if this measure can fit into this line, do nothing
 
@@ -91,8 +95,31 @@ public class Visualizer implements VConfigAble {
 			tmpPage.addNewLine(tmpLine);
 			pages.add(tmpPage);
 		}
+		createMapping();
 		initGroups();
 	}
+	public void createMapping(){
+		measureMapping = new HashMap<>();
+		for (int p=0;p<pages.size();p++){
+			List<VLine> lines = pages.get(p).getLines();
+			for (int l=0;l<lines.size();l++){
+				for (VMeasure measure:lines.get(l).getMeasures()){
+					int measureID = measure.getNumber();
+					measureMapping.put(measureID,new Pair<>(p,l));
+				}
+			}
+		}
+	}
+
+	public HashMap<Integer, Pair<Integer,Integer>> getMeasureMapping() {
+		return measureMapping;
+	}
+
+
+	public List<VMeasure> getVMeasures() {
+		return VMeasures;
+	}
+
 	public void initGroups(){
 		 groups = new ArrayList<>();
 		 for (VPage page:pages){

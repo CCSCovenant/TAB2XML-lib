@@ -15,20 +15,8 @@ public class VElement implements VConfigAble {
 		group.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				if (Selected.getInstance().getSElement()!=getCurrentElement()){
-					if (Selected.getInstance().getSElement()!=null){
-						Selected.getInstance().getSElement().setHighLight(false);
-					}
-					Selected.getInstance().setSElement(getCurrentElement());
-					System.out.println("Selected new element");
-					setHighLight(true);
-					event.consume();
-				}else {
-					System.out.println("Unselected a element");
-					Selected.getInstance().setSElement(null);
-					setHighLight(false);
-					event.consume();
-				}
+				Selected.getInstance().setSElement(getCurrentElement());
+				event.consume();
 			}
 		});
 	}

@@ -24,6 +24,7 @@ public class VMeasure extends VElement{
 	private List<VBarline> barlines = new ArrayList<>();
 	private List<VNoteHead> tieNoteHead = new ArrayList<>();
 	private List<VNoteHead> slurNoteHead = new ArrayList<>();
+	VLine line;
 	Rectangle background = new Rectangle();
 	String instrument = "";
 	double gapCount = 0;
@@ -147,7 +148,16 @@ public class VMeasure extends VElement{
 			group.getChildren().add(vNote.getShapeGroups());
 		}
 	}
-	public void addNoteHead(Note note,VNote vNote){
+
+	public VLine getVLine() {
+		return line;
+	}
+
+	public void setVLine(VLine line) {
+		this.line = line;
+	}
+
+	public void addNoteHead(Note note, VNote vNote){
 		int dots = 0;
 		if (note.getDots()!=null){
 			dots = note.getDots().size();
@@ -367,5 +377,9 @@ public class VMeasure extends VElement{
 	}
 	public List<VNote> getNotes() {
 		return Notes;
+	}
+
+	public int getNumber() {
+		return number;
 	}
 }
