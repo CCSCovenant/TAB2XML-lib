@@ -114,8 +114,15 @@ public class Visualizer implements VConfigAble {
 	public HashMap<Integer, Pair<Integer,Integer>> getMeasureMapping() {
 		return measureMapping;
 	}
-
-
+	/**
+	 * get VNote with measure ID and note ID
+	 * @param measureID measure id
+	 * @param noteID note id
+	 * @return noteID th VNote in the given measure
+	 * */
+	public VNote getNote(int measureID,int noteID){
+		 return VMeasures.get(measureID).getNotes().get(noteID);
+	}
 	public List<VMeasure> getVMeasures() {
 		return VMeasures;
 	}
