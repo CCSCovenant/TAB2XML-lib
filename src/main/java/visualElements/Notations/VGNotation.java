@@ -62,8 +62,6 @@ public class VGNotation extends VElement {
 		for (Line line:Hlines){
 			line.setStroke(color);
 		}
-
-		System.out.println("selected Lines");
 	}
 
 	@Override

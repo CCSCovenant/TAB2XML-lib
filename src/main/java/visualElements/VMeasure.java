@@ -4,6 +4,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Pair;
 import models.measure.Measure;
 import models.measure.attributes.Time;
 import models.measure.barline.BarLine;
@@ -24,6 +25,7 @@ public class VMeasure extends VElement{
 	private List<VBarline> barlines = new ArrayList<>();
 	private List<VNoteHead> tieNoteHead = new ArrayList<>();
 	private List<VNoteHead> slurNoteHead = new ArrayList<>();
+	VLine line;
 	Rectangle background = new Rectangle();
 	String instrument = "";
 	double gapCount = 0;
@@ -72,10 +74,14 @@ public class VMeasure extends VElement{
 	}
 	//  N / G G N C / N
 	public void initConfig(){
-		configMap.put("noteDistance",10d);
-		configMap.put("gapBeforeMeasure",20d);
-		configMap.put("gapBetweenElement",VConfig.getInstance().getGlobalConfig("MinNoteDistance"));
-		configMap.put("gapBetweenGrace",5d);
+		initConfigElement("noteDistance",10d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("gapBeforeMeasure",20d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("gapBetweenElement",VConfig.getInstance().getGlobalConfig("MinNoteDistance"),0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("gapBetweenGrace",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+	}
+	public void initConfigElement(String id,double initValue,double lower,double upper){
+		configMap.put(id,initValue);
+		limitMap.put(id,new Pair<>(lower,upper));
 	}
 	public void initDrumNotations(){
 		double durationCounter = 0;
@@ -147,7 +153,16 @@ public class VMeasure extends VElement{
 			group.getChildren().add(vNote.getShapeGroups());
 		}
 	}
-	public void addNoteHead(Note note,VNote vNote){
+
+	public VLine getVLine() {
+		return line;
+	}
+
+	public void setVLine(VLine line) {
+		this.line = line;
+	}
+
+	public void addNoteHead(Note note, VNote vNote){
 		int dots = 0;
 		if (note.getDots()!=null){
 			dots = note.getDots().size();
@@ -367,5 +382,9 @@ public class VMeasure extends VElement{
 	}
 	public List<VNote> getNotes() {
 		return Notes;
+	}
+
+	public int getNumber() {
+		return number;
 	}
 }
