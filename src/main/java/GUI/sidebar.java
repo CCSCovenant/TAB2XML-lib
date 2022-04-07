@@ -4,8 +4,10 @@ import com.jfoenix.controls.JFXButton;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
 import com.jfoenix.transitions.hamburger.HamburgerNextArrowBasicTransition;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
 import javafx.scene.input.MouseEvent;
@@ -15,21 +17,29 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontPosture;
 import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
+import javafx.util.Pair;
+import models.measure.Measure;
+import visualElements.Selected;
+import visualElements.VDot;
+import visualElements.VElement;
+import visualElements.VMeasure;
+import visualizer.Visualizer;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 public class sidebar {
 	public VBox vbox;
 	public ScrollPane scrollPane;
 	public HBox hboxMain;
 	public HBox hboxMini;
+	private int[] pointers = new int[18];
 	JFXButton applyChanges;
 	ArrayList<Text> labels = new ArrayList<>(18);
 	ArrayList<Spinner> spinners = new ArrayList<>(18);
-	@FXML public JFXDrawer d;
-	@FXML Spinner noteDistance;
-	private HashMap<String, Double> configMap; // size 18
+	HashMap<String, Double> configMap = new HashMap<>();
+	HashMap<String,Pair<Double,Double>> limitMap = new HashMap<>();
 
 	public sidebar() {
 		this.hboxMini = new HBox();
@@ -57,7 +67,8 @@ public class sidebar {
 			this.labels.add(new Text(str[i]));
 			this.labels.get(i).setFont(font);
 			this.vbox.getChildren().add(labels.get(i));
-			this.spinners.add(new Spinner<>(0,20,0));
+			this.spinners.add(new Spinner<>(0d,20d,0d));
+			spinners.get(i).setDisable(true);
 			this.vbox.getChildren().add(spinners.get(i));
 		}
 
@@ -68,6 +79,9 @@ public class sidebar {
 
 		this.hboxMain.getChildren().add(scrollPane);
 
+		for (int i = 0; i < pointers.length; i++) {
+			pointers[i] = i;
+		}
 	}
 
 	public void initialize(JFXDrawer drawer, JFXHamburger hamburger) {
@@ -83,10 +97,10 @@ public class sidebar {
 				drawer.open();
 			}
 		});
-
 	}
 
-	public void applySettings() {
-
+	public void update(HashMap<String, Double> configMap, HashMap<String, Pair<Double,Double>> limitMap) {
+		this.configMap = configMap;
+		this.limitMap = limitMap;
 	}
 }
