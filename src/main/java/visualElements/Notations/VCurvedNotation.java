@@ -5,12 +5,11 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.QuadCurveTo;
 import visualElements.VConfig;
-import visualElements.VConfigAble;
 import visualElements.VElement;
 
 import java.util.HashMap;
 
-public class VCurvedNotation extends VElement implements VConfigAble {
+public class VCurvedNotation extends VElement {
 	boolean positive = false;
 	String type;
 	public HashMap<String,Double> configMap = new HashMap<>();

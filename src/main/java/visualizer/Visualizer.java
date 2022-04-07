@@ -20,7 +20,7 @@ import java.util.List;
  *
  * @author Kuimou
  * */
-public class Visualizer implements VConfigAble {
+public class Visualizer {
 	Score score;
 	ArrayList<Group> groups;
 	ArrayList<VPage> pages;
@@ -143,15 +143,6 @@ public class Visualizer implements VConfigAble {
 			 list.add(i);
 		 }
 		VConfig.getInstance().setStaffDetail(list);
-	}
-	@Override
-	public HashMap<String, Double> getConfigAbleList() {
-		return null;
-	}
-
-	@Override
-	public void updateConfig(String id, double value) {
-
 	}
 
 	public int getMeasureCounter() {

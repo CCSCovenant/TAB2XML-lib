@@ -3,6 +3,7 @@ package visualElements;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Pair;
 
 import java.util.HashMap;
 
@@ -11,11 +12,15 @@ public class VElement implements VConfigAble {
 	double W = 0;
 	double H = 0;
 	HashMap<String,Double> configMap = new HashMap<>();
+	HashMap<String, Pair<Double,Double>> limitMap = new HashMap<>();
 	public VElement(){
 		group.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
 				Selected.getInstance().setSElement(getCurrentElement());
+				if (getCurrentElement() instanceof VNoteHead){
+
+				}
 				event.consume();
 			}
 		});
@@ -40,6 +45,11 @@ public class VElement implements VConfigAble {
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
 		return configMap;
+	}
+
+	@Override
+	public HashMap<String, Pair<Double, Double>> getLimits() {
+		return limitMap;
 	}
 
 	@Override
