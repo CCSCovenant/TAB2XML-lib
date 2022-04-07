@@ -5,12 +5,11 @@ import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.QuadCurveTo;
 import visualElements.VConfig;
-import visualElements.VConfigAble;
 import visualElements.VElement;
 
 import java.util.HashMap;
 
-public class VCurvedNotation extends VElement implements VConfigAble {
+public class VCurvedNotation extends VElement {
 	boolean positive = false;
 	String type;
 	public HashMap<String,Double> configMap = new HashMap<>();
@@ -49,7 +48,20 @@ public class VCurvedNotation extends VElement implements VConfigAble {
 
 
 	}
-	public void setUpCurve(QuadCurveTo quadCurve,double x1,double x2,double y1,double y2){
+
+	@Override
+	public void setHighLight(boolean states) {
+		Color color;
+		if (states) {
+			color = VConfig.getInstance().getHighLightColor();
+		} else {
+			color = VConfig.getInstance().getDefaultColor();
+		}
+		path.setFill(color);
+		path.setStroke(color);
+	}
+
+	public void setUpCurve(QuadCurveTo quadCurve, double x1, double x2, double y1, double y2){
 		quadCurve.setX(x1);
 		quadCurve.setY(y1);
 		quadCurve.setControlX(x2);
@@ -85,7 +97,8 @@ public class VCurvedNotation extends VElement implements VConfigAble {
 	}
 
 	public void initConfig(){
-		configMap.put("defaultControlPoint", VConfig.getInstance().getGlobalConfig("Step")*2);
+		initConfigElement("defaultControlPoint",VConfig.getInstance().getGlobalConfig("Step")*2,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+
 	}
 
 

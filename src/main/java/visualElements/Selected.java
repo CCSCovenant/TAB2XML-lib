@@ -11,9 +11,17 @@ public class Selected {
 		return selected;
 	}
 
-	public void setSElement(VElement vElement) {
-		this.vElement = vElement;
-
+	public void setSElement(VElement sElement) {
+		if (sElement!=vElement){
+			if (vElement!=null){
+				vElement.setHighLight(false);
+			}
+			vElement = sElement;
+			vElement.setHighLight(true);
+		}else {
+			sElement.setHighLight(false);
+			vElement = null;
+		}
 	}
 
 	public VElement getSElement() {

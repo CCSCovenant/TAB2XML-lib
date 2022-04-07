@@ -25,16 +25,14 @@ public class VGNotation extends VElement {
 		initConfig();
 	}
 	public void initConfig(){
-		configMap.put("GuitarNotationStartHeight",100d);
-		configMap.put("GuitarNotationEndHeight",120d);
+		initConfigElement("GuitarNotationStartHeight",100d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("GuitarNotationEndHeight",120d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("DrumNotationHeight",-30d,-50d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("notationGap",10d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("thickness",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("dotSize",2d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("dotOffset",6d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
 
-		configMap.put("DrumNotationHeight",-30d);
-
-		configMap.put("notationGap",10d);
-		configMap.put("thickness",5d);
-
-		configMap.put("dotSize",2d);
-		configMap.put("dotOffset",6d);
 
 	}
 	public int getSize(){
@@ -62,8 +60,6 @@ public class VGNotation extends VElement {
 		for (Line line:Hlines){
 			line.setStroke(color);
 		}
-
-		System.out.println("selected Lines");
 	}
 
 	@Override

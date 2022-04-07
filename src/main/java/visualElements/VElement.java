@@ -3,6 +3,7 @@ package visualElements;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Pair;
 
 import java.util.HashMap;
 
@@ -11,24 +12,16 @@ public class VElement implements VConfigAble {
 	double W = 0;
 	double H = 0;
 	HashMap<String,Double> configMap = new HashMap<>();
+	HashMap<String, Pair<Double,Double>> limitMap = new HashMap<>();
 	public VElement(){
 		group.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				if (Selected.getInstance().getSElement()!=getCurrentElement()){
-					if (Selected.getInstance().getSElement()!=null){
-						Selected.getInstance().getSElement().setHighLight(false);
-					}
-					Selected.getInstance().setSElement(getCurrentElement());
-					System.out.println("Selected new element");
-					setHighLight(true);
-					event.consume();
-				}else {
-					System.out.println("Unselected a element");
-					Selected.getInstance().setSElement(null);
-					setHighLight(false);
-					event.consume();
+				Selected.getInstance().setSElement(getCurrentElement());
+				if (getCurrentElement() instanceof VNoteHead){
+
 				}
+				event.consume();
 			}
 		});
 	}
@@ -48,10 +41,18 @@ public class VElement implements VConfigAble {
 	public VElement getCurrentElement(){
 		return this;
 	}
-
+	public void initConfigElement(String id,double initValue,double lower,double upper){
+		configMap.put(id,initValue);
+		limitMap.put(id,new Pair<>(lower,upper));
+	}
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
 		return configMap;
+	}
+
+	@Override
+	public HashMap<String, Pair<Double, Double>> getLimits() {
+		return limitMap;
 	}
 
 	@Override

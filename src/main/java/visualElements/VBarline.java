@@ -77,9 +77,10 @@ public class VBarline extends VElement{
 	}
 
 	public void initConfig(){
-		configMap.put("distanceBetweenLine",5d);
-		configMap.put("notationHeight",-20d);
-		configMap.put("notationSize",15d);
+		initConfigElement("distanceBetweenLine",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("notationHeight",-20d,-50d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("notationSize",15d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+
 	}
 	@Override
 	public void setHighLight(boolean states) {

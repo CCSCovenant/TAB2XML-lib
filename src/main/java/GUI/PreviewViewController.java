@@ -3,13 +3,18 @@ package GUI;
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
 import custom_exceptions.TXMLException;
+import javafx.animation.Animation;
+import javafx.animation.FadeTransition;
+import javafx.animation.RotateTransition;
 import javafx.application.Application;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXML;
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
+import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.SpinnerValueFactory;
@@ -22,6 +27,8 @@ import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
+import javafx.util.Duration;
+import javafx.util.Pair;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
@@ -30,7 +37,10 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import player.MXLPlayer;
 import player.ThreadPlayer;
 import utility.SwingFXUtils;
+import visualElements.Selected;
 import visualElements.VConfig;
+import visualElements.VMeasure;
+import visualizer.ImageResourceHandler;
 import visualizer.Visualizer;
 
 import javax.imageio.ImageIO;
@@ -39,12 +49,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 public class PreviewViewController extends Application {
 	@FXML ImageView pdfViewer;
 	@FXML Spinner<Integer> pageSpinner;
 	@FXML Spinner<Integer> measureSpinner;
 	@FXML ScrollPane scrollView;
+	@FXML Button refresh;
 	@FXML private JFXHamburger hamburger;
 	@FXML private JFXDrawer drawer;
 	sidebar sb1 = new sidebar();
@@ -55,6 +67,7 @@ public class PreviewViewController extends Application {
 	private int pageNumber = 0;
 	private Visualizer visualizer;
 	private MXLPlayer player;
+	HashMap<Integer, Pair<Integer,Integer>> measureMapping;
 
 	public static ThreadPlayer thp;
 	public Scene scene;
@@ -68,26 +81,46 @@ public class PreviewViewController extends Application {
 	public void update() throws TXMLException, FileNotFoundException, URISyntaxException {
 		this.visualizer = new Visualizer(mvc.converter.getScore());
 		groups = visualizer.getElementGroups();
+		measureMapping = visualizer.getMeasureMapping();
 		goToPage(0);
 
 		initPageHandler(groups.size()-1);
 		initMeasureHandler(visualizer.getMeasureCounter()-1);
+		initRefresh();
 		//goToPage(pageNumber);
+	}
+	private void initRefresh(){
+		ImageView refreshView = new ImageView(ImageResourceHandler.getInstance().getImage("refresh"));
+		refreshView.setFitWidth(40);
+		refreshView.setFitHeight(40);
+		refresh.setGraphic(refreshView);
+		RotateTransition rotate = new RotateTransition(Duration.seconds(2),refresh);
+		rotate.setCycleCount(Animation.INDEFINITE);
+		rotate.setByAngle(360);
+
+		FadeTransition fade = new FadeTransition(Duration.seconds(0.2),refresh);
+		fade.setFromValue(1.0);
+		fade.setToValue(0.2);
+		fade.setCycleCount(2);
+		fade.setAutoReverse(true);
+		refresh.setOnMouseEntered(e->rotate.play());
+		refresh.setOnMouseExited(e->rotate.pause());
+		refresh.setOnMouseClicked(e->fade.play());
 	}
 	private void initPageHandler(int max_page){
 		pageSpinner.setEditable(true);
-		pageSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max_page, 0));
+		pageSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max_page+1, 0));
 		pageSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
 			@Override
 			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
-				goToPage(newValue);
+				goToPage(newValue-1);
 			}
 		});
 
 	}
 	private void initMeasureHandler(int max_measures){
 		measureSpinner.setEditable(true);
-		measureSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, max_measures, 0));
+		measureSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max_measures+1, 0));
 		measureSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
 			@Override
 			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
@@ -96,8 +129,32 @@ public class PreviewViewController extends Application {
 		});
 	}
 	private void goToMeasure(int measureNumber){
-		//TODO goto measure
+		Pair<Integer,Integer> localPart = measureMapping.get(measureNumber);
+		VMeasure measure = visualizer.getVMeasures().get(measureNumber-1);
+		Selected.getInstance().setSElement(measure);
+		double YPos = measure.getVLine().getShapeGroups().getLayoutY() - VConfig.getInstance().getGlobalConfig("MeasureDistance");
+		double XPos = measure.getShapeGroups().getLayoutX();
+		double PageX = VConfig.getInstance().getGlobalConfig("PageX");
+		double PageY = VConfig.getInstance().getGlobalConfig("PageY");
+		double factorY = 1;
+		double factorX = 1;
+		Bounds bounds = scrollView.getViewportBounds();
+		double diffY = PageY-bounds.getHeight();
+		double diffX = PageX-bounds.getWidth();
+		if (XPos<diffX) {
+			factorX = XPos/diffX;
+		}
+		if (YPos<diffY) {
+			factorY = YPos/diffY;
+		}
+
+		int pageNumber = localPart.getKey();
+		goToPage(pageNumber);
+		scrollView.setVvalue(scrollView.getVmax()*factorY);
+		scrollView.setHvalue(scrollView.getHmax()*factorX);
+
 	}
+
 	private void initEvents(AnchorPane anchorPane){
 		KeyCombination zoomOut = new KeyCodeCombination(KeyCode.PAGE_DOWN,KeyCombination.CONTROL_DOWN);
 		KeyCombination zoomIn = new KeyCodeCombination(KeyCode.PAGE_UP,KeyCombination.CONTROL_DOWN);
@@ -155,6 +212,7 @@ public class PreviewViewController extends Application {
 	private void apply() throws TXMLException {
 		visualizer.alignment();
 		groups = visualizer.getElementGroups();
+		measureMapping = visualizer.getMeasureMapping();
 		goToPage(pageNumber);
 		initPageHandler(groups.size());
 	}
@@ -166,6 +224,9 @@ public class PreviewViewController extends Application {
 	}
 	private void goToPage(int page)  {
 		if (0<=page&&page<groups.size()){
+			pageNumber = page;
+			pageSpinner.getEditor().setText(page+"");
+			pageSpinner.commitValue();
 			AnchorPane anchorPane = new AnchorPane();
 			anchorPane.getChildren().add(groups.get(page));
 			Group group = new Group(anchorPane);

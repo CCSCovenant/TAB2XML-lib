@@ -2,27 +2,16 @@
 
 <?import com.jfoenix.controls.JFXDrawer?>
 <?import com.jfoenix.controls.JFXHamburger?>
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.control.ScrollPane?>
-<?import javafx.scene.control.Spinner?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
 <?import javafx.scene.effect.ColorAdjust?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.BorderPane?>
-<?import javafx.scene.layout.HBox?>
-
+<?import javafx.scene.layout.*?>
 <BorderPane fx:id="borderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="450.0" minWidth="640.0" prefHeight="700.0" prefWidth="1000.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.PreviewViewController">
     <center>
         <AnchorPane prefHeight="200.0" prefWidth="666.0" BorderPane.alignment="CENTER">
             <children>
                 <AnchorPane layoutX="12.0" layoutY="614.0" prefHeight="38.0" prefWidth="976.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0">
                     <children>
-                        <HBox layoutY="11.0" spacing="5.0" AnchorPane.leftAnchor="870.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="8.0">
-                            <padding>
-                                <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                            </padding>
-                        </HBox>
                         <HBox layoutX="14.0" layoutY="8.0" spacing="5.0" AnchorPane.leftAnchor="14.0">
                             <children>
                                 <Label text="Go-to-page">
@@ -66,6 +55,14 @@
                </effect>
             </JFXHamburger>
             <JFXDrawer fx:id="drawer" defaultDrawerSize="260.0" direction="RIGHT" layoutX="739.0" layoutY="61.0" overLayVisible="false" prefHeight="589.0" prefWidth="260.0" snapToPixel="false" AnchorPane.rightAnchor="1.0" AnchorPane.topAnchor="61.0" />
+                  <HBox prefHeight="55.0" prefWidth="55.0" spacing="5.0" AnchorPane.leftAnchor="20.0" AnchorPane.topAnchor="20.0">
+                      <padding>
+                          <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                      </padding>
+               <children>
+                  <Button fx:id="refresh" contentDisplay="CENTER" mnemonicParsing="false" onAction="#apply" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: transparent;" />
+               </children>
+                  </HBox>
             </children>
         </AnchorPane>
     </center>
