@@ -97,7 +97,8 @@ public class VCurvedNotation extends VElement {
 	}
 
 	public void initConfig(){
-		configMap.put("defaultControlPoint", VConfig.getInstance().getGlobalConfig("Step")*2);
+		initConfigElement("defaultControlPoint",VConfig.getInstance().getGlobalConfig("Step")*2,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+
 	}
 
 

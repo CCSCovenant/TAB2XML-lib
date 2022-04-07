@@ -86,15 +86,13 @@ public class VNoteHead extends VElement{
 		group.getChildren().add(bendText);
 	}
 	public void initConfig(){
-		configMap.put("scale",1d);
-		configMap.put("graceScale",0.7d);
-
-		configMap.put("defaultSize",10d);
-		configMap.put("dotGap",5d);
-
-		configMap.put("blendHeight",-20d);
-		configMap.put("blendOffsetX",15d);
-		configMap.put("blendTextOffsetY",-3d);
+		initConfigElement("scale",1d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("graceScale",0.7d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("defaultSize",10d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("dotGap",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("blendHeight",-20d,-50d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("blendOffsetX",15d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("blendTextOffsetY",-3d,-10d,VConfig.getInstance().getGlobalConfig("PageX"));
 
 	}
 	public void setFlip(){

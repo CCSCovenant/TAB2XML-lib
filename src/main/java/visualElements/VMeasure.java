@@ -4,7 +4,6 @@ import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
-import javafx.util.Pair;
 import models.measure.Measure;
 import models.measure.attributes.Time;
 import models.measure.barline.BarLine;
@@ -79,10 +78,7 @@ public class VMeasure extends VElement{
 		initConfigElement("gapBetweenElement",VConfig.getInstance().getGlobalConfig("MinNoteDistance"),0d,VConfig.getInstance().getGlobalConfig("PageX"));
 		initConfigElement("gapBetweenGrace",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
 	}
-	public void initConfigElement(String id,double initValue,double lower,double upper){
-		configMap.put(id,initValue);
-		limitMap.put(id,new Pair<>(lower,upper));
-	}
+
 	public void initDrumNotations(){
 		double durationCounter = 0;
 		VGNotation notation;

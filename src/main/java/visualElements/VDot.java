@@ -12,8 +12,9 @@ public class VDot extends VElement{
 		group.getChildren().add(circle);
 	}
 	public void initConfig(){
-		configMap.put("size",1.5d);
-		configMap.put("gap_with_last_element",5d);
+		initConfigElement("size",1.5d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("gap_with_last_element",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+
 	}
 
 	@Override

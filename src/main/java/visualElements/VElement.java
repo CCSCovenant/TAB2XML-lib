@@ -41,7 +41,10 @@ public class VElement implements VConfigAble {
 	public VElement getCurrentElement(){
 		return this;
 	}
-
+	public void initConfigElement(String id,double initValue,double lower,double upper){
+		configMap.put(id,initValue);
+		limitMap.put(id,new Pair<>(lower,upper));
+	}
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
 		return configMap;
