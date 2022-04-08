@@ -197,11 +197,12 @@ public class VNoteHead extends VElement{
 		}
 		imageView.setPreserveRatio(true);
 		if (isGrace){
-			imageView.setFitWidth(step*2*s*2);
-			double height = imageView.getImage().getHeight()/imageView.getImage().getWidth()*step*2*s*2;
+
 			if (instrument.equals("TAB")){
 
 			}else {
+				imageView.setFitWidth(step*2*s*2);
+				double height = imageView.getImage().getHeight()/imageView.getImage().getWidth()*step*2*s*2;
 				imageView.setLayoutY(-height+step+step*s);
 			}
 		}else {
