@@ -214,6 +214,8 @@ public class VMeasure extends VElement{
 
 	@Override
 	public void setHighLight(boolean states) {
+		highLight = states;
+
 		Color color;
 		if (states){
 			color	= VConfig.getInstance().getHighLightColor();
@@ -350,6 +352,7 @@ public class VMeasure extends VElement{
 		background.toBack();
 		alignmentBarlines();
 		alignmentNotations();
+		setHighLight(highLight);
 	}
 	public double getWInMinWidth(){
 		double minW = 0;

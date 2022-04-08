@@ -84,6 +84,7 @@ public class VBarline extends VElement{
 	}
 	@Override
 	public void setHighLight(boolean states) {
+		highLight = states;
 		Color color;
 		if (states){
 			color	= VConfig.getInstance().getHighLightColor();

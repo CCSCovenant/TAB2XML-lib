@@ -15,6 +15,7 @@ public class VElement implements VConfigAble {
 	public HashMap<String, Pair<Double,Double>> limitMap = new HashMap<>();
 	public HashMap<String,Boolean> configAble = new HashMap<>();
 	public HashMap<String,Double> stepMap = new HashMap<>();
+	public boolean highLight = false;
 	public VElement(){
 		group.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override

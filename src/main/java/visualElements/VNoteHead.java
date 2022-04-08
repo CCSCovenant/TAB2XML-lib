@@ -100,6 +100,8 @@ public class VNoteHead extends VElement{
 	}
 	@Override
 	public void setHighLight(boolean states) {
+		highLight = states;
+
 
 		Color color;
 		if (states){
@@ -127,6 +129,7 @@ public class VNoteHead extends VElement{
 			blend.setMode(BlendMode.SRC_ATOP);
 			arrow.setEffect(blend);
 		}
+
 	}
 
 
@@ -222,6 +225,7 @@ public class VNoteHead extends VElement{
 				W += dots.get(i).getW();
 			}
 		}
+		setHighLight(highLight);
 	}
 	public VNote getParentNote() {
 		return parentNote;

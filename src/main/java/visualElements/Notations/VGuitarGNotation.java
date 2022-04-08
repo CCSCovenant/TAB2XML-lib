@@ -92,5 +92,6 @@ public class VGuitarGNotation extends VGNotation{
 			Line line = lineStack.pop();
 			line.setEndX(HPosition.get(HPosition.size()-1));
 		}
+		setHighLight(highLight);
 	}
 }

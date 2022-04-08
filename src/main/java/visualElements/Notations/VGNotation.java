@@ -46,6 +46,8 @@ public class VGNotation extends VElement {
 	}
 	@Override
 	public void setHighLight(boolean states) {
+		highLight = states;
+
 		Color color;
 		if (states){
 			color	= VConfig.getInstance().getHighLightColor();

@@ -19,6 +19,8 @@ public class VDot extends VElement{
 
 	@Override
 	public void setHighLight(boolean states) {
+		highLight = states;
+
 		Color color;
 		if (states){
 			color	= VConfig.getInstance().getHighLightColor();
@@ -35,5 +37,6 @@ public class VDot extends VElement{
 
 	public void alignment(){
 		W = circle.getRadius()*2;
+		setHighLight(highLight);
 	}
 }

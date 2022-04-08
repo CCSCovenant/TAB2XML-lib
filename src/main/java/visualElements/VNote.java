@@ -49,6 +49,8 @@ public class VNote extends VElement {
 	}
 	@Override
 	public void setHighLight(boolean states) {
+		highLight = states;
+
 		for (VNoteHead noteHead:noteHeads){
 			noteHead.setHighLight(states);
 		}
@@ -70,6 +72,7 @@ public class VNote extends VElement {
 			maxVPos = Math.max(maxVPos,noteHead.getShapeGroups().getLayoutY());
 		}
 		W = group.getBoundsInLocal().getWidth();
+		setHighLight(highLight);
 	}
 
 	public VMeasure getParentMeasure() {

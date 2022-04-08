@@ -43,11 +43,13 @@ public class VCurvedNotation extends VElement {
 		setUpCurve(quadCurveDown,x1,(x1+x2)/2,adjustedY,adjustDownControlY);
 		path.setFill(Color.BLACK);
 
-
+		setHighLight(highLight);
 	}
 
 	@Override
 	public void setHighLight(boolean states) {
+		highLight = states;
+
 		Color color;
 		if (states) {
 			color = VConfig.getInstance().getHighLightColor();

@@ -39,6 +39,7 @@ public class VClef extends VSign {
 		imageView.setLayoutX(min);
 		W = imageView.getFitWidth()+min*2;
 		updateStaffLine(W);
+		setHighLight(highLight);
 	}
 	public void updateStaffLine(double W){
 		for (Line line:staffLines){
