@@ -14,7 +14,6 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.util.Pair;
 import visualElements.VElement;
-import visualElements.VUtility;
 
 import java.util.HashMap;
 
@@ -63,7 +62,7 @@ public class Sidebar {
 				continue;
 			}
 			HBox hBox = new HBox();
-			Text text = new Text(VUtility.getDisplayName(key));
+			Text text = new Text(key);
 
 			hBox.getChildren().add(text);
 			Spinner spinner = new Spinner();

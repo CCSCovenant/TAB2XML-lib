@@ -144,12 +144,14 @@ public class VNoteHead extends VElement{
 	public void updateConfig(String id, double value) {
 		if (configMap.containsKey(id)){
 			configMap.put(id,value);
+			if (id.equals("offsetX")){
+				parentNote.updateConfig("offsetX",value);
+			}
 		}
 	}
 	public void alignment(){
 		step = VConfig.getInstance().getGlobalConfig("Step");
 		group.setLayoutY(relative*step);
-		group.setLayoutX(configMap.get("offsetX"));
 		double s = configMap.get("scale");
 		if (isGrace){
 			s = configMap.get("graceScale");
@@ -200,7 +202,7 @@ public class VNoteHead extends VElement{
 			arrow.setFitHeight(step*2);
 			arrow.setLayoutY(ajustedY);
 			bendText.setLayoutY(ajustedY+textOffset);
-			bendText.setLayoutX(notePosRight+step+blendOffsetX);
+			bendText.setLayoutX(notePosRight+step);
 		}
 
 		W = step*2*s;
