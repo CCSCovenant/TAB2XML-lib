@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.ListIterator;
 
@@ -24,6 +25,7 @@ import models.measure.note.Dot;
 import models.measure.note.Note;
 import models.measure.note.notations.Slur;
 import models.measure.note.notations.Tied;
+import models.Part;
 import models.measure.Measure;
 import models.measure.attributes.Attributes;
 import models.measure.attributes.Clef;
@@ -35,15 +37,28 @@ public class DetailedPlayer {
 	private Sequence sequence;
 	private List<List<Double>> time;
 	private int BPM = 120;
+	private List<Measure> mE;
+	private HashMap<Integer,List<List<Note>>> sortedMeas = new HashMap<>();
+	private List<List<Note>> current = new ArrayList<>();
+	private List<List<Double>> t = new ArrayList<>();
+	private List<String> noteString = new ArrayList<>();
+	private int notecount = 1; int chordcount = 1;int noteid = 1;
+	private List<Integer> noteId = new ArrayList<>();
+	private HashMap<Integer,List<String>> stringID = new HashMap<>();
 	
-	public DetailedPlayer(String musicString,List<Note> notes, ManagedPlayer p) {
-		this.musicString = musicString;
+	private HashMap<Integer,List<Note>> meas = new HashMap<>(); 
+	private HashMap<Integer,List<List<Double>>> separateTimes = new HashMap<>();
+	private HashMap<Integer,List<Integer>> ElementID = new HashMap<>(); 
+	
+	public DetailedPlayer(String musicString,List<Note> notes, ManagedPlayer p,List<Measure> meas) {
+		this.musicString = musicString;mE = meas;
+		measuremap(meas);
 		player = p;
 		musicNotes = notes;
 		setTempo();	
 		initialize();
 	}
-	
+
 	public void initialize() {
 		sequence = getSequence(musicString);
 		time = new ArrayList<>();
@@ -72,26 +87,46 @@ public class DetailedPlayer {
 		int totaltime = (int) (sequence.getMicrosecondLength() / 1000);
 		double elapsedtime = 0;
 		
-		int i = 0;
+		int i = 0;int j = 0;int c = 0;
 		ListIterator<Note> iterator = musicNotes.listIterator();
-	
+		
 		while(iterator.hasNext() && i < musicNotes.size()) {
 			Note note = musicNotes.get(i);
 			double start = elapsedtime;
-			elapsedtime += getNoteDuration(note,i);
+			elapsedtime += getNoteDuration(note,i,musicNotes);
 			double stop = elapsedtime;
-			
+
 			time.add(new ArrayList<>());
 			time.get(i).add(start);
 			time.get(i).add(stop);
 			i++;
+
+			this.sortedMeas.put(mE.get(c).getNumber(), this.current);
+			this.stringID.put(mE.get(c).getNumber(), noteString);
+			this.ElementID.put(mE.get(c).getNumber(), noteId);
+			this.current = new ArrayList<>();
+			noteString = new ArrayList<>();
+			noteId= new ArrayList<>();
+			notecount=1;chordcount=1;noteid = 1;
+			c++;
 		}
-//		System.out.println("\n" +totaltime);
-//		System.out.println(elapsedtime);
-//		for(int j = 0; j<time.size(); j++) {
-//			System.out.println(time.get(j).get(0));
-//			System.out.println(time.get(j).get(1)+"\n");
-//		}
+		
+		int index = 0;
+		for(Measure m : mE) {
+			int k = 0;
+			ListIterator<Note> iterators = m.getNotesBeforeBackup().listIterator();
+		
+			while(iterators.hasNext() && k < m.getNotesBeforeBackup().size()) {
+				t.add(time.get(index));
+				index++;
+				k++;
+			}
+			this.separateTimes.put(m.getNumber(), t);
+			this.t = new ArrayList<>();
+		}
+		
+		setNoteList();
+		//t=null;
 	} 
 	
 	public void play() {
@@ -99,7 +134,7 @@ public class DetailedPlayer {
 	}
 	private List<Note> tiednotes = new ArrayList<Note>(); private int ch=0;private int tie=0;
 	
-	public double getNoteDuration(Note note, int position) {
+	public double getNoteDuration(Note note, int position,List<Note> in) {
 		double beat = 60000/BPM; // duration of quarter note in milliseconds
 		double duration = 0;
 		boolean hasChord = note.getChord() != null;
@@ -109,45 +144,58 @@ public class DetailedPlayer {
 		
 		if(hasTie) {
 			tiednotes.add(note);tie++;
-			boolean isLastNote = position == musicNotes.size()-1;
+			boolean isLastNote = position == in.size()-1;
 			for(Tied tie : note.getNotations().getTieds()) {
 				boolean stop = tie != null && tie.getType().equals("stop");
-				if(stop && !isLastNote && (musicNotes.get(position+1).getNotations() != null && musicNotes.get(position+1).getNotations().getTieds() == null)) {
-					this.tie--;
+				if(stop && !isLastNote && (in.get(position+1).getNotations() != null && in.get(position+1).getNotations().getTieds() == null)) {
+					this.tie--;this.noteId.add(noteid);noteid++;
 					duration = timeOf(tiednotes);
 					while(this.tie>0) {
 						time.get(position-this.tie).set(1, time.get(position-this.tie).get(0)+duration);
+					//	if(t != null) {	t.get(position-this.tie).set(1, t.get(position-this.tie).get(0)+duration); }
 						this.tie--;
+						this.noteId.add(noteid);noteid++;
 					}
+					current.add(tiednotes);
+					this.noteString.add("N"+notecount); notecount++;
 					tiednotes = new ArrayList<>();
 					return duration;
 				}
-				else if(stop && !isLastNote && musicNotes.get(position+1).getNotations() == null) { 
-					this.tie--;
+				else if(stop && !isLastNote && in.get(position+1).getNotations() == null) {
+					this.tie--;this.noteId.add(noteid);noteid++;
 					duration = timeOf(tiednotes);
 					while(this.tie>0) {
 						time.get(position-this.tie).set(1, time.get(position-this.tie).get(0)+duration);
+				//	/*	if(t != null) {*/	t.get(position-this.tie).set(1, t.get(position-this.tie).get(0)+duration); 
 						this.tie--;
+						this.noteId.add(noteid);noteid++;
 					}
+					current.add(tiednotes);
+					this.noteString.add("N"+notecount); notecount++;
 					tiednotes = new ArrayList<>();
 					return duration;
 				}
 				else if(stop && isLastNote) {  
-					this.tie--;
+					this.tie--;this.noteId.add(noteid);noteid++;
 					duration = timeOf(tiednotes);
 					while(this.tie>0) {
 						time.get(position-this.tie).set(1, time.get(position-this.tie).get(0)+duration);
+				//		if(t != null) {	t.get(position-this.tie).set(1, t.get(position-this.tie).get(0)+duration); }
 						this.tie--;
+						this.noteId.add(noteid);noteid++;
 					}
+					current.add(tiednotes);
+					this.noteString.add("N"+notecount); notecount++;
 					tiednotes = new ArrayList<>();
 					return duration;
 				}
 			}
 			return duration;
 		}
-		else if(hasChord) {duration = getChordDuration(note,position); return duration;}
-		else if(position != musicNotes.size()-1 && musicNotes.get(position+1).getChord() != null) {ch++;return 0;}
+		else if(hasChord) {duration = getChordDuration(note,position,in); return duration;}
+		else if(position != in.size()-1 && in.get(position+1).getChord() != null) {ch++;this.noteId.add(noteid);return 0;}
 		else if(hasSlur) {
+			if(position != -1) {notes.add(note); current.add(notes); this.noteString.add("N"+notecount); notecount++;}
 			boolean sameNote = false;
 			for(Slur slur : note.getNotations().getSlurs()) {
 				if(slur != null && (slur.getType().equals("start") && !sameNote)) {
@@ -164,58 +212,44 @@ public class DetailedPlayer {
 					duration = beat * 0.03125;
 				}
 			}
+			this.noteId.add(noteid);noteid++;
 			return duration;
 		}
-		else {notes.add(note); duration = timeOf(notes);
-//		if(note.getGrace() != null) {
-//			duration = beat * 0.25;
-//		}else {
-//			if(note.getType().equals("whole")) { duration = beat * 4; }
-//			else if(note.getType().equals("half")) { duration = beat * 2; }
-//			else if(note.getType().equals("quarter")) { duration = beat; }
-//			else if(note.getType().equals("eighth")) { duration = beat * 0.5; }
-//			else if(note.getType().equals("16th")) { duration = beat * 0.25; }
-//			else if(note.getType().equals("32nd")) { duration = beat * 0.125; }
-//			else if(note.getType().equals("64th")) { duration = beat * 0.0625; }
-//			else if(note.getType().equals("128th")) { duration = beat * 0.03125; }
-//			else { duration = beat; }
-//		}
-//		
-//		if(note.getDots() != null) {
-//			for(Dot dot : note.getDots()) {
-//				if(dot != null) {
-//					duration = duration + (duration/2);
-//				}
-//			}
-//		}
-//		if(note.getChord() != null) {
-//			duration = 0;
-//		}
+		else {notes.add(note); 
+			current.add(notes);
+			this.noteId.add(noteid);noteid++;
+			this.noteString.add("N"+notecount); notecount++;
+			duration = timeOf(notes);
 		return duration;
 		}
 	}
 
 	private List<Note> chordnotes = new ArrayList<Note>();
 	
-	private double getChordDuration(Note note,int index) {
+	private double getChordDuration(Note note,int index,List<Note> in) {
 		
-		Note prev = musicNotes.get(index-1);
+		Note prev = in.get(index-1);
 		if( prev.getChord() == null) { chordnotes.add(prev); }
 		
 		chordnotes.add(note);ch++;
 		
-		if(index == musicNotes.size()-1 || musicNotes.get(index+1).getChord() == null) {
+		if(index == in.size()-1 || in.get(index+1).getChord() == null) {
 			double dur;ch--;
 			if(note.getNotations() != null && note.getNotations().getSlurs() != null
 					&& note.getNotations().getSlurs().size() > 1 && note.getNotations().getSlurs().get(1).getType().equals("start")) {
-				dur = (double)500 * 0.03125;
+				dur = (double)500 * 0.03125;for(int i = ch; i > 0; i--) {this.noteId.add(noteid); }
 			}else {
 				dur = timeOf(chordnotes);
 				while(ch>0) {
 					time.get(index-ch).set(1, time.get(index-ch).get(0)+dur);
+			//	if(t != null) {	t.get(index-ch).set(1, t.get(index-ch).get(0)+dur); }
 					ch--;
+					this.noteId.add(noteid);
 				}
 			}
+			noteid++;
+			current.add(chordnotes);
+			this.noteString.add("C"+chordcount); chordcount++;
 			chordnotes = new ArrayList<Note>();
 			return dur;
 		}
@@ -266,6 +300,32 @@ public class DetailedPlayer {
 		catch(Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void measuremap(List<Measure> meas) {
+		for(Measure m: meas) {
+			this.meas.put(m.getNumber(), m.getNotesBeforeBackup());
+		}
+	}
+	
+	private List<List<Integer>> noteIDList = new ArrayList<>();
+	
+	private void setNoteList() {
+		for(Integer measureID : this.ElementID.keySet()) {
+			for(Integer noteID : this.ElementID.get(measureID)) {
+				List<Integer> elID = new ArrayList<>();
+				elID.add(measureID);
+				elID.add(noteID);
+				noteIDList.add(elID);
+			}
+		}
+	}
+ 	
+	public List<Integer> getElementID(int index){
+		return noteIDList.get(index);
+	}
+	public List<List<Double>> getTime(){
+		return this.time;
 	}
 //	try {
 //	File file = new File("C:\\Users\\kidim\\Desktop\\m\\musik.mid");

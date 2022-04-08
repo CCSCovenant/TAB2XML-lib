@@ -18,7 +18,7 @@ import java.util.HashMap;
 import java.util.List;
 
 public class MXLPlayer{
-	private ScorePartwise score; private List<Note> notes= new ArrayList<>();
+	private ScorePartwise score; private List<Note> notes= new ArrayList<>(); List<Measure> scoreMeasure= new ArrayList<>();
 	private String clef;
 	private Player player = new Player();
 	private HashMap<String,ScorePart> scorePartMap = new HashMap<>();
@@ -28,6 +28,7 @@ public class MXLPlayer{
 	}
 	public MXLPlayer(){ }
 	public List<Note> getNotes(){ return notes; }
+	public List<Measure> getMeasure() { return scoreMeasure; }
 	/**
 	 * this method will play music from given duration.
 	 *
@@ -70,10 +71,10 @@ public class MXLPlayer{
 	}private int measures=0;boolean partOfRepeat = false;
 	public String getPart(Part part,int measureID, int duration){
 		StringBuilder musicString = new StringBuilder(); 
-		List<Measure> repeats = new ArrayList<>(); 
+		List<Measure> repeats = new ArrayList<>(); 				
 		
 			int measureCount = 0; 								measures=part.getMeasures().size();
-			for (Measure measure:part.getMeasures()){
+			for (Measure measure:part.getMeasures()){	scoreMeasure.add(measure);
 				if (measureCount>measureID){
 					musicString.append(getMeasure(measure,part.getId(),-1));
 					musicString.append(getRepeats(part, measure, -1,repeats));
