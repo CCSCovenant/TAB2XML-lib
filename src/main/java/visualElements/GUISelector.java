@@ -40,10 +40,16 @@ public class GUISelector {
 					vElement.setHighLight(HighLight.SELECTED);
 				}else {
 					vElement.setHighLight(HighLight.NULL);
-				}			}
+				}
+			}
 			vElement = sElement;
 			if (vElement!=null){
 				sidebar.update(vElement);
+				if (vElement.getConfigAbleList().size()>0){
+					sidebar.openDrawer();
+				}else {
+					sidebar.closeDrawer();
+				}
 				if (vElement instanceof VNoteHead){
 					ThreadPlayer player = new ThreadPlayer("singleNoteThread");
 					String musicString = MXLPlayer.getNoteDetails(((VNoteHead) vElement).getNote());
@@ -59,6 +65,7 @@ public class GUISelector {
 				}else {
 					sElement.setHighLight(HighLight.NULL);
 				}
+				sidebar.closeDrawer();
 			}
 			vElement = null;
 		}

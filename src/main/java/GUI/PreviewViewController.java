@@ -71,12 +71,14 @@ public class PreviewViewController extends Application {
 
 	public static ThreadPlayer thp;
 	public Scene scene;
+	public Stage stage;
 	public ArrayList<Group> groups;
 	public void setMainViewController(MainViewController mvcInput) {
 		mvc = mvcInput;
 	}
-	public void setScene(Scene scene){
+	public void setSceneAndStage(Scene scene,Stage stage){
 		this.scene = scene;
+		this.stage =stage;
 	}
 	public void update() throws TXMLException, FileNotFoundException, URISyntaxException {
 		this.visualizer = new Visualizer(mvc.converter.getScore());
@@ -261,6 +263,22 @@ public class PreviewViewController extends Application {
 
 	@Override
 	public void start(Stage primaryStage) throws Exception {}
+
+	public void expendRight(){
+		stage.setResizable(false);
+		double W = stage.getWidth();
+		stage.setWidth(W+200);
+		stage.setResizable(true);
+	}
+	public void reduceLeft(){
+		stage.setResizable(false);
+		double W = stage.getWidth();
+		stage.setWidth(W-200);
+		stage.setResizable(true);
+	}
+	public void showURL(String url){
+		getHostServices().showDocument(url);
+	}
 
 }
 

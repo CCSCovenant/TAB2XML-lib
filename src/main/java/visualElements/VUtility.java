@@ -131,10 +131,10 @@ public class VUtility {
 			return "Minimum Note Spacing";
 		}
 		else if (id.equalsIgnoreCase("offsetX")) {
-			return "Ghost Note Horizontal Offset";
+			return "Note Head Horizontal Offset";
 		}
 		else if (id.equalsIgnoreCase("scale")) {
-			return "Ghost Note Size";
+			return "Grace Note Size";
 		}
 		else if (id.equalsIgnoreCase("dotOffset")) {
 			return "Dot Offset";
@@ -158,6 +158,9 @@ public class VUtility {
 			return "Dot Size";
 		}
 		return id;
+	}
+	public static String getHelpDocUrl(){
+		return "https://github.com/CCSCovenant/TAB2XML/blob/master/Documents/EECS2311_%20USER%20MANUAL.pdf";
 	}
 
 
