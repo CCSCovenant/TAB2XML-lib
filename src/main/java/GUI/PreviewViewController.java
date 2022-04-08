@@ -238,7 +238,7 @@ public class PreviewViewController extends Application {
 	@FXML
 	private void playHandler(){
 		String s = player.getString(-1,-1,-1);
-		thp = new ThreadPlayer("music-thread");
+		thp = new ThreadPlayer("music-thread");thp.addXMLPlayer(player);
 		thp.start(s);
 	}
 	private void goToPage(int page)  {
