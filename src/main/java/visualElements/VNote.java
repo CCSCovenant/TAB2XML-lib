@@ -37,7 +37,7 @@ public class VNote extends VElement {
 		group.getChildren().add(noteHead.getShapeGroups());
 	}
 	public void initConfig(){
-		configMap.put("graceOffset",5d);
+		initConfigElement("graceOffset",5,0,10,false);
 	}
 	public void setNoteType(String type){
 		if (type==null){
@@ -47,12 +47,7 @@ public class VNote extends VElement {
 		}
 
 	}
-	@Override
-	public void setHighLight(boolean states) {
-		for (VNoteHead noteHead:noteHeads){
-			noteHead.setHighLight(states);
-		}
-	}
+
 
 	public void setGrace(boolean grace) {
 		isGrace = grace;
