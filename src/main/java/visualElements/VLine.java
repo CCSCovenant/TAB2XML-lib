@@ -214,12 +214,8 @@ public class VLine extends VElement{
 			double measureLength = measures.get(i).getWInMinWidth();
 			lengthBeforeAlignment += measureLength;
 			measureLengthBeforeAlignment[i] = measureLength;
-			System.out.print(measureLength+" ");
 		}
-
-		System.out.println();
 		radio = (availableLength-lengthBeforeAlignment)/lengthBeforeAlignment;
-		System.out.println(radio+1);
 		for (int i=0;i<measures.size();i++){
 			VMeasure measure = measures.get(i);
 			double idealLengthDiff = measureLengthBeforeAlignment[i]*radio;
@@ -227,7 +223,6 @@ public class VLine extends VElement{
 			measure.updateConfig("gapBetweenElement",measure.getConfigAbleList().get("MinNoteDistance")+ideaGapDiff);
 		}
 
-		System.out.println();
 		W = 0;
 		vClef.alignment();
 		W += vClef.getW();
@@ -236,7 +231,6 @@ public class VLine extends VElement{
 			measures.get(i).getShapeGroups().setLayoutX(W);
 			measures.get(i).alignment();
 			W = W+measures.get(i).getW();
-			System.out.println(measures.get(i).getW());
 		}
 
 		alignmentCurved();

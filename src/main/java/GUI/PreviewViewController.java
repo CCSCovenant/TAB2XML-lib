@@ -222,7 +222,11 @@ public class PreviewViewController extends Application {
 			visualizer.alignment();
 			groups = visualizer.getElementGroups();
 			measureMapping = visualizer.getMeasureMapping();
+			double vv = scrollView.getVvalue();
+			double hv = scrollView.getHvalue();
 			goToPage(pageNumber);
+			scrollView.setVvalue(vv);
+			scrollView.setHvalue(hv);
 			initPageHandler(groups.size());
 		}catch (Exception e){
 
@@ -245,6 +249,8 @@ public class PreviewViewController extends Application {
 			initEvents(anchorPane);
 			scrollView.setContent(group);
 			pageNumber = page;
+			anchorPane.setScaleX(scale);
+			anchorPane.setScaleY(scale);
 		}else {
 
 		}

@@ -95,7 +95,7 @@ public class VNoteHead extends VElement{
 		initConfigWithBlend();
 	}
 	public void initConfig(){
-		initConfigElement("offsetX",0d,0d,VConfig.getInstance().getGlobalConfig("PageX"),1,true);
+		initConfigElement("offsetX",0d,-50,50,1,true);
 		initConfigElement("scale",1d,0d,2d,0.1,true);
 		initConfigElement("graceScale",0.7d,0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
 		initConfigElement("dotGap",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
@@ -113,6 +113,8 @@ public class VNoteHead extends VElement{
 	}
 	public void initConfigWithGrace(){
 		initConfigElement("graceScale",0.7d,0.5d,1.0,0.1,true);
+		initConfigElement("scale",1d,0d,2d,0.1,false);
+
 	}
 
 	public void setFlip(){
@@ -185,24 +187,19 @@ public class VNoteHead extends VElement{
 		if (isGrace){
 			s = configMap.get("graceScale");
 		}
+		imageView.setPreserveRatio(true);
 
 		if (isGrace){
 			imageView.setFitWidth(step*2*s*2);
-			Bounds bounds = group.getBoundsInLocal();
+			double height = imageView.getImage().getHeight()/imageView.getImage().getWidth()*step*2*s*2;
 			if (instrument.equals("TAB")){
 
 			}else {
-				group.setLayoutY(relative*step-bounds.getHeight()/1.8);
+				imageView.setLayoutY(-height+step+step*s);
 			}
 		}else {
 			imageView.setFitWidth(step*2*s);
 		}
-		imageView.setPreserveRatio(true);
-		Bounds bounds = imageView.getBoundsInLocal();
-		background.setWidth(bounds.getWidth());
-		background.setHeight(bounds.getHeight());
-		background.setFill(Color.TRANSPARENT);
-
 		//alignment text
 		text.setFont(new Font(step*2*s*1.3));
 		Bounds bounds1 = text.getBoundsInLocal();
