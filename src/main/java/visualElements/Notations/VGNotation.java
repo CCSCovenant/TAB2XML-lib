@@ -5,6 +5,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
+import visualElements.HighLight;
 import visualElements.VConfig;
 import visualElements.VElement;
 import visualElements.VUtility;
@@ -45,14 +46,13 @@ public class VGNotation extends VElement {
 		return notes;
 	}
 	@Override
-	public void setHighLight(boolean states) {
+	public void setHighLight(HighLight states) {
+		Color color = null;
 		highLight = states;
-
-		Color color;
-		if (states){
-			color	= VConfig.getInstance().getHighLightColor();
-		}else {
-			color = VConfig.getInstance().getDefaultColor();
+		switch (states){
+			case NULL -> color = VConfig.getInstance().getDefaultColor();
+			case PLAY -> color = VConfig.getInstance().getPlayColor();
+			case SELECTED -> color = VConfig.getInstance().getHighLightColor();
 		}
 		for (Line line:Vlines){
 			line.setStroke(color);

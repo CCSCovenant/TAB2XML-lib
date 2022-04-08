@@ -26,12 +26,8 @@ public class VPage extends VElement{
 	}
 
 	@Override
-	public void setHighLight(boolean states) {
-		highLight = states;
+	public void setHighLight(HighLight states) {
 
-		for (VLine line:lines){
-			line.setHighLight(states);
-		}
 	}
 
 	@Override

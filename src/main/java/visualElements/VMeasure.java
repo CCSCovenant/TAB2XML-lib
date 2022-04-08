@@ -213,16 +213,13 @@ public class VMeasure extends VElement{
 
 
 	@Override
-	public void setHighLight(boolean states) {
+	public void setHighLight(HighLight states) {
+		Color color = null;
 		highLight = states;
-
-		Color color;
-		if (states){
-			color	= VConfig.getInstance().getHighLightColor();
-			//background.setStroke(color);
-		}else {
-			color = VConfig.getInstance().getDefaultColor();
-			//background.setStroke(Color.TRANSPARENT);
+		switch (states){
+			case NULL -> color = VConfig.getInstance().getDefaultColor();
+			case PLAY -> color = VConfig.getInstance().getPlayColor();
+			case SELECTED -> color = VConfig.getInstance().getHighLightColor();
 		}
 		for (VGNotation notation:Notations){
 			notation.setHighLight(states);

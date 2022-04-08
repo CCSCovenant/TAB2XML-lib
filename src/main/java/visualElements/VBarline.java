@@ -83,13 +83,13 @@ public class VBarline extends VElement{
 
 	}
 	@Override
-	public void setHighLight(boolean states) {
+	public void setHighLight(HighLight states) {
+		Color color = null;
 		highLight = states;
-		Color color;
-		if (states){
-			color	= VConfig.getInstance().getHighLightColor();
-		}else {
-			color = VConfig.getInstance().getDefaultColor();
+		switch (states){
+			case NULL -> color = VConfig.getInstance().getDefaultColor();
+			case PLAY -> color = VConfig.getInstance().getPlayColor();
+			case SELECTED -> color = VConfig.getInstance().getHighLightColor();
 		}
 		notation.setFill(color);
 		circle.setFill(color);

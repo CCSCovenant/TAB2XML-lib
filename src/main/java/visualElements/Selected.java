@@ -21,13 +21,13 @@ public class Selected {
 	public void setSElement(VElement sElement) {
 		if (sElement!=vElement){
 			if (vElement!=null){
-				vElement.setHighLight(false);
+				vElement.setHighLight(HighLight.NULL);
 			}
 			vElement = sElement;
 			sidebar.update(vElement);
-			vElement.setHighLight(true);
+			vElement.setHighLight(HighLight.SELECTED);
 		}else {
-			sElement.setHighLight(false);
+			sElement.setHighLight(HighLight.NULL);
 			vElement = null;
 		}
 	}

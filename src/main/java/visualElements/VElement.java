@@ -15,7 +15,7 @@ public class VElement implements VConfigAble {
 	public HashMap<String, Pair<Double,Double>> limitMap = new HashMap<>();
 	public HashMap<String,Boolean> configAble = new HashMap<>();
 	public HashMap<String,Double> stepMap = new HashMap<>();
-	public boolean highLight = false;
+	public HighLight highLight = HighLight.NULL;
 	public VElement(){
 		group.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
@@ -29,7 +29,7 @@ public class VElement implements VConfigAble {
 		});
 	}
 
-	public void setHighLight(boolean states){
+	public void setHighLight(HighLight states) {
 
 	}
 	public Group getShapeGroups(){
@@ -81,6 +81,7 @@ public class VElement implements VConfigAble {
 	public void updateConfig(String id, double value) {
 		if (configMap.containsKey(id)){
 			configMap.put(id,value);
+		}else {
 		}
 	}
 }

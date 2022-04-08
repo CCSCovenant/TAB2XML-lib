@@ -1,6 +1,11 @@
 package visualElements;
 
+import javafx.geometry.Bounds;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorInput;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import visualizer.ImageResourceHandler;
 
@@ -26,6 +31,22 @@ public class VClef extends VSign {
 			staffLines.add(line);
 			group.getChildren().add(line);
 		}
+
+	}
+	public void setHighLight(HighLight states) {
+		Color color = null;
+		highLight = states;
+		switch (states){
+			case NULL -> color = VConfig.getInstance().getDefaultColor();
+			case PLAY -> color = VConfig.getInstance().getPlayColor();
+			case SELECTED -> color = VConfig.getInstance().getHighLightColor();
+		}
+		Blend blend = new Blend();
+		Bounds bounds = group.getBoundsInLocal();
+		ColorInput colorinput = new ColorInput(bounds.getMinX(),bounds.getMinY(),bounds.getWidth(),bounds.getHeight(),color);
+		blend.setTopInput(colorinput);
+		blend.setMode(BlendMode.SRC_ATOP);
+		group.setEffect(blend);
 	}
 	public void alignment(){
 		List<Integer> staffDetail = VConfig.getInstance().getStaffDetail();

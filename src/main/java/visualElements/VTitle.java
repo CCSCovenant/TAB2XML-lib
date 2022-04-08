@@ -17,10 +17,6 @@ public class VTitle extends VElement{
 
 	}
 
-	@Override
-	public void setHighLight(boolean states) {
-		highLight = states;
-	}
 
 	@Override
 	public Group getShapeGroups() {

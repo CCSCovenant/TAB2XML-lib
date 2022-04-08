@@ -25,7 +25,7 @@ public class VLine extends VElement{
 
 
 	@Override
-	public void setHighLight(boolean states) {
+	public void setHighLight(HighLight states) {
 
 	}
 
@@ -167,7 +167,7 @@ public class VLine extends VElement{
 				if (Y<3*step){
 					curvedNotation.setPositive(true);
 				}
-				curvedNotation.Alignment(startX,endX,Y);
+				curvedNotation.alignment(startX,endX,Y);
 
 			}else if (curvedNotation.getType().equals("Slur")){
 				double startX = lineStart;
@@ -193,7 +193,7 @@ public class VLine extends VElement{
 					VMeasure pMeasure = pNote.getParentMeasure();
 					endX = pMeasure.getShapeGroups().getLayoutX()+pNote.getShapeGroups().getLayoutX();
 				}
-				curvedNotation.Alignment(startX,endX,Y);
+				curvedNotation.alignment(startX,endX,Y);
 
 			}
 		}

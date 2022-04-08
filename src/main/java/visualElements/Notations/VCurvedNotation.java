@@ -4,6 +4,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.MoveTo;
 import javafx.scene.shape.Path;
 import javafx.scene.shape.QuadCurveTo;
+import visualElements.HighLight;
 import visualElements.VConfig;
 import visualElements.VElement;
 
@@ -18,23 +19,21 @@ public class VCurvedNotation extends VElement {
 	Path path;
 
 	public VCurvedNotation(String type){
-		initConfig();
 		this.type = type;
 		path = new Path(moveTo,quadCurveTop,quadCurveDown);
 		group.getChildren().add(path);
 	}
-	public void Alignment(double x1,double x2,double y){
+	public void alignment(double x1,double x2,double y){
 		double adjustedY = y;
 		double adjustedControlY = y;
 		double adjustDownControlY = y;
-
 		if (positive){
-			adjustedControlY -= configMap.get("defaultControlPoint");
-			adjustDownControlY -= configMap.get("defaultControlPoint")*2/3;
+			adjustedControlY -= VConfig.getInstance().getGlobalConfig("defaultControlPoint");
+			adjustDownControlY -= VConfig.getInstance().getGlobalConfig("defaultControlPoint")*2/3;
 		}else {
 			adjustedY += VConfig.getInstance().getGlobalConfig("Step")*2;
-			adjustedControlY = adjustedY+configMap.get("defaultControlPoint");
-			adjustDownControlY = adjustedY+configMap.get("defaultControlPoint")*2/3;
+			adjustedControlY = adjustedY+VConfig.getInstance().getGlobalConfig("defaultControlPoint");
+			adjustDownControlY = adjustedY+VConfig.getInstance().getGlobalConfig("defaultControlPoint")*2/3;
 
 		}
 		moveTo.setX(x1);
@@ -42,19 +41,17 @@ public class VCurvedNotation extends VElement {
 		setUpCurve(quadCurveTop,x2,((x1+x2)/2),adjustedY,adjustedControlY);
 		setUpCurve(quadCurveDown,x1,(x1+x2)/2,adjustedY,adjustDownControlY);
 		path.setFill(Color.BLACK);
-
 		setHighLight(highLight);
 	}
 
 	@Override
-	public void setHighLight(boolean states) {
+	public void setHighLight(HighLight states) {
+		Color color = null;
 		highLight = states;
-
-		Color color;
-		if (states) {
-			color = VConfig.getInstance().getHighLightColor();
-		} else {
-			color = VConfig.getInstance().getDefaultColor();
+		switch (states){
+			case NULL -> color = VConfig.getInstance().getDefaultColor();
+			case PLAY -> color = VConfig.getInstance().getPlayColor();
+			case SELECTED -> color = VConfig.getInstance().getHighLightColor();
 		}
 		path.setFill(color);
 		path.setStroke(color);
@@ -85,10 +82,6 @@ public class VCurvedNotation extends VElement {
 		return endID;
 	}
 
-	public void initConfig(){
-		initConfigElement("defaultControlPoint",VConfig.getInstance().getGlobalConfig("Step")*2,0d,VConfig.getInstance().getGlobalConfig("PageX"));
-
-	}
 
 
 	public void setPositive(boolean positive) {

@@ -48,9 +48,8 @@ public class VNote extends VElement {
 
 	}
 	@Override
-	public void setHighLight(boolean states) {
+	public void setHighLight(HighLight states) {
 		highLight = states;
-
 		for (VNoteHead noteHead:noteHeads){
 			noteHead.setHighLight(states);
 		}

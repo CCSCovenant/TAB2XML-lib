@@ -122,15 +122,13 @@ public class VNoteHead extends VElement{
 		imageView.setRotationAxis(new Point3D(0,1,0));
 	}
 	@Override
-	public void setHighLight(boolean states) {
+	public void setHighLight(HighLight states) {
+		Color color = null;
 		highLight = states;
-
-
-		Color color;
-		if (states){
-			color	= VConfig.getInstance().getHighLightColor();
-		}else {
-			color = VConfig.getInstance().getDefaultColor();
+		switch (states){
+			case NULL -> color = VConfig.getInstance().getDefaultColor();
+			case PLAY -> color = VConfig.getInstance().getPlayColor();
+			case SELECTED -> color = VConfig.getInstance().getHighLightColor();
 		}
 		Blend blend = new Blend();
 		Bounds bounds = imageView.getBoundsInLocal();
