@@ -7,6 +7,8 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.testfx.framework.junit5.ApplicationTest;
 import visualElements.VConfig;
+import visualElements.VLine;
+import visualElements.VMeasure;
 import visualElements.VPage;
 import visualizer.Visualizer;
 
@@ -46,7 +48,39 @@ public class VisualizerTest extends ApplicationTest {
 		for (Visualizer visualizer:visualizers){
 			for (VPage page: visualizer.pages){
 				double pageY = VConfig.getInstance().getGlobalConfig("PageY");
-				Assertions.assertTrue(page.getShapeGroups().getBoundsInLocal().getHeight()<pageY);
+				double MarginY = VConfig.getInstance().getGlobalConfig("MarginY");
+				double measureDistance = VConfig.getInstance().getGlobalConfig("MeasureDistance");
+				double actualY = page.H;
+				Assertions.assertTrue(actualY<=(pageY-MarginY+measureDistance));
+			}
+		}
+	}
+
+	@Test
+	void LineAlignmentCheck(){
+		for (Visualizer visualizer:visualizers){
+			for (VPage page: visualizer.pages){
+				for (VLine line:page.getLines()){
+					double pageX = VConfig.getInstance().getGlobalConfig("PageX");
+					double MarginX = VConfig.getInstance().getGlobalConfig("MarginX");
+					double actualX = line.getW();
+					Assertions.assertTrue(Math.abs(pageX-2*MarginX-actualX)<=10);
+				}
+			}
+		}
+	}
+	@Test
+	void MeasureAlignmentTest(){
+		for (Visualizer visualizer:visualizers){
+			for (VPage page: visualizer.pages){
+				for (VLine line:page.getLines()){
+					double W = 0;
+					 W += line.vClef.getW();
+					for (VMeasure measure:line.getMeasures()){
+						Assertions.assertEquals(W,measure.getShapeGroups().getLayoutX());
+						W += measure.getW();
+					}
+				}
 			}
 		}
 	}

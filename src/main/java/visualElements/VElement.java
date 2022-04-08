@@ -9,8 +9,8 @@ import java.util.HashMap;
 
 public class VElement implements VConfigAble {
 	public Group group = new Group();
-	double W = 0;
-	double H = 0;
+	public double W = 0;
+	public double H = 0;
 	public HashMap<String,Double> configMap = new HashMap<>();
 	public HashMap<String, Pair<Double,Double>> limitMap = new HashMap<>();
 	public HashMap<String,Boolean> configAble = new HashMap<>();

@@ -13,10 +13,10 @@ public class VLine extends VElement{
 	ArrayList<VNoteHead> slurElements = new ArrayList<>();
 	double MarginX = VConfig.getInstance().getGlobalConfig("MarginX");
 	double PageW = VConfig.getInstance().getGlobalConfig("PageX");
-	VClef vClef;
+	public VClef vClef;
 	double gapCount = 0;
 	public VLine(String stafftype){
-		W = MarginX;
+		W = 0;
 		vClef = new VClef(stafftype);
 		group.getChildren().add(vClef.getShapeGroups());
 		vClef.alignment();
@@ -212,8 +212,8 @@ public class VLine extends VElement{
 	}
 
 	public void alignment() {
-		W = MarginX + vClef.getW();
-		double availableLength = PageW - MarginX -W;
+		W = vClef.getW();
+		double availableLength = PageW - 2*MarginX -W;
 		double lengthBeforeAlignment = 0;
 		double[] measureLengthBeforeAlignment = new double[measures.size()];
 		double radio = 1;
@@ -232,6 +232,7 @@ public class VLine extends VElement{
 		}
 
 		W = 0;
+		vClef.getShapeGroups().setLayoutX(W);
 		vClef.alignment();
 		W += vClef.getW();
 		
