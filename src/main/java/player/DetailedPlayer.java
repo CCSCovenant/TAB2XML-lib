@@ -45,6 +45,7 @@ public class DetailedPlayer {
 	private int notecount = 1; int chordcount = 1;int noteid = 1;
 	private List<Integer> noteId = new ArrayList<>();
 	private HashMap<Integer,List<String>> stringID = new HashMap<>();
+	private int slidermax; private int slidermin;
 	
 	private HashMap<Integer,List<Note>> meas = new HashMap<>(); 
 	private HashMap<Integer,List<List<Double>>> separateTimes = new HashMap<>();
@@ -79,7 +80,7 @@ public class DetailedPlayer {
 		int beginning = 0;  //start of slider(will be determined when slider is implemented)
 		
 		long position = (long)(beginning + (end-beginning)*ratio);
-//		p.seek(position);
+		//track position of music when playing
 		
 		//BPM=120
 		//PPQ=128
@@ -135,6 +136,18 @@ public class DetailedPlayer {
 	public void play() {
 		player.resume();
 	}
+	public void pause() {
+		player.pause();
+	}
+	public void seek(double sliderPOS) {
+		if(player.isPlaying() || player.isPaused()) {
+			double ratio  = (slidermax - slidermin) * sliderPOS;
+			long total = player.getTickLength();
+			long time =(long) ((double)player.getTickLength() * ratio);
+			player.seek(time);
+		}
+	}
+	
 	private List<Note> tiednotes = new ArrayList<Note>(); private int ch=0;private int tie=0;
 	
 	public double getNoteDuration(Note note, int position,List<Note> in) {
