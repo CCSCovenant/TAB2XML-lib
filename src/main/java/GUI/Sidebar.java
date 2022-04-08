@@ -31,6 +31,7 @@ public class Sidebar {
 		this.scrollPane = new ScrollPane(this.vbox);
 		this.scrollPane.setPrefWidth(260);
 		this.scrollPane.setFitToHeight(true);
+		this.scrollPane.setFitToWidth(true);
 		this.hboxMain.getChildren().add(scrollPane);
 	}
 
