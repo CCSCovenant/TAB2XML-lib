@@ -51,7 +51,7 @@ public class DetailedPlayer {
 	private HashMap<Integer,List<Integer>> ElementID = new HashMap<>(); 
 	
 	public DetailedPlayer(String musicString,List<Note> notes, ManagedPlayer p,List<Measure> meas) {
-		this.musicString = musicString;mE = meas;
+		this.musicString = musicString;
 		measuremap(meas);
 		player = p;
 		musicNotes = notes;
@@ -89,7 +89,7 @@ public class DetailedPlayer {
 		
 		int i = 0;int j = 0;int c = 0;
 		ListIterator<Note> iterator = musicNotes.listIterator();
-		
+
 		while(iterator.hasNext() && i < musicNotes.size()) {
 			Note note = musicNotes.get(i);
 			double start = elapsedtime;
@@ -101,14 +101,17 @@ public class DetailedPlayer {
 			time.get(i).add(stop);
 			i++;
 
-			this.sortedMeas.put(mE.get(c).getNumber(), this.current);
-			this.stringID.put(mE.get(c).getNumber(), noteString);
-			this.ElementID.put(mE.get(c).getNumber(), noteId);
-			this.current = new ArrayList<>();
-			noteString = new ArrayList<>();
-			noteId= new ArrayList<>();
-			notecount=1;chordcount=1;noteid = 1;
-			c++;
+			if(Math.abs(j-i) == mE.get(c).getNotesBeforeBackup().size()) {
+				j+= mE.get(c).getNotesBeforeBackup().size();
+				this.sortedMeas.put(mE.get(c).getNumber(), this.current);
+				this.stringID.put(mE.get(c).getNumber(), noteString);
+				this.ElementID.put(mE.get(c).getNumber(), noteId);
+				this.current = new ArrayList<>();
+				noteString = new ArrayList<>();
+				noteId= new ArrayList<>();
+				notecount=1;chordcount=1;noteid = 1;
+				c++;
+			}
 		}
 		
 		int index = 0;
@@ -303,9 +306,14 @@ public class DetailedPlayer {
 	}
 	
 	private void measuremap(List<Measure> meas) {
+		List<Measure> measures = new ArrayList<>();
 		for(Measure m: meas) {
-			this.meas.put(m.getNumber(), m.getNotesBeforeBackup());
+			if(m.getNotesBeforeBackup() != null) {
+				this.meas.put(m.getNumber(), m.getNotesBeforeBackup());
+				measures.add(m);
+			}
 		}
+		mE = measures;
 	}
 	
 	private List<List<Integer>> noteIDList = new ArrayList<>();
