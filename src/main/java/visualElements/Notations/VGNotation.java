@@ -12,7 +12,10 @@ import visualElements.VUtility;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ *
+ *
+ * */
 public class VGNotation extends VElement {
 	List<Integer> notes = new ArrayList<>(); // how much note in current notation
 	List<String> types = new ArrayList<>(); // the type of note in current notation
