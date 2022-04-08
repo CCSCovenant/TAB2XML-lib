@@ -29,9 +29,9 @@ public class Sidebar {
 	public Sidebar(PreviewViewController controller) {
 		this.controller = controller;
 		this.hboxMain = new HBox();
-		this.hboxMain.setPrefSize(230, 574);
+		this.hboxMain.setPrefSize(300, 574);
 		this.scrollPane = new ScrollPane(this.vbox);
-		this.scrollPane.setPrefWidth(200);
+		this.scrollPane.setPrefWidth(300);
 		this.scrollPane.setFitToHeight(true);
 		this.scrollPane.setFitToWidth(true);
 		this.hboxMain.getChildren().add(scrollPane);
@@ -39,7 +39,6 @@ public class Sidebar {
 
 	public void initialize(JFXDrawer drawer, JFXHamburger hamburger) {
 		this.drawer = drawer;
-		drawer.setLayoutX(-50);
 		this.hamburger = hamburger;
 		drawer.setSidePane(this.hboxMain);
 		drawer.setOverLayVisible(false);

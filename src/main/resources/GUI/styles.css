@@ -64,3 +64,6 @@
 .hyperlink{
     -fx-text-fill: white;
 }
+.drawer{
+    -fx-background-color: rgb(50,50,50);
+}

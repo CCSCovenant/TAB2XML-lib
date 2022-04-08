@@ -267,13 +267,13 @@ public class PreviewViewController extends Application {
 	public void expendRight(){
 		stage.setResizable(false);
 		double W = stage.getWidth();
-		stage.setWidth(W+200);
+		stage.setWidth(W+150);
 		stage.setResizable(true);
 	}
 	public void reduceLeft(){
 		stage.setResizable(false);
 		double W = stage.getWidth();
-		stage.setWidth(W-200);
+		stage.setWidth(W-150);
 		stage.setResizable(true);
 	}
 	public void showURL(String url){

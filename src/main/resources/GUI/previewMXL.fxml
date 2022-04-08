@@ -65,7 +65,11 @@
                               <Insets left="5.0" right="5.0" />
                            </padding>
                         </HBox>
-                        <JFXDrawer fx:id="drawer" defaultDrawerSize="200.0" direction="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="40.0" overLayVisible="false" snapToPixel="false" />
+                        <HBox prefHeight="100.0" prefWidth="200.0" VBox.vgrow="ALWAYS">
+                           <children>
+                              <JFXDrawer fx:id="drawer" alignment="CENTER_LEFT" defaultDrawerSize="280.0" direction="RIGHT" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minWidth="40.0" overLayVisible="false" snapToPixel="false" style="-fx-background-color: rgb(50,50,50);" HBox.hgrow="ALWAYS" />
+                           </children>
+                        </HBox>
                      </children>
                   </VBox>
                </children>
