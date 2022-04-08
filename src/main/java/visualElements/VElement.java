@@ -38,7 +38,8 @@ public class VElement implements VConfigAble {
 		if (states){
 			color	= VConfig.getInstance().getHighLightColor();
 		}else {
-			color = VConfig.getInstance().getDefaultColor();
+			group.setEffect(null);
+			return;
 		}
 		Blend blend = new Blend();
 		Bounds bounds = group.getBoundsInLocal();
