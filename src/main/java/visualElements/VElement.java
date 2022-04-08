@@ -20,7 +20,7 @@ public class VElement implements VConfigAble {
 		group.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
 			public void handle(MouseEvent event) {
-				Selected.getInstance().setSElement(getCurrentElement());
+				GUISelector.getInstance().setSElement(getCurrentElement());
 				if (getCurrentElement() instanceof VNoteHead){
 
 				}

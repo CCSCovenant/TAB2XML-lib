@@ -7,14 +7,14 @@ package visualElements;
  * setPlayingElement(note) to highlight that note.
  * @author Kuimou Yu
  * */
-public class PlayHighLight {
-	private static PlayHighLight playing = new PlayHighLight();
+public class PlayingSelector {
+	private static PlayingSelector playing = new PlayingSelector();
 	private VElement vElement;
-	private PlayHighLight(){
+	private PlayingSelector(){
 
 	}
 
-	public static PlayHighLight getInstance() {
+	public static PlayingSelector getInstance() {
 		return playing;
 	}
 
@@ -26,16 +26,24 @@ public class PlayHighLight {
 	public void setPlayingElement(VElement sElement) {
 		if (sElement!=vElement){
 			if (vElement!=null){
-				if (vElement==Selected.getInstance().getSElement()){
+				if (vElement== GUISelector.getInstance().getSElement()){
 					vElement.setHighLight(HighLight.SELECTED);
 				}else {
 					vElement.setHighLight(HighLight.NULL);
 				}
 			}
 			vElement = sElement;
-			vElement.setHighLight(HighLight.PLAY);
+			if (vElement!=null){
+				vElement.setHighLight(HighLight.PLAY);
+			}
 		}else {
-			sElement.setHighLight(HighLight.NULL);
+			if (sElement!=null){
+				if (sElement== GUISelector.getInstance().getSElement()){
+					sElement.setHighLight(HighLight.SELECTED);
+				}else {
+					sElement.setHighLight(HighLight.NULL);
+				}
+			}
 			vElement = null;
 		}
 	}
