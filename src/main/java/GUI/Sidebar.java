@@ -12,6 +12,8 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
+import javafx.stage.Stage;
 import javafx.util.Pair;
 import visualElements.VElement;
 import visualElements.VUtility;
@@ -37,6 +39,7 @@ public class Sidebar {
 
 	public void initialize(JFXDrawer drawer, JFXHamburger hamburger) {
 		drawer.setSidePane(this.hboxMain);
+		drawer.setOverLayVisible(false);
 		HamburgerNextArrowBasicTransition burgerTask2 = new HamburgerNextArrowBasicTransition(hamburger);
 		burgerTask2.setRate(-1);
 		hamburger.addEventHandler(MouseEvent.MOUSE_PRESSED,(e)->{
@@ -44,7 +47,9 @@ public class Sidebar {
 			burgerTask2.play();
 			if(drawer.isOpened()) {
 				drawer.close();
+				drawer.setDisable(true);
 			} else {
+				drawer.setDisable(false);
 				drawer.open();
 			}
 		});
