@@ -206,6 +206,7 @@ public class VMeasure extends VElement{
 		if (note.getType()!=null) {
 			vNote.setNoteType(note.getType());
 		}
+		noteHead.setNote(note);
 		vNote.addNoteHead(noteHead);
 	}
 

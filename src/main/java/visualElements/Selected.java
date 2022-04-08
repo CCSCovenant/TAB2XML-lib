@@ -1,6 +1,9 @@
 package visualElements;
 
 import GUI.Sidebar;
+import player.MXLPlayer;
+import player.ThreadPlayer;
+
 /**
  * this class is a singleton class
  * that will be call during user select event.
@@ -37,6 +40,12 @@ public class Selected {
 			}
 			vElement = sElement;
 			sidebar.update(vElement);
+			if (vElement instanceof VNoteHead){
+				ThreadPlayer player = new ThreadPlayer("singleNoteThread");
+				String musicString = MXLPlayer.getNoteDetails(((VNoteHead) vElement).getNote());
+				System.out.println(musicString);
+				player.start(musicString);
+			}
 			vElement.setHighLight(HighLight.SELECTED);
 		}else {
 			sElement.setHighLight(HighLight.NULL);

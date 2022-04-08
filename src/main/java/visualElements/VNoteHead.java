@@ -12,6 +12,7 @@ import javafx.scene.shape.QuadCurve;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import models.measure.note.Note;
 import models.measure.note.notations.Slur;
 import models.measure.note.notations.Tied;
 import visualizer.ImageResourceHandler;
@@ -36,6 +37,7 @@ public class VNoteHead extends VElement{
 	QuadCurve quadCurve;
 	Text bendText;
 	ImageView arrow;
+	Note note;
 	int dotC = 0;
 	public VNoteHead(String AssetName,int dots,int relative,boolean isGrace,VNote parentNote){
 		this.parentNote = parentNote;
@@ -77,6 +79,14 @@ public class VNoteHead extends VElement{
 		if (isGrace){
 			initConfigWithGrace();
 		}
+	}
+
+	public void setNote(Note note) {
+		this.note = note;
+	}
+
+	public Note getNote() {
+		return note;
 	}
 
 	public void addBend(double bendAlter){
@@ -186,7 +196,6 @@ public class VNoteHead extends VElement{
 			s = configMap.get("graceScale");
 		}
 		imageView.setPreserveRatio(true);
-
 		if (isGrace){
 			imageView.setFitWidth(step*2*s*2);
 			double height = imageView.getImage().getHeight()/imageView.getImage().getWidth()*step*2*s*2;
@@ -196,15 +205,26 @@ public class VNoteHead extends VElement{
 				imageView.setLayoutY(-height+step+step*s);
 			}
 		}else {
-			imageView.setFitWidth(step*2*s);
+			imageView.setFitHeight(step*2*s);
 		}
 		//alignment text
-		text.setFont(new Font(step*2*s*1.3));
-		Bounds bounds1 = text.getBoundsInLocal();
-		background.setWidth(bounds1.getWidth());
-		background.setHeight(bounds1.getHeight()*0.75);
-		background.setFill(VConfig.getInstance().backGroundColor);
-		background.setLayoutY(-bounds1.getHeight()*0.75);
+		if (instrument.equals("TAB")){
+			text.setFont(new Font(step*2*s*1.3));
+			Bounds bounds1 = text.getBoundsInLocal();
+			background.setWidth(bounds1.getWidth());
+			background.setHeight(bounds1.getHeight()*0.75);
+			background.setFill(VConfig.getInstance().backGroundColor);
+			background.setLayoutY(-bounds1.getHeight()*0.75);
+		}else {
+			Bounds bounds1 = imageView.getBoundsInLocal();
+			background.setWidth(bounds1.getWidth());
+			background.setHeight(bounds1.getHeight());
+			background.setLayoutX(0);
+			background.setLayoutX(0);
+			background.setFill(new Color(1,1,1,0.001));
+
+		}
+
 		//alignment bend
 		if (quadCurve!=null){
 			double blendHeight = configMap.get("blendHeight");

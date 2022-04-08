@@ -149,7 +149,7 @@ public class MXLPlayer{
 		return musicString.toString();
 	}
 	
-	public String getNoteDetails(Note note) {
+	public static String getNoteDetails(Note note) {
 		StringBuilder musicString = new StringBuilder();
 		String voice;
 		String instrument;
@@ -202,7 +202,7 @@ public class MXLPlayer{
 		return musicString.toString();
 	}
 	
-	public String getInstrument(String InstrumentId) {
+	public static String getInstrument(String InstrumentId) {
 		if(InstrumentId.equals("P1-I47")) { return "OPEN_HI_HAT"; }
 		else if(InstrumentId.equals("P1-I52")) { return "RIDE_CYMBAL_1"; }
 		else if(InstrumentId.equals("P1-I53")) { return "CHINESE_CYMBAL"; }
