@@ -60,7 +60,7 @@
                           <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                       </padding>
                <children>
-                  <Button fx:id="refresh" contentDisplay="CENTER" mnemonicParsing="false" onAction="#apply" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: transparent;" />
+                  <Button fx:id="refresh" contentDisplay="CENTER" mnemonicParsing="false" onAction="#reset" prefHeight="40.0" prefWidth="40.0" style="-fx-background-color: transparent;" />
                </children>
                   </HBox>
             </children>

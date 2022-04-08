@@ -54,6 +54,12 @@ public class VNoteHead extends VElement{
 		group.getChildren().add(imageView);
 		W = group.getBoundsInLocal().getWidth();
 		initDots(dots);
+		if (dots>0){
+			initConfigWithDot();
+		}
+		if (isGrace){
+			initConfigWithGrace();
+		}
 	}
 	public VNoteHead(int fret,int dots,int relative,boolean isGrace,VNote parentNote){
 		this.parentNote = parentNote;
@@ -68,6 +74,9 @@ public class VNoteHead extends VElement{
 		W = group.getBoundsInLocal().getWidth();
 
 		dotC = dots;
+		if (isGrace){
+			initConfigWithGrace();
+		}
 	}
 
 	public void addBend(double bendAlter){
@@ -83,17 +92,29 @@ public class VNoteHead extends VElement{
 		group.getChildren().add(arrow);
 		group.getChildren().add(quadCurve);
 		group.getChildren().add(bendText);
+		initConfigWithBlend();
 	}
 	public void initConfig(){
-		initConfigElement("scale",1d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
-		initConfigElement("graceScale",0.7d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
-		initConfigElement("defaultSize",10d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
-		initConfigElement("dotGap",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
-		initConfigElement("blendHeight",-20d,-50d,VConfig.getInstance().getGlobalConfig("PageX"));
-		initConfigElement("blendOffsetX",15d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
-		initConfigElement("blendTextOffsetY",-3d,-10d,VConfig.getInstance().getGlobalConfig("PageX"));
-
+		initConfigElement("offsetX",0d,0d,VConfig.getInstance().getGlobalConfig("PageX"),1,true);
+		initConfigElement("scale",1d,0d,2d,0.1,true);
+		initConfigElement("graceScale",0.7d,0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
+		initConfigElement("dotGap",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
+		initConfigElement("blendHeight",-20d,-50d,VConfig.getInstance().getGlobalConfig("PageX"),false);
+		initConfigElement("blendOffsetX",15d,0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
+		initConfigElement("blendTextOffsetY",-3d,-10d,VConfig.getInstance().getGlobalConfig("PageX"),false);
 	}
+	public void initConfigWithDot(){
+		initConfigElement("dotGap",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"),true);
+	}
+	public void initConfigWithBlend(){
+		initConfigElement("blendHeight",-20d,-50d,VConfig.getInstance().getGlobalConfig("PageX"),true);
+		initConfigElement("blendOffsetX",15d,0d,VConfig.getInstance().getGlobalConfig("PageX"),true);
+		initConfigElement("blendTextOffsetY",-3d,-10d,VConfig.getInstance().getGlobalConfig("PageX"),true);
+	}
+	public void initConfigWithGrace(){
+		initConfigElement("graceScale",0.7d,0.5d,1.0,0.1,true);
+	}
+
 	public void setFlip(){
 		imageView.setRotate(180);
 		imageView.setRotationAxis(new Point3D(0,1,0));
@@ -158,6 +179,7 @@ public class VNoteHead extends VElement{
 
 	public void alignment(){
 		step = VConfig.getInstance().getGlobalConfig("Step");
+		group.setLayoutX(configMap.get("offsetX"));
 		group.setLayoutY(relative*step);
 		double s = configMap.get("scale");
 		if (isGrace){
@@ -204,12 +226,12 @@ public class VNoteHead extends VElement{
 			quadCurve.setControlY(-step);
 			quadCurve.setFill(Color.TRANSPARENT);
 			quadCurve.setStroke(Color.BLACK);
-			arrow.setLayoutX(step+blendOffsetX);
+			arrow.setLayoutX(notePosRight+blendOffsetX-step);
 			arrow.setFitWidth(step*2);
 			arrow.setFitHeight(step*2);
 			arrow.setLayoutY(ajustedY);
 			bendText.setLayoutY(ajustedY+textOffset);
-			bendText.setLayoutX(notePosRight+step);
+			bendText.setLayoutX(notePosRight+blendOffsetX-2*step);
 		}
 
 		W = step*2*s;

@@ -210,6 +210,13 @@ public class PreviewViewController extends Application {
 		}
 	}
 	@FXML
+	public void reset() throws TXMLException {
+		this.visualizer = new Visualizer(mvc.converter.getScore());
+		groups = visualizer.getElementGroups();
+		measureMapping = visualizer.getMeasureMapping();
+		goToPage(pageNumber);
+		initPageHandler(groups.size());
+	}
 	public void apply() {
 		try {
 			visualizer.alignment();
