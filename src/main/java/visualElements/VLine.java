@@ -62,8 +62,6 @@ public class VLine extends VElement{
 
 	}
 	public void initCurvedNotations(){
-
-
 		for (VMeasure measure:measures){
 			for (VNoteHead noteHead:measure.getTieNoteHead()){
 				tiedElements.add(noteHead);
@@ -99,15 +97,20 @@ public class VLine extends VElement{
 			group.getChildren().add(curvedNotation.getShapeGroups());
 		}
 		HashMap<Integer,Integer> slurMap = new HashMap<>();
+		HashMap<Integer,Slur> slurMap2 = new HashMap<>();
+
 		for (int i=0;i<slurElements.size();i++){
 			VNoteHead noteHead = slurElements.get(i);
 			for (Slur slur:noteHead.slurs){
 				if (slur.getType().equals("start")){
 					slurMap.put(slur.getNumber(),i);
+					slurMap2.put(slur.getNumber(),slur);
 				}else {
 					int start = -2;
+					Slur slur1 = null;
 					if (slurMap.containsKey(slur.getNumber())){
 						start = slurMap.get(slur.getNumber());
+						slur1 = slurMap2.get(slur.getNumber());
 						slurMap.remove(slur.getNumber());
 					}
 
@@ -118,6 +121,11 @@ public class VLine extends VElement{
 					group.getChildren().add(curvedNotation.getShapeGroups());
 					if (slur.getPlacement()!=null){
 						if (slur.getPlacement().equals("above")){
+							curvedNotation.setPositive(true);
+						}
+					}
+					if (slur1!=null&&slur1.getPlacement()!=null){
+						if (slur1.getPlacement().equals("above")){
 							curvedNotation.setPositive(true);
 						}
 					}

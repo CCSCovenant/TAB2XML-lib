@@ -24,19 +24,8 @@ public class VGNotation extends VElement {
 	List<Line> Hlines = new ArrayList<>();
 	List<Circle> circles = new ArrayList<>();
 	public VGNotation(){
-		initConfig();
 	}
-	public void initConfig(){
-		initConfigElement("GuitarNotationStartHeight",100d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
-		initConfigElement("GuitarNotationEndHeight",120d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
-		initConfigElement("DrumNotationHeight",-30d,-50d,VConfig.getInstance().getGlobalConfig("PageX"));
-		initConfigElement("notationGap",10d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
-		initConfigElement("thickness",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
-		initConfigElement("dotSize",2d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
-		initConfigElement("dotOffset",6d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
 
-
-	}
 	public int getSize(){
 		return notes.size();
 	}
