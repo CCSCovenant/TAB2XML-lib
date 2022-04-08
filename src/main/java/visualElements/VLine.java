@@ -24,6 +24,10 @@ public class VLine extends VElement{
 	}
 
 
+	@Override
+	public void setHighLight(boolean states) {
+
+	}
 
 	public boolean addNewMeasure(VMeasure newMeasure){
 		// calculate if new Measure's length will exceed the width of a page

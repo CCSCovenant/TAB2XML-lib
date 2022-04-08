@@ -212,6 +212,29 @@ public class VMeasure extends VElement{
 
 
 
+	@Override
+	public void setHighLight(boolean states) {
+		Color color;
+		if (states){
+			color	= VConfig.getInstance().getHighLightColor();
+			//background.setStroke(color);
+		}else {
+			color = VConfig.getInstance().getDefaultColor();
+			//background.setStroke(Color.TRANSPARENT);
+		}
+		for (VGNotation notation:Notations){
+			notation.setHighLight(states);
+		}
+		for (Line line:staffLines){
+			line.setStroke(color);
+		}
+		for (VNote note:Notes){
+			note.setHighLight(states);
+		}
+		for (VBarline barline:barlines){
+			barline.setHighLight(states);
+		}
+	}
 
 	public void setNumber(int number) {
 		this.number = number;

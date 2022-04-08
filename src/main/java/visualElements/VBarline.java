@@ -1,6 +1,7 @@
 package visualElements;
 
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
@@ -80,6 +81,24 @@ public class VBarline extends VElement{
 		initConfigElement("notationHeight",-20d,-50d,VConfig.getInstance().getGlobalConfig("PageX"));
 		initConfigElement("notationSize",15d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
 
+	}
+	@Override
+	public void setHighLight(boolean states) {
+		Color color;
+		if (states){
+			color	= VConfig.getInstance().getHighLightColor();
+		}else {
+			color = VConfig.getInstance().getDefaultColor();
+		}
+		notation.setFill(color);
+		circle.setFill(color);
+		circle1.setFill(color);
+		if (Lightline!=null){
+			Lightline.setFill(color);
+		}
+		if (Hevayline!=null){
+			Hevayline.setFill(color);
+		}
 	}
 
 	@Override

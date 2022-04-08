@@ -1,6 +1,7 @@
 package visualElements.Notations;
 
 import javafx.scene.Group;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.StrokeLineCap;
@@ -42,6 +43,21 @@ public class VGNotation extends VElement {
 	}
 	public List<Integer> getNotes(){
 		return notes;
+	}
+	@Override
+	public void setHighLight(boolean states) {
+		Color color;
+		if (states){
+			color	= VConfig.getInstance().getHighLightColor();
+		}else {
+			color = VConfig.getInstance().getDefaultColor();
+		}
+		for (Line line:Vlines){
+			line.setStroke(color);
+		}
+		for (Line line:Hlines){
+			line.setStroke(color);
+		}
 	}
 
 	@Override

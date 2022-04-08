@@ -2,6 +2,9 @@ package visualElements;
 
 import javafx.geometry.Bounds;
 import javafx.geometry.Point3D;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorInput;
 import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -51,12 +54,6 @@ public class VNoteHead extends VElement{
 		group.getChildren().add(imageView);
 		W = group.getBoundsInLocal().getWidth();
 		initDots(dots);
-		if (dots>0){
-			initConfigWithDot();
-		}
-		if (isGrace){
-			initConfigWithGrace();
-		}
 	}
 	public VNoteHead(int fret,int dots,int relative,boolean isGrace,VNote parentNote){
 		this.parentNote = parentNote;
@@ -71,9 +68,6 @@ public class VNoteHead extends VElement{
 		W = group.getBoundsInLocal().getWidth();
 
 		dotC = dots;
-		if (isGrace){
-			initConfigWithGrace();
-		}
 	}
 
 	public void addBend(double bendAlter){
@@ -89,32 +83,50 @@ public class VNoteHead extends VElement{
 		group.getChildren().add(arrow);
 		group.getChildren().add(quadCurve);
 		group.getChildren().add(bendText);
-		initConfigWithBlend();
 	}
 	public void initConfig(){
-		initConfigElement("offsetX",0d,0d,VConfig.getInstance().getGlobalConfig("PageX"),1,true);
-		initConfigElement("scale",1d,0d,VConfig.getInstance().getGlobalConfig("PageX"),0.1,false);
-		initConfigElement("graceScale",0.7d,0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
-		initConfigElement("dotGap",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
-		initConfigElement("blendHeight",-20d,-50d,VConfig.getInstance().getGlobalConfig("PageX"),false);
-		initConfigElement("blendOffsetX",15d,0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
-		initConfigElement("blendTextOffsetY",-3d,-10d,VConfig.getInstance().getGlobalConfig("PageX"),false);
-	}
-	public void initConfigWithDot(){
-		initConfigElement("dotGap",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"),true);
-	}
-	public void initConfigWithBlend(){
-		initConfigElement("blendHeight",-20d,-50d,VConfig.getInstance().getGlobalConfig("PageX"),true);
-		initConfigElement("blendOffsetX",15d,0d,VConfig.getInstance().getGlobalConfig("PageX"),true);
-		initConfigElement("blendTextOffsetY",-3d,-10d,VConfig.getInstance().getGlobalConfig("PageX"),true);
-	}
-	public void initConfigWithGrace(){
-		initConfigElement("graceScale",0.7d,0.5d,1.0,0.1,true);
-	}
+		initConfigElement("scale",1d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("graceScale",0.7d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("defaultSize",10d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("dotGap",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("blendHeight",-20d,-50d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("blendOffsetX",15d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("blendTextOffsetY",-3d,-10d,VConfig.getInstance().getGlobalConfig("PageX"));
 
+	}
 	public void setFlip(){
 		imageView.setRotate(180);
 		imageView.setRotationAxis(new Point3D(0,1,0));
+	}
+	@Override
+	public void setHighLight(boolean states) {
+
+		Color color;
+		if (states){
+			color	= VConfig.getInstance().getHighLightColor();
+		}else {
+			color = VConfig.getInstance().getDefaultColor();
+		}
+		Blend blend = new Blend();
+		Bounds bounds = imageView.getBoundsInLocal();
+		ColorInput colorinput = new ColorInput(bounds.getMinX(),bounds.getMinY(),bounds.getWidth(),bounds.getHeight(),color);
+		blend.setTopInput(colorinput);
+		blend.setMode(BlendMode.SRC_ATOP);
+		imageView.setEffect(blend);
+		text.setFill(color);
+		for (VDot dot:dots){
+			dot.setHighLight(states);
+		}
+		if (quadCurve!=null){
+			quadCurve.setStroke(color);
+			bendText.setFill(color);
+			bounds = arrow.getBoundsInLocal();
+			colorinput = new ColorInput(bounds.getMinX(),bounds.getMinY(),bounds.getWidth(),bounds.getHeight(),color);
+			blend = new Blend();
+			blend.setTopInput(colorinput);
+			blend.setMode(BlendMode.SRC_ATOP);
+			arrow.setEffect(blend);
+		}
 	}
 
 
@@ -140,15 +152,7 @@ public class VNoteHead extends VElement{
 	public void setSlurs(List<Slur> slurs) {
 		this.slurs = slurs;
 	}
-	@Override
-	public void updateConfig(String id, double value) {
-		if (configMap.containsKey(id)){
-			configMap.put(id,value);
-			if (id.equals("offsetX")){
-				parentNote.updateConfig("offsetX",value);
-			}
-		}
-	}
+
 	public void alignment(){
 		step = VConfig.getInstance().getGlobalConfig("Step");
 		group.setLayoutY(relative*step);

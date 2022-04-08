@@ -51,7 +51,6 @@ public class Sidebar {
 		HashMap<String,Double> configMap = vElement.getConfigAbleList();
 		HashMap<String,Boolean> configAble = vElement.getConfigAble();
 		HashMap<String,Pair<Double,Double>> limitMap = vElement.getLimits();
-		HashMap<String,Double> stepMap = vElement.getStepMap();
 		scrollPane.setContent(null);
 		if (configMap == null){
 			return;
@@ -69,9 +68,8 @@ public class Sidebar {
 			double min = limitMap.get(key).getKey();
 			double max = limitMap.get(key).getValue();
 			double current = configMap.get(key);
-			double step = stepMap.get(key);
 			spinner.setEditable(true);
-			spinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(min,max,current,step));
+			spinner.setValueFactory(new SpinnerValueFactory.DoubleSpinnerValueFactory(min,max,current));
 			spinner.valueProperty().addListener(new ChangeListener<Double>() {
 				@Override
 				public void changed(ObservableValue<? extends Double> observable, Double oldValue, Double newValue) {

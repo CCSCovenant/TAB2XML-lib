@@ -46,6 +46,17 @@ public class VCurvedNotation extends VElement {
 
 	}
 
+	@Override
+	public void setHighLight(boolean states) {
+		Color color;
+		if (states) {
+			color = VConfig.getInstance().getHighLightColor();
+		} else {
+			color = VConfig.getInstance().getDefaultColor();
+		}
+		path.setFill(color);
+		path.setStroke(color);
+	}
 
 	public void setUpCurve(QuadCurveTo quadCurve, double x1, double x2, double y1, double y2){
 		quadCurve.setX(x1);
