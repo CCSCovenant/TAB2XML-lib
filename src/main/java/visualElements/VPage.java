@@ -37,13 +37,24 @@ public class VPage extends VElement{
 
 
 	public boolean addNewLine(VLine line){
-		if (H+measureDistance>PageY-MarginY){
+		line.alignment();
+		double lineH = line.getH();
+		if (H+lineH>PageY-MarginY){
+			if (lines.size()==0){
+				//TODO give user error while can't fit a single line into the page
+				//which should not happen :(  WHY SOME ONE CONFIG LIKE THIS
+				line.getShapeGroups().setLayoutY(H);
+				line.getShapeGroups().setLayoutX(MarginX);
+				lines.add(line);
+				group.getChildren().add(line.getShapeGroups());
+				H += line.getH()+measureDistance;
+				return true;
+			}
 			return false;
 		}else {
 			line.getShapeGroups().setLayoutY(H);
 			line.getShapeGroups().setLayoutX(MarginX);
 			lines.add(line);
-			line.alignment();
 			group.getChildren().add(line.getShapeGroups());
 			H += line.getH()+measureDistance;
 			return true;

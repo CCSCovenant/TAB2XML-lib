@@ -1,6 +1,7 @@
 package visualElements.Notations;
 
 import javafx.scene.shape.Line;
+import visualElements.VConfig;
 import visualElements.VUtility;
 
 import java.util.List;
@@ -8,6 +9,18 @@ import java.util.Stack;
 
 public class VDrumGNotation extends VGNotation{
 
+	public VDrumGNotation(){
+		initConfig();
+	}
+	public void initConfig(){
+		initConfigElement("GuitarNotationStartHeight",100d,0d, VConfig.getInstance().getGlobalConfig("PageX"),false);
+		initConfigElement("GuitarNotationEndHeight",120d,0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
+		initConfigElement("DrumNotationHeight",-30d,-50d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("notationGap",10d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("thickness",5d,1d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("dotSize",2d,0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
+		initConfigElement("dotOffset",6d,0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
+	}
 	@Override
 	public void alignment(List<Double> HPosition, List<Double> VPosition){
 		double height = configMap.get("DrumNotationHeight");
@@ -45,7 +58,7 @@ public class VDrumGNotation extends VGNotation{
 						startX = HPosition.get(i);
 					}
 					Hlines.get(HlinePointer).setStartX(startX);
-
+					Hlines.get(HlinePointer).setStrokeWidth(configMap.get("thickness"));
 					Hlines.get(HlinePointer).setLayoutY(height + (lineStack.size() - 1) * gap);
 					HlinePointer++;
 					}

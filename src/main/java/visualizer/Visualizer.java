@@ -21,11 +21,11 @@ import java.util.List;
  * @author Kuimou
  * */
 public class Visualizer {
-	Score score;
-	ArrayList<Group> groups;
-	ArrayList<VPage> pages;
-	List<VMeasure> VMeasures;
-	String staffType;
+	public Score score;
+	public ArrayList<Group> groups;
+	public ArrayList<VPage> pages;
+	public List<VMeasure> VMeasures;
+	public String staffType;
 	int measureCounter = 0;
 
 	HashMap<Integer, Pair<Integer,Integer>> measureMapping = new HashMap<>();

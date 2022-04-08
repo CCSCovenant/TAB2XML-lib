@@ -37,7 +37,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import player.MXLPlayer;
 import player.ThreadPlayer;
 import utility.SwingFXUtils;
-import visualElements.Selected;
+import visualElements.GUISelector;
 import visualElements.VConfig;
 import visualElements.VMeasure;
 import visualizer.ImageResourceHandler;
@@ -83,11 +83,12 @@ public class PreviewViewController extends Application {
 		groups = visualizer.getElementGroups();
 		measureMapping = visualizer.getMeasureMapping();
 		sidebar = new Sidebar(this);
+
 		sidebar.initialize(drawer, hamburger);
-		Selected.getInstance().setSidebar(sidebar);
+		GUISelector.getInstance().setSidebar(sidebar);
 		goToPage(0);
-		initPageHandler(groups.size()-1);
-		initMeasureHandler(visualizer.getMeasureCounter()-1);
+		initPageHandler(groups.size());
+		initMeasureHandler(visualizer.getMeasureCounter());
 		initRefresh();
 		//goToPage(pageNumber);
 	}
@@ -111,7 +112,7 @@ public class PreviewViewController extends Application {
 	}
 	private void initPageHandler(int max_page){
 		pageSpinner.setEditable(true);
-		pageSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max_page+1, 0));
+		pageSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max_page, 1));
 		pageSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
 			@Override
 			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
@@ -122,7 +123,7 @@ public class PreviewViewController extends Application {
 	}
 	private void initMeasureHandler(int max_measures){
 		measureSpinner.setEditable(true);
-		measureSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max_measures+1, 0));
+		measureSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max_measures, 1));
 		measureSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
 			@Override
 			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
@@ -133,7 +134,7 @@ public class PreviewViewController extends Application {
 	private void goToMeasure(int measureNumber){
 		Pair<Integer,Integer> localPart = measureMapping.get(measureNumber);
 		VMeasure measure = visualizer.getVMeasures().get(measureNumber-1);
-		Selected.getInstance().setSElement(measure);
+		GUISelector.getInstance().setSElement(measure);
 		double YPos = measure.getVLine().getShapeGroups().getLayoutY() - VConfig.getInstance().getGlobalConfig("MeasureDistance");
 		double XPos = measure.getShapeGroups().getLayoutX();
 		double PageX = VConfig.getInstance().getGlobalConfig("PageX");
@@ -228,6 +229,8 @@ public class PreviewViewController extends Application {
 			scrollView.setVvalue(vv);
 			scrollView.setHvalue(hv);
 			initPageHandler(groups.size());
+			pageSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, groups.size(), 1));
+
 		}catch (Exception e){
 
 		}
@@ -241,14 +244,13 @@ public class PreviewViewController extends Application {
 	private void goToPage(int page)  {
 		if (0<=page&&page<groups.size()){
 			pageNumber = page;
-			pageSpinner.getEditor().setText(page+"");
+			pageSpinner.getEditor().setText((pageNumber+1)+"");
 			pageSpinner.commitValue();
 			AnchorPane anchorPane = new AnchorPane();
 			anchorPane.getChildren().add(groups.get(page));
 			Group group = new Group(anchorPane);
 			initEvents(anchorPane);
 			scrollView.setContent(group);
-			pageNumber = page;
 			anchorPane.setScaleX(scale);
 			anchorPane.setScaleY(scale);
 		}else {

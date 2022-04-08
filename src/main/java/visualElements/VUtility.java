@@ -54,7 +54,7 @@ public class VUtility {
 				case 16:
 					return "16th_full";
 				case 32:
-					return "32th_full";
+					return "32nd_full";
 				default:
 					return "64th_full";
 			}
