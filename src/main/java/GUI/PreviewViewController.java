@@ -59,7 +59,7 @@ public class PreviewViewController extends Application {
 	@FXML Button refresh;
 	@FXML private JFXHamburger hamburger;
 	@FXML private JFXDrawer drawer;
-	sidebar sb1 = new sidebar();
+	Sidebar sidebar;
 	private static Window convertWindow = new Stage();
 
 	private double scale = 1.0;
@@ -82,8 +82,10 @@ public class PreviewViewController extends Application {
 		this.visualizer = new Visualizer(mvc.converter.getScore());
 		groups = visualizer.getElementGroups();
 		measureMapping = visualizer.getMeasureMapping();
+		sidebar = new Sidebar(this);
+		sidebar.initialize(drawer, hamburger);
+		Selected.getInstance().setSidebar(sidebar);
 		goToPage(0);
-
 		initPageHandler(groups.size()-1);
 		initMeasureHandler(visualizer.getMeasureCounter()-1);
 		initRefresh();
@@ -170,7 +172,6 @@ public class PreviewViewController extends Application {
 			anchorPane.setScaleX(scale);
 			anchorPane.setScaleY(scale);
 		});
-		sb1.initialize(drawer, hamburger);
 	}
 	@FXML
 	private void exportPDFHandler() {
@@ -209,12 +210,16 @@ public class PreviewViewController extends Application {
 		}
 	}
 	@FXML
-	private void apply() throws TXMLException {
-		visualizer.alignment();
-		groups = visualizer.getElementGroups();
-		measureMapping = visualizer.getMeasureMapping();
-		goToPage(pageNumber);
-		initPageHandler(groups.size());
+	public void apply() {
+		try {
+			visualizer.alignment();
+			groups = visualizer.getElementGroups();
+			measureMapping = visualizer.getMeasureMapping();
+			goToPage(pageNumber);
+			initPageHandler(groups.size());
+		}catch (Exception e){
+
+		}
 	}
 	@FXML
 	private void playHandler(){
@@ -232,7 +237,6 @@ public class PreviewViewController extends Application {
 			Group group = new Group(anchorPane);
 			initEvents(anchorPane);
 			scrollView.setContent(group);
-			scrollView.setVvalue(0);
 			pageNumber = page;
 		}else {
 

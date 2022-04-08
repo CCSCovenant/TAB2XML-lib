@@ -17,7 +17,6 @@ import models.measure.note.notations.Tied;
 import visualizer.ImageResourceHandler;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class VNoteHead extends VElement{
@@ -224,12 +223,6 @@ public class VNoteHead extends VElement{
 			}
 		}
 	}
-	@Override
-	public HashMap<String, Double> getConfigAbleList() {
-		return null;
-	}
-
-
 	public VNote getParentNote() {
 		return parentNote;
 	}

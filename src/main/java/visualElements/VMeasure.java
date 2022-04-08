@@ -73,9 +73,9 @@ public class VMeasure extends VElement{
 	}
 	//  N / G G N C / N
 	public void initConfig(){
-		initConfigElement("noteDistance",10d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("MinNoteDistance",10d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
 		initConfigElement("gapBeforeMeasure",20d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
-		initConfigElement("gapBetweenElement",VConfig.getInstance().getGlobalConfig("MinNoteDistance"),0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("gapBetweenElement",VConfig.getInstance().getGlobalConfig("MinNoteDistance"),0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
 		initConfigElement("gapBetweenGrace",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
 	}
 
@@ -312,6 +312,10 @@ public class VMeasure extends VElement{
 	}
 	public void alignment(){
 		W = 0;
+		background.setLayoutY(0);
+		background.setLayoutX(0);
+		background.setWidth(0);
+		background.setHeight(0);
 		W += configMap.get("gapBeforeMeasure");
 		gapCount = 0;
 		double gapBetweenElement = configMap.get("gapBetweenElement");
@@ -341,7 +345,7 @@ public class VMeasure extends VElement{
 		background.setLayoutX(bounds.getMinX());
 		background.setLayoutY(bounds.getMinY());
 		background.setHeight(bounds.getHeight());
-		background.setWidth(bounds.getWidth());
+		background.setWidth(W);
 		background.setFill(Color.TRANSPARENT);
 		background.toBack();
 		alignmentBarlines();
@@ -350,7 +354,7 @@ public class VMeasure extends VElement{
 	public double getWInMinWidth(){
 		double minW = 0;
 		minW += configMap.get("gapBeforeMeasure");
-		double gapBetweenElement = VConfig.getInstance().getGlobalConfig("MinNoteDistance");
+		double gapBetweenElement = configMap.get("MinNoteDistance");
 		double gapBetweenGrace = configMap.get("gapBetweenGrace");
 		for (VSign sign:Signs){
 			sign.alignment();

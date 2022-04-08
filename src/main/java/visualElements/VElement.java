@@ -13,6 +13,7 @@ public class VElement implements VConfigAble {
 	double H = 0;
 	public HashMap<String,Double> configMap = new HashMap<>();
 	public HashMap<String, Pair<Double,Double>> limitMap = new HashMap<>();
+	public HashMap<String,Boolean> configAble = new HashMap<>();
 	public VElement(){
 		group.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 			@Override
@@ -42,8 +43,12 @@ public class VElement implements VConfigAble {
 		return this;
 	}
 	public void initConfigElement(String id,double initValue,double lower,double upper){
+		initConfigElement(id,initValue,lower,upper,true);
+	}
+	public void initConfigElement(String id,double initValue,double lower,double upper,boolean states){
 		configMap.put(id,initValue);
 		limitMap.put(id,new Pair<>(lower,upper));
+		configAble.put(id,states);
 	}
 	@Override
 	public HashMap<String, Double> getConfigAbleList() {
@@ -53,6 +58,10 @@ public class VElement implements VConfigAble {
 	@Override
 	public HashMap<String, Pair<Double, Double>> getLimits() {
 		return limitMap;
+	}
+
+	public HashMap<String, Boolean> getConfigAble() {
+		return configAble;
 	}
 
 	@Override

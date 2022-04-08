@@ -205,23 +205,29 @@ public class VLine extends VElement{
 
 	public void alignment() {
 		W = MarginX + vClef.getW();
+		double availableLength = PageW - MarginX -W;
+		double lengthBeforeAlignment = 0;
+		double[] measureLengthBeforeAlignment = new double[measures.size()];
+		double radio = 1;
 		gapCount = 0;
-		for (VMeasure measure : measures) {
-			W += measure.getW();
-			gapCount += measure.getGapCount();
+		for (int i=0;i<measures.size();i++){
+			double measureLength = measures.get(i).getWInMinWidth();
+			lengthBeforeAlignment += measureLength;
+			measureLengthBeforeAlignment[i] = measureLength;
+			System.out.print(measureLength+" ");
 		}
-		double idealLengthDiff = PageW - MarginX - W;
-		double ideaGapDiff = idealLengthDiff / gapCount;
 
-			//find the gap that fit into the page
-			for (VMeasure measure : measures) {
-				double changed = measure.getConfigAbleList().get("gapBetweenElement") + ideaGapDiff;
-				if (changed < VConfig.getInstance().getGlobalConfig("MinNoteDistance")){
-					changed = VConfig.getInstance().getGlobalConfig("MinNoteDistance");
-				}
-				measure.updateConfig("gapBetweenElement",changed );
-			}
+		System.out.println();
+		radio = (availableLength-lengthBeforeAlignment)/lengthBeforeAlignment;
+		System.out.println(radio+1);
+		for (int i=0;i<measures.size();i++){
+			VMeasure measure = measures.get(i);
+			double idealLengthDiff = measureLengthBeforeAlignment[i]*radio;
+			double ideaGapDiff = idealLengthDiff / measure.getGapCount();
+			measure.updateConfig("gapBetweenElement",measure.getConfigAbleList().get("MinNoteDistance")+ideaGapDiff);
+		}
 
+		System.out.println();
 		W = 0;
 		vClef.alignment();
 		W += vClef.getW();
@@ -230,6 +236,7 @@ public class VLine extends VElement{
 			measures.get(i).getShapeGroups().setLayoutX(W);
 			measures.get(i).alignment();
 			W = W+measures.get(i).getW();
+			System.out.println(measures.get(i).getW());
 		}
 
 		alignmentCurved();
