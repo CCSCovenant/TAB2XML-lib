@@ -1,18 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import com.jfoenix.controls.JFXDrawer?>
-<?import com.jfoenix.controls.JFXHamburger?>
+<?import com.jfoenix.controls.*?>
 <?import javafx.geometry.*?>
 <?import javafx.scene.control.*?>
-<?import javafx.scene.effect.ColorAdjust?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.layout.*?>
+
 <BorderPane fx:id="borderPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="480.0" minWidth="852.0" prefHeight="720.0" prefWidth="1280.0" stylesheets="@styles.css" xmlns="http://javafx.com/javafx/16" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GUI.PreviewViewController">
     <center>
         <AnchorPane prefHeight="200.0" prefWidth="666.0" BorderPane.alignment="CENTER">
             <children>
                 <AnchorPane layoutX="12.0" layoutY="614.0" prefHeight="38.0" prefWidth="976.0" AnchorPane.bottomAnchor="8.0" AnchorPane.leftAnchor="12.0" AnchorPane.rightAnchor="12.0">
                     <children>
-                        <HBox layoutX="14.0" layoutY="8.0" spacing="5.0" AnchorPane.leftAnchor="14.0">
+                        <HBox layoutX="14.0" layoutY="8.0" spacing="5.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="5.0">
                             <children>
                                 <Label text="Go-to-page">
                                     <padding>
@@ -30,20 +30,38 @@
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </padding>
                         </HBox>
-                        <HBox layoutX="411.0" layoutY="4.0" prefHeight="38.0" prefWidth="236.0" AnchorPane.leftAnchor="411.0" AnchorPane.topAnchor="4.0">
+                        <HBox layoutX="411.0" layoutY="4.0" prefHeight="38.0" prefWidth="400.0" AnchorPane.leftAnchor="411.0" AnchorPane.topAnchor="0.0">
                             <padding>
                                 <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                             </padding>
                             <children>
                         <HBox prefHeight="29.0" prefWidth="4.0" />
-                        <ToggleButton fx:id="playButton" mnemonicParsing="false" onAction="#playHandler" text="ToggleButton" />
-                        <ToggleButton fx:id="repeatButton" mnemonicParsing="false" onAction="#setRepeat" text="ToggleButton" />
-                        <Label text="Label" />
-                        <Spinner fx:id="tempoAdjust" />
-                                <Button fx:id="saveMXLButton" disable="false" mnemonicParsing="false" onAction="#exportPDFHandler" prefHeight="28.0" prefWidth="88.0" text="Export PDF">
+                        <ToggleButton fx:id="playButton" minHeight="35.0" minWidth="35.0" mnemonicParsing="false" onAction="#playHandler" prefHeight="30.0" prefWidth="30.0" />
+                        <ToggleButton fx:id="repeatButton" minHeight="35.0" minWidth="35.0" mnemonicParsing="false" onAction="#setRepeat">
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin>
+                           <padding>
+                              <Insets left="5.0" />
+                           </padding></ToggleButton>
+                        <Label minWidth="100.0" text="TempSetting" textFill="WHITE">
+                           <HBox.margin>
+                              <Insets top="3.0" />
+                           </HBox.margin>
+                           <padding>
+                              <Insets bottom="5.0" left="10.0" right="10.0" top="5.0" />
+                           </padding></Label>
+                        <Spinner fx:id="tempoAdjust" prefWidth="60.0">
+                           <HBox.margin>
+                              <Insets top="4.5" />
+                           </HBox.margin></Spinner>
+                                <Button fx:id="saveMXLButton" disable="false" minHeight="35.0" minWidth="35.0" mnemonicParsing="false" onAction="#exportPDFHandler" prefHeight="30.0" prefWidth="30.0">
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
-                                    </padding></Button>
+                                    </padding>
+                           <HBox.margin>
+                              <Insets left="20.0" />
+                           </HBox.margin></Button>
                             </children>
                         </HBox>
                     </children>

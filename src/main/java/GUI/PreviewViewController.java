@@ -15,12 +15,16 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorInput;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.Window;
@@ -53,6 +57,7 @@ public class PreviewViewController extends Application {
 	@FXML Spinner<Integer> measureSpinner;
 	@FXML ScrollPane scrollView;
 	@FXML Button refresh;
+	@FXML Button saveMXLButton;
 	@FXML private JFXHamburger hamburger;
 	@FXML private JFXDrawer drawer;
 	@FXML ToggleButton playButton;
@@ -127,9 +132,12 @@ public class PreviewViewController extends Application {
 		repeatIcon.setFitHeight(30);
 		Tooltip repeatTooltip = new Tooltip("Select to enable repeat, unselect to disable repeat");
 
-
+		ImageView exportIcon = new ImageView(ImageResourceHandler.getInstance().getImage("saveIcon"));
+		exportIcon.setFitWidth(30);
+		exportIcon.setFitHeight(30);
 		Tooltip exportTooltip = new Tooltip("Select to enable repeat, unselect to disable repeat");
-
+		saveMXLButton.setGraphic(exportIcon);
+		saveMXLButton.setTooltip(exportTooltip);
 		playButton.setGraphic(playIcon);
 		playButton.setTooltip(playTooltip);
 		repeatButton.setGraphic(repeatIcon);
@@ -283,9 +291,30 @@ public class PreviewViewController extends Application {
 	@FXML
 	private void setRepeat(){
 		VConfig.getInstance().setEnableRepeat(repeatButton.isSelected());
+		Color color = VConfig.getInstance().defaultColor;
+		if (repeatButton.isSelected()){
+			color = VConfig.getInstance().getHighLightColor();
+		}
+		Blend blend = new Blend();
+		Bounds bounds = ((ImageView)repeatButton.getGraphic()).getBoundsInLocal();
+		ColorInput colorinput = new ColorInput(bounds.getMinX(),bounds.getMinY(),bounds.getWidth(),bounds.getHeight(),color);
+		blend.setTopInput(colorinput);
+		blend.setMode(BlendMode.SRC_ATOP);
+		repeatButton.getGraphic().setEffect(blend);
 	}
 	@FXML
 	private void playHandler() throws InvalidMidiDataException, MidiUnavailableException, InterruptedException {
+		Color color = VConfig.getInstance().defaultColor;
+		if (playButton.isSelected()){
+			color = VConfig.getInstance().getHighLightColor();
+		}
+		Blend blend = new Blend();
+		Bounds bounds = ((ImageView)playButton.getGraphic()).getBoundsInLocal();
+		ColorInput colorinput = new ColorInput(bounds.getMinX(),bounds.getMinY(),bounds.getWidth(),bounds.getHeight(),color);
+		blend.setTopInput(colorinput);
+		blend.setMode(BlendMode.SRC_ATOP);
+		playButton.getGraphic().setEffect(blend);
+
 		if (playButton.isSelected()){
 			if (GUISelector.getInstance().getSElement()==null){
 				linkedPlayer.play(0);
