@@ -134,7 +134,7 @@ public class VUtility {
 			return "Note Head Horizontal Offset";
 		}
 		else if (id.equalsIgnoreCase("scale")) {
-			return "Grace Note Size";
+			return "Note Size";
 		}
 		else if (id.equalsIgnoreCase("dotOffset")) {
 			return "Dot Offset";

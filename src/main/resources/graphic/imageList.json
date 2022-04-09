@@ -174,5 +174,10 @@
     "name": "repeat_icon",
     "url": "graphic/enableRepeat.png",
     "id": "enableRepeat"
+  },
+  {
+    "name": "save_icon",
+    "url": "graphic/save_icon.png",
+    "id": "saveIcon"
   }
 ]

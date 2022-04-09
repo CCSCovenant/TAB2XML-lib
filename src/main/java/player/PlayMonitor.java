@@ -64,11 +64,9 @@ public class PlayMonitor extends Thread{
 			if (playNextNote()){
 				try {
 					double duration = durations.get(measure).get(note);
-					System.out.println(duration*(60000/tempo));
 					GDuration += (long) (duration*(60000/tempo));
 					long current = System.currentTimeMillis();
 					long plan_to_sleep = last+GDuration-current;
-
 					Thread.sleep(plan_to_sleep);
 				} catch (InterruptedException e) {
 					e.printStackTrace();

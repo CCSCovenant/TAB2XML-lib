@@ -49,7 +49,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class PreviewViewController extends Application {
-	@FXML ImageView pdfViewer;
 	@FXML Spinner<Integer> pageSpinner;
 	@FXML Spinner<Integer> measureSpinner;
 	@FXML ScrollPane scrollView;
@@ -127,6 +126,9 @@ public class PreviewViewController extends Application {
 		repeatIcon.setFitWidth(30);
 		repeatIcon.setFitHeight(30);
 		Tooltip repeatTooltip = new Tooltip("Select to enable repeat, unselect to disable repeat");
+
+
+		Tooltip exportTooltip = new Tooltip("Select to enable repeat, unselect to disable repeat");
 
 		playButton.setGraphic(playIcon);
 		playButton.setTooltip(playTooltip);
