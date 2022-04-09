@@ -9,12 +9,13 @@ public class PlayMonitor extends Thread{
 	private Thread t;
 	private String threadName;
 	List<VMeasure> measures;
-	List<List<Long>> durations;
+	List<List<Double>> durations;
 	int measure = 0;
 	int note = 0;
-	boolean shouldRun;
-	public PlayMonitor(List<VMeasure> measures,List<List<Long>> durations){
-		this.measures = measures;
+	boolean shouldRun = true;
+	public PlayMonitor(List<List<Double>> durations,String name){
+		//this.measures = measures;
+		this.threadName = name;
 		this.durations = durations;
 	}
 	public void start(){
@@ -25,10 +26,10 @@ public class PlayMonitor extends Thread{
 	}
 	public void run(){
 		while (shouldRun){
-			long duration = durations.get(measure).get(note);
+			double duration = durations.get(measure).get(note);
 			if (playNextNote()){
 				try {
-					Thread.sleep(duration);
+					Thread.sleep((long) (duration*1000));
 					System.out.println("played");
 				} catch (InterruptedException e) {
 					e.printStackTrace();

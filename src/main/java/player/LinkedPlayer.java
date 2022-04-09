@@ -9,8 +9,8 @@ import visualElements.VConfig;
 import java.util.List;
 
 public class LinkedPlayer {
-	List<List<Long>> Durations;
-	List<List<Long>> FullDurationsWithRepeat;
+	List<List<Double>> Durations;
+	List<List<Double>> FullDurationsWithRepeat;
 
 	List<String> measureMapping;
 	List<String> fullMusicWithRepeat;
@@ -19,8 +19,8 @@ public class LinkedPlayer {
 		measureMapping = parser.getMeasureMapping();
 		fullMusicWithRepeat = parser.getFullMusicWithRepeat();
 
-	//	Durations = parser.getDurations();
-	//	FullDurationsWithRepeat =parser.getFullDurationsWithRepeat();
+		Durations = parser.getDurations();
+		FullDurationsWithRepeat =parser.getFullDurationsWithRepeat();
 	}
 	public void play(int measureNumber){
 		int tempo = (int)(double)VConfig.getInstance().getGlobalConfig("tempo");
@@ -31,7 +31,8 @@ public class LinkedPlayer {
 		}
 		pattern.setTempo(tempo);
 		Player player = new Player();
-		//PlayMonitor PlayMonitor = new PlayMonitor(measureNumber,Durations);
+		PlayMonitor PlayMonitor = new PlayMonitor(Durations,"Monitor");
+		PlayMonitor.start();
 		player.delayPlay(0,pattern);
 
 	}

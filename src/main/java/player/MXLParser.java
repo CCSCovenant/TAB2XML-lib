@@ -2,10 +2,12 @@ package player;
 
 import converter.Score;
 import custom_exceptions.TXMLException;
+import javafx.util.Pair;
 import models.Part;
 import models.ScorePartwise;
 import models.measure.Measure;
 import models.measure.barline.BarLine;
+import models.measure.note.Dot;
 import models.measure.note.Note;
 import models.measure.note.notations.Tied;
 
@@ -16,11 +18,11 @@ import java.util.List;
 public class MXLParser {
 	private ScorePartwise score;
 	private String clef;
-	List<List<Long>> Durations;
-	List<List<Long>> FullDurationsWithRepeat;
+	List<List<Double>> Durations = new ArrayList<>();
+	List<List<Double>> FullDurationsWithRepeat = new ArrayList<>();
 
-	List<String> measureMapping;
-	List<String> fullMusicWithRepeat;
+	List<String> measureMapping = new ArrayList<>();
+	List<String> fullMusicWithRepeat = new ArrayList<>();
 	public MXLParser(Score score) throws TXMLException {
 		this.score = score.getModel();
 		initStrings();
@@ -91,7 +93,7 @@ public class MXLParser {
 		if (measure.getNotesBeforeBackup()!=null){
 			List<Note> tmp = new ArrayList<>();
 			for(Note note: measure.getNotesBeforeBackup()) {
-				if (note.getChord()!=null){
+				if (note.getChord()==null){
 					if (tmp.size()>0){
 						Notes.add(tmp);
 					}
@@ -104,12 +106,17 @@ public class MXLParser {
 				Notes.add(tmp);
 			}
 		}
-
-
+		List<Double> durationM = new ArrayList<>();
+		for (List<Note> noteGroup:Notes){
+			Pair<String,Double> notePair = getNoteDetails(noteGroup,clef);
+			musicString.append(notePair.getKey());
+			durationM.add(notePair.getValue());
+		}
+		Durations.add(durationM);
 		return musicString.toString();
 	}
 	
-	public static String getNoteDetails(List<Note> notes,String clef) {
+	public static Pair<String,Double> getNoteDetails(List<Note> notes, String clef) {
 		StringBuilder musicString = new StringBuilder();
 		String voice = "";
 		String chord = "";
@@ -117,14 +124,14 @@ public class MXLParser {
 		String startTie = "";
 		String Duration = "";
 		String Alter = "";
+		String Dots = "";
 		String endTie = "";
-
+		Double Duration_Total = 0d;
 		
 		//unpitched notes are generally used in music that contain a percussion clef
-		//We need to use the appropriate voice for percussive notes (V9）
-
+		//We need to use the appropriate voice for percussive notes (V9)
 		if (clef.equals("TAB")){
-			voice = "V1";
+			voice = "V1 I25";
 		}else {
 			voice = "V9";
 		}
@@ -132,13 +139,23 @@ public class MXLParser {
 
 		for (Note note:notes){
 			if (note.getRest()!=null){
-				Duration = "R"+getNoteDuration(note)+"";
+				Duration = "R"+getNoteDurationType(note)+"";
 			}else {
 				if (note.getChord()!=null){
 					chord = "+";
 				}
-				Duration = getNoteDuration(note)+"";
-				if (note.getNotations()!=null){
+				if (clef.equals("TAB")){
+					Duration = note.getPitch().getStep();
+					if(note.getPitch().getAlter() != null) {
+						if(note.getPitch().getAlter() == 1){ Duration += "#";}
+						else if(note.getPitch().getAlter() == -1) {Duration += "#";}
+					}
+					Duration += note.getPitch().getOctave();
+					Duration += getNoteDurationType(note)+"";
+				}else {
+					Duration = getNoteDurationType(note)+"";
+				}
+				if (note.getNotations()!=null&&note.getNotations().getTieds()!=null){
 					for (Tied tied:note.getNotations().getTieds()){
 						if (tied.getType().equals("start")){
 							endTie = "-";
@@ -149,19 +166,26 @@ public class MXLParser {
 					}
 				}
 				if(note.getInstrument() == null || note.getInstrument().getId().equals("")) {
-					instrument = "I25";
+
 				}//instruments for percussive notes are in the form '[name_of_instrument]'
 				else { instrument = "[" + getInstrument(note.getInstrument().getId()) + "]";
 				}
 			}
-			musicString.append(chord+""+instrument+""+startTie+""+Duration+Alter+""+endTie+" ");
+			//add dots;
+			if (note.getDots()!=null){
+				for (Dot dot:note.getDots()){
+					Dots +=".";
+				}
+			}
+			musicString.append(chord+""+instrument+""+startTie+""+Duration+Alter+Dots+""+endTie);
+			Duration_Total = Math.max(getNoteDuration(note),Duration_Total);
 		}
-		
-		return musicString.toString();
+		musicString.append(" ");
+		return new Pair<String,Double>(musicString.toString(),Duration_Total);
 	}
 	
 
-	public static char getNoteDuration(Note note) {
+	public static char getNoteDurationType(Note note) {
 		if (note.getType()!=null){
 			if(note.getType().equals("whole")) { return 'w'; }
 			else if(note.getType().equals("half")) { return 'h'; }
@@ -174,12 +198,35 @@ public class MXLParser {
 			else { return 'q'; }
 		} else { return 'q'; }
 	}
+	public static double getNoteDuration(Note note){
+		double duration = 1;
+		if (note.getType()!=null){
+			if(note.getType().equals("whole")) { duration = 1; }
+			else if(note.getType().equals("half")) { duration = 0.5; }
+			else if(note.getType().equals("quarter")) { duration = 0.25; }
+			else if(note.getType().equals("eighth")) { duration = 0.125; }
+			else if(note.getType().equals("16th")) { duration = 0.75;}
+			else if(note.getType().equals("32nd")) { duration = 0.375; }
+			else if(note.getType().equals("64th")) { duration = 0.1875;; }
+			else if(note.getType().equals("128th")) { duration = 0.09375; }
+			else { duration = 0.25; }
+		} else { duration = 0.25; }
+		if (note.getDots()!=null){
+			double k = 2;
+			for (int i=0;i<note.getDots().size();i++){
+				duration += duration * 1/k;
+				k*=2;
+			}
+		}
+		return duration;
+	}
 
-	public List<List<Long>> getDurations() {
+
+	public List<List<Double>> getDurations() {
 		return Durations;
 	}
 
-	public List<List<Long>> getFullDurationsWithRepeat() {
+	public List<List<Double>> getFullDurationsWithRepeat() {
 		return FullDurationsWithRepeat;
 	}
 
