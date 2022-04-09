@@ -241,7 +241,6 @@ public class PreviewViewController extends Application {
 	@FXML
 	private void playHandler() throws InvalidMidiDataException, MidiUnavailableException, InterruptedException {
 		linkedPlayer.play(0);
-
 	}
 	private void goToPage(int page)  {
 		if (0<=page&&page<groups.size()){

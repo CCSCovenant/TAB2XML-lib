@@ -6,146 +6,137 @@ import models.Part;
 import models.ScorePartwise;
 import models.measure.Measure;
 import models.measure.barline.BarLine;
-import models.measure.note.Dot;
 import models.measure.note.Note;
-import models.measure.note.notations.Slur;
-import models.measure.note.notations.Tied;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class MXLParser {
 	private ScorePartwise score;
-	private List<Note> notes= new ArrayList<>();
-	List<Measure> scoreMeasure= new ArrayList<>();
 	private String clef;
+	List<List<Long>> Durations;
+	List<List<Long>> FullDurationsWithRepeat;
+
 	List<String> measureMapping;
+	List<String> fullMusicWithRepeat;
 	public MXLParser(Score score) throws TXMLException {
 		this.score = score.getModel();
 		initStrings();
 	}
-	public List<Note> getNotes(){ return notes; }
-	public List<Measure> getMeasure() { return scoreMeasure; }
 	public List<String> getMeasureMapping() {
 		return measureMapping;
 	}
 	public void initStrings(){
 		measureMapping = new ArrayList<>();
+		fullMusicWithRepeat = new ArrayList<>();
 		for (Part part:score.getParts()){
-			initPart(part,measureMapping);
+			initPart(part,measureMapping,fullMusicWithRepeat);
 		}
 	}
-	private int measures=0;boolean partOfRepeat = false;
-	public void initPart(Part part,List<String> measureMapping){
-			List<Measure> repeats = new ArrayList<>();
-			measures=part.getMeasures().size();
-			for (Measure measure:part.getMeasures()){	scoreMeasure.add(measure);
+	public void initPart(Part part,List<String> measureMapping,List<String> fullMusicWithRepeat){
+			for (Measure measure:part.getMeasures()){
 				StringBuilder musicString = new StringBuilder();
 				musicString.append(getMeasure(measure));
-				musicString.append(getRepeats(measure,repeats));
 				measureMapping.add(musicString.toString());
 			}
-	}private int m_count = 0;
-	public String getMeasure(Measure measure){
-		StringBuilder musicString = new StringBuilder();
-		if (measure.getNotesBeforeBackup()!=null){m_count++;
-			for(Note note: measure.getNotesBeforeBackup()) {
-				if(m_count<=measures) {notes.add(note);}
-					if (note.getChord() == null && musicString.length() > 0 && musicString.charAt(musicString.length() - 1) == '+') {
-						musicString.deleteCharAt(musicString.length() - 1);
-						musicString.append(" ");
-					}
-					if (this.clef != null || measure.getAttributes().getClef() != null) {
-						if (note.getChord() != null && musicString.length() > 0 && musicString.charAt(musicString.length() - 1) == '+') {
-							if(clef.equals("percussion")) {
-								musicString.append("[" + getInstrument(note.getInstrument().getId()) + "] ");
+			processWithRepeat(part,fullMusicWithRepeat);
+	}
+
+	public void processWithRepeat(Part part,List<String> fullMusicWithRepeat){
+		int repeatStart = 0;
+		HashMap<Integer,Integer> repeatTime = new HashMap<>();
+		for (int i=0;i<part.getMeasures().size();i++){
+			Measure measure = part.getMeasures().get(i);
+			fullMusicWithRepeat.add(measureMapping.get(i));
+			if (measure.getBarlines()!=null){
+				for (BarLine barLine:measure.getBarlines()){
+					if (barLine.getRepeat()!=null){
+						if (barLine.getRepeat().getDirection().equals("forward")){
+							repeatStart = i-1;
+						}else if (barLine.getRepeat().getDirection().equals("backward")){
+							int time2repeat = 1;
+							if (barLine.getRepeat().getTimes()!=null){
+								time2repeat = Integer.parseInt(barLine.getRepeat().getTimes());
 							}
-						} else {
-							musicString.append(getNoteDetails(note));
-						}
-						if (clef == null) {
-							this.clef = measure.getAttributes().getClef().getSign();
-						}
-						if (clef.equals("percussion")) {
-							if (note.getRest() != null) {
-								musicString.append("R");
-								musicString.append(getNoteDuration(note));
+
+							if (repeatTime.containsKey(measure.getNumber())){
+								if (repeatTime.get(measure.getNumber())>=time2repeat-1){
+									continue;
+								}else {
+									repeatTime.put(measure.getNumber(),repeatTime.get(measure.getNumber())+1);
+								}
 							}else {
-								musicString.deleteCharAt(musicString.length() - 1);
-								musicString.append(getNoteDuration(note));
+								repeatTime.put(measure.getNumber(),1);
 							}
-							musicString.append(getDots(note)); 
-							addTies(musicString, note); 
-						} 
-						else if (clef.equals("TAB")) {
-							if (note.getRest() != null) {
-								musicString.append("R");
-								musicString.append(getNoteDuration(note));
-							} else {
-								musicString.append(note.getPitch().getStep());
-								
-								if(note.getPitch().getAlter() != null) {
-									if(note.getPitch().getAlter() == 1) musicString.append("#");
-									else if(note.getPitch().getAlter() == -1) musicString.append("b");
-								}
-								musicString.append(note.getPitch().getOctave());
-								
-								if(note.getNotations() != null && note.getNotations().getTechnical() != null
-										&& note.getNotations().getTechnical().getBend() != null) {
-								musicString.append(bendNote(note, false));
-								}
-								else if(note.getGrace() != null) {
-									if(note.getNotations() != null && note.getNotations().getSlurs() != null) {
-										musicString.append("o");
-									}else {
-										musicString.append("s");
-									}
-									addSlur(musicString,note);
-								} else {
-									musicString.append(getNoteDuration(note));
-									addSlur(musicString,note);
-									musicString.append(getDots(note));
-									addTies(musicString, note);
-								}
-
-							}
-						}
-						musicString.append(" ");
-
-						if (note != measure.getNotesBeforeBackup().get(measure.getNotesBeforeBackup().size() - 1)) {
-							musicString.deleteCharAt(musicString.length() - 1);
-							musicString.append("+");
+							i = repeatStart;
 						}
 					}
-				}			
-
-
+				}
+			}
 		}
+	}
+
+	public List<String> getFullMusicWithRepeat() {
+		return fullMusicWithRepeat;
+	}
+
+	public String getMeasure(Measure measure){
+		if (measure.getAttributes()!=null&&measure.getAttributes().getClef()!=null){
+			clef = measure.getAttributes().getClef().getSign();
+		}
+		StringBuilder musicString = new StringBuilder();
+		List<List<Note>> Notes = new ArrayList<>();
+		if (measure.getNotesBeforeBackup()!=null){
+			List<Note> tmp = new ArrayList<>();
+			for(Note note: measure.getNotesBeforeBackup()) {
+				if (note.getChord()!=null){
+					if (tmp.size()>0){
+						Notes.add(tmp);
+					}
+					tmp = new ArrayList<>();
+				}
+
+				tmp.add(note);
+			}
+			if (tmp.size()>0){
+				Notes.add(tmp);
+			}
+		}
+
+
 		return musicString.toString();
 	}
 	
-	public static String getNoteDetails(Note note) {
+	public static String getNoteDetails(List<Note> notes,String clef) {
 		StringBuilder musicString = new StringBuilder();
 		String voice;
+		String chord="";
 		String instrument;
 		
 		//unpitched notes are generally used in music that contain a percussion clef
-		//We need to use the appropriate voice for percussive notes (V9)
-		if(note.getUnpitched() != null) {
+		//We need to use the appropriate voice for percussive notes (V9）
+
+		if (clef.equals("TAB")){
+			voice = "V1";
+		}else {
 			voice = "V9";
 		}
-		else {
-			voice = "V" + note.getVoice();
+		musicString.append(voice+" ");
+
+		for (Note note:notes){
+			if (note.getChord()!=null){
+				chord = "+";
+			}
+
+			if(note.getInstrument() == null || note.getInstrument().getId().equals("")) {
+				instrument = "I25";
+			}//instruments for percussive notes are in the form '[name_of_instrument]'
+			else { instrument = "[" + getInstrument(note.getInstrument().getId()) + "]";
+			}
+
+			musicString.append(voice + " " + instrument + " ");
 		}
-		
-		//The MIDI instrument code for acoustic guitar is I25
-		if(note.getInstrument() == null || note.getInstrument().getId().equals("")) {
-			instrument = "I25";
-		}//instruments for percussive notes are in the form '[name_of_instrument]' 
-		else { instrument = "[" + getInstrument(note.getInstrument().getId()) + "]";
-		}
-		
-		musicString.append(voice + " " + instrument + " ");
 		
 		return musicString.toString();
 	}
@@ -164,19 +155,15 @@ public class MXLParser {
 			else { return 'q'; }
 		} else { return 'q'; }
 	}
-	
-	public String getDots(Note note) {
-		StringBuilder musicString = new StringBuilder();
-		if(note.getDots() != null) {
-			for(Dot dot : note.getDots()) {
-				if(dot != null) {
-					musicString.append('.');
-				}
-			}
-		}
-		return musicString.toString();
+
+	public List<List<Long>> getDurations() {
+		return Durations;
 	}
-	
+
+	public List<List<Long>> getFullDurationsWithRepeat() {
+		return FullDurationsWithRepeat;
+	}
+
 	public static String getInstrument(String InstrumentId) {
 		if(InstrumentId.equals("P1-I47")) { return "OPEN_HI_HAT"; }
 		else if(InstrumentId.equals("P1-I52")) { return "RIDE_CYMBAL_1"; }
@@ -195,201 +182,4 @@ public class MXLParser {
 		else { return "GUNSHOT"; }//default for now
 	}
 
-	public void addTies(StringBuilder musicString, Note note) {
-		int indextoCheck = musicString.length() - 1; 
-		if(note.getNotations() != null && note.getNotations().getTieds() != null) {
-			//This loop looks for the position of the last note in the music string
-			for(int i = 1; i <= 10; i++) {
-				if(musicString.charAt(musicString.length()-i) != '.' && musicString.charAt(musicString.length()-i) == getNoteDuration(note)) {
-					indextoCheck = musicString.length() - i;
-					break;
-				}
-			}
-			//Once the last note is found, this loop checks if that note is tied to another 
-			//note and if it is the end or middle of the tie.
-			//If so, then a '-' is added before the note
-			for(Tied tie : note.getNotations().getTieds()) {
-				if(tie != null && (tie.getType().equals("stop") || tie.getType().equals("continue"))) {
-					musicString.replace(indextoCheck, indextoCheck + 1, "-" + getNoteDuration(note));
-					break;
-				}
-			}
-		}
-		//Checks if the last note is tied to another note and if it is the start or middle of the tie.
-		//There is no need to look for the exact location of the note because the '-' can be added after the 
-		//note's dots(if there are any)
-		 if(note.getNotations() != null && note.getNotations().getTieds() != null) {
-			for(Tied tie : note.getNotations().getTieds()) {
-				if(tie != null && (tie.getType().equals("start") || tie.getType().equals("continue"))) {
-					musicString.append("-");
-					break;
-				}
-			}
-			
-		}
-	}
-	private String getRepeats(Measure measure, List<Measure> repeats) {
-		/* Method checks whether the measure or group of measures is repeated then 
-		 * appends the repeats to the musicString
-		 */
-		StringBuilder musicString = new StringBuilder();
-		
-		if(measure.getBarlines() != null) {
-			boolean sameMeasure = false;
-			for(BarLine barline : measure.getBarlines()) {
-				//if-statement to avoid null-pointer exception
-				if(barline != null && barline.getRepeat() != null) {
-					//"forward" determines the beginning of a repeat
-					if(barline.getRepeat().getDirection().equals("forward")) {
-						repeats.add(measure); 
-						partOfRepeat = true; 
-						sameMeasure = true;
-					}
-					//"backward" determines the end of a repeat
-					if(barline.getRepeat().getDirection().equals("backward") && !sameMeasure) {
-						repeats.add(measure); 
-						partOfRepeat = false;
-					}
-					//when the measure is part of repeat but not the beginning or end
-					else if(partOfRepeat && !sameMeasure) {
-						repeats.add(measure);
-					}
-					
-					if(barline.getRepeat().getDirection().equals("backward")) {
-						//'times' is the number of times the measure is played. It is a string so it needs to be converted to integer
-						int times = Integer.parseInt(barline.getRepeat().getTimes());
-						for(int i = 1; i < times; i++) {
-							for(Measure currentMeasure: repeats) {measures++;
-								musicString.append(getMeasure(currentMeasure));
-							}
-						}
-						
-						break;
-					}
-				}
-			}	
-		}
-		return musicString.toString();
-	}
-	
-	private String bendNote(Note note, boolean isInChord) {
-		StringBuilder musicString = new StringBuilder();
-//	      musicString.append(" T100 V0 L0 I25  :CON(100,0) :CON(101,0) :CON(6,1) ");
-//	      musicString.append(note.getPitch().getStep());
-//			
-//			if(note.getPitch().getAlter() != null) {
-//				if(note.getPitch().getAlter() == 1) musicString.append("#");
-//				else if(note.getPitch().getAlter() == -1) musicString.append("b");
-//			}
-//			musicString.append(note.getPitch().getOctave() +" R3 L1");
-//	        int PW = 8192; // Default Pitch Bend
-//	        int steps=250;  // Let us consider 250 steps in one semitone
-//	        double duration = 0.25/steps;  // Duration of each step
-//	        int PWValue=8192/steps;        // This is the value of pitch bend to be changed gradually
-//	        for(int i=0;i<steps;i++) // S1 to R1
-//	        {
-//	             PW=PW+PWValue;
-//	             musicString.append(" R/"+duration +" :PW("+PW+") ");
-//	        }
-	      
-		double time;
-		if(note.getType().equals("half")) time = 0.5;
-		else time = 0.25;
-		
-		int PB = 8192; // Default Pitch Bend
-		int steps=20; // Let us consider 20 steps in one semitone
-		double duration = time/steps; // Duration of each step
-		int PWValue=8192/steps; // This is the value of pitch bend to be changed gradually
-		
-		if(note.getNotations() != null && note.getNotations().getTechnical() != null
-				&& note.getNotations().getTechnical().getBend() != null) {
-			double bendalter = note.getNotations().getTechnical().getBend().getBendAlter();
-			PWValue = 8192/(int)(steps/(2*bendalter));
-		}
-//		if(isInChord) musicString.append("");
-//		else {
-		
-//			musicString.append("x "+note.getPitch().getStep());
-//			
-//			if(note.getPitch().getAlter() != null) {
-//				if(note.getPitch().getAlter() == 1) musicString.append("#");
-//				else if(note.getPitch().getAlter() == -1) musicString.append("b");
-//			}
-//			musicString.append(note.getPitch().getOctave());
-			musicString.append("+");
-			
-	//	}
-//			for(int i=0;i<(steps/4);i++) 
-//			{
-//				musicString.append("R/"+duration +" :PW("+PB+") ");
-//			}
-//		for(int i=0;i<(steps/2);i++) // S1 to R1
-//		{
-//		PB+=PWValue;
-//		musicString.append("R/"+duration +" :PW("+PB+") ");
-//		}
-//		musicString.append(":PW(8192) ");
-//		System.out.println(PWValue);
-			
-			for(int i=0;i<(steps*0.25);i++) 
-			{
-				musicString.append("R/"+duration +" :PW("+PB+") ");
-			}
-			if(PWValue == 1638) PB = 8190;
-			else if(PWValue == 819) PB=4914;
-		for(int i=0;i<(steps*0.8);i++) // S1 to R1
-		{
-		PB+=PWValue;
-		musicString.append("R/"+duration +" :PW("+PB+") ");
-		}
-		//musicString.append(":PW(40952) ");
-		musicString.append(":PW(8192) ");
-		System.out.println(PWValue);
-	//	musicString.append("V1 I25 Rh");
-		return musicString.toString();
-	}
-	
-	private int index=-1;
-	private void addSlur(StringBuilder musicString, Note note) {
-		int indextoCheck = musicString.length() - 1; 
-		String current=""; boolean sameNote = false;
-		if(note.getNotations() != null && note.getNotations().getSlurs() != null) {
-			//This loop looks for the position of the last note in the music string
-			for(int i = 1; i <= 10; i++) {
-				current+=musicString.charAt(musicString.length()-i);
-				if(note.getPitch().getStep().equals(current)) {
-					indextoCheck = musicString.length() - i;
-					break;
-				}
-				current="";
-			}
-			for(Slur slur : note.getNotations().getSlurs()) {
-				if(slur != null && (slur.getType().equals("stop"))) {
-					sameNote = true;
-					
-				}
-				else if(slur.getType().equals("start") && sameNote) {
-					musicString.replace(index-1, index, "o");
-					for(int i=indextoCheck; i<musicString.length(); i++) {
-						if(musicString.charAt(i) == getNoteDuration(note)) {
-							musicString.replace(i, i + 1, "o");
-							break;
-						}
-					}
-					index=-1;
-					sameNote=false;
-				}
-			}
-		}
-		
-		 if(note.getNotations() != null && note.getNotations().getSlurs() != null) {
-			for(Slur slur : note.getNotations().getSlurs()) {
-				 if(slur != null && (slur.getType().equals("start"))) {
-					index=musicString.length();
-					break;
-				}
-			}
-			
-		}
-	}
 }
