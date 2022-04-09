@@ -244,6 +244,10 @@ public class PreviewViewController extends Application {
 	}
 	@FXML
 	public void reset() throws TXMLException {
+		if (linkedPlayer!=null){
+			linkedPlayer.stop();
+		}
+		playButton.setSelected(false);
 		VConfig.getInstance().initDefaultConfig();
 		this.visualizer = new Visualizer(mvc.converter.getScore());
 		this.linkedPlayer = new LinkedPlayer(mvc.converter.getScore());

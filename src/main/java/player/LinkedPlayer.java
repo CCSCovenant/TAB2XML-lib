@@ -72,7 +72,11 @@ public class LinkedPlayer {
 		player.delayPlay(0,pattern);
 	}
 	public void stop(){
-		player.getManagedPlayer().finish();
-		playMonitor.stopPlaying();
+		if (player!=null){
+			player.getManagedPlayer().finish();
+		}
+		if (playMonitor!=null){
+			playMonitor.stopPlaying();
+		}
 	}
 }
