@@ -250,6 +250,12 @@ public class MXLParser {
 
 	public static char getNoteDurationType(Note note) {
 		if (note.getType()!=null){
+			boolean graceSlur = note.getGrace() != null && note.getNotations() != null && note.getNotations().getSlurs() != null;	
+			boolean noteSlur = note.getNotations() != null && note.getNotations().getSlurs() != null
+					&& note.getNotations().getSlurs().size() > 1 && note.getNotations().getSlurs().get(1).getType().equals("start");
+					
+			if(noteSlur || graceSlur) {return 'o';}
+
 			if(note.getType().equals("whole")) { return 'w'; }
 			else if(note.getType().equals("half")) { return 'h'; }
 			else if(note.getType().equals("quarter")) { return 'q'; }
@@ -264,6 +270,10 @@ public class MXLParser {
 	public static double getNoteDuration(Note note){
 		double duration = 1;
 		if (note.getType()!=null){
+			boolean graceSlur = note.getGrace() != null && note.getNotations() != null && note.getNotations().getSlurs() != null;	
+			boolean noteSlur = note.getNotations() != null && note.getNotations().getSlurs() != null
+					&& note.getNotations().getSlurs().size() > 1 && note.getNotations().getSlurs().get(1).getType().equals("start");
+
 			if(note.getType().equals("whole")) { duration = 1; }
 			else if(note.getType().equals("half")) { duration = 0.5; }
 			else if(note.getType().equals("quarter")) { duration = 0.25; }
@@ -273,6 +283,7 @@ public class MXLParser {
 			else if(note.getType().equals("64th")) { duration = 0.015625;; }
 			else if(note.getType().equals("128th")) { duration = 0.0078125; }
 			else { duration = 0.25; }
+			if(noteSlur || graceSlur) {duration = 0.0078125;}
 		} else { duration = 0.25; }
 		if (note.getDots()!=null){
 			double k = 2;
