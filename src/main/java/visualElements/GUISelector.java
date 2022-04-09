@@ -1,8 +1,6 @@
 package visualElements;
 
 import GUI.Sidebar;
-import player.MXLPlayer;
-import player.ThreadPlayer;
 
 /**
  * this class is a singleton class
@@ -45,10 +43,6 @@ public class GUISelector {
 			if (vElement!=null){
 				sidebar.update(vElement);
 				if (vElement instanceof VNoteHead){
-					ThreadPlayer player = new ThreadPlayer("singleNoteThread");
-					String musicString = MXLPlayer.getNoteDetails(((VNoteHead) vElement).getNote());
-					System.out.println(musicString);
-					player.start(musicString);
 				}
 				vElement.setHighLight(HighLight.SELECTED);
 			}

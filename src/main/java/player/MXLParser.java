@@ -10,90 +10,47 @@ import models.measure.note.Dot;
 import models.measure.note.Note;
 import models.measure.note.notations.Slur;
 import models.measure.note.notations.Tied;
-import models.part_list.ScorePart;
-import org.jfugue.player.Player;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-public class MXLPlayer{
-	private ScorePartwise score; private List<Note> notes= new ArrayList<>(); List<Measure> scoreMeasure= new ArrayList<>();
+public class MXLParser {
+	private ScorePartwise score;
+	private List<Note> notes= new ArrayList<>();
+	List<Measure> scoreMeasure= new ArrayList<>();
 	private String clef;
-	private Player player = new Player();
-	private HashMap<String,ScorePart> scorePartMap = new HashMap<>();
-	public MXLPlayer(Score score) throws TXMLException {
-		this.score = score.getModel();						
-		initPartList();
+	List<String> measureMapping;
+	public MXLParser(Score score) throws TXMLException {
+		this.score = score.getModel();
+		initStrings();
 	}
-	public MXLPlayer(){ }
 	public List<Note> getNotes(){ return notes; }
 	public List<Measure> getMeasure() { return scoreMeasure; }
-	/**
-	 * this method will play music from given duration.
-	 * @param partID which part should player start
-	 * @param measureID which measure should player start
-	 * @param duration  when should player start in a measure.
-	 * */
-	public void play(int partID,int measureID, int duration){
-		StringBuilder musicString = new StringBuilder();
-		int partCount = 0;
-		for (Part part:score.getParts()){
-			if (partCount>partID){
-				musicString.append(getPart(part,-1,-1));
-			}else if (partCount==partID){
-				musicString.append(getPart(part,measureID,duration));
-			}
-			partCount++;
-		}
-		ThreadPlayer threadPlayer = new ThreadPlayer("player-1");
-		threadPlayer.start(musicString.toString());
+	public List<String> getMeasureMapping() {
+		return measureMapping;
 	}
-	public String getString(int partID,int measureID, int duration){
-		StringBuilder musicString = new StringBuilder();
-		int partCount = 0;
+	public void initStrings(){
+		measureMapping = new ArrayList<>();
 		for (Part part:score.getParts()){
-			if (partCount>partID){
-				musicString.append(getPart(part,-1,-1));
-			}else if (partCount==partID){
-				musicString.append(getPart(part,measureID,duration));
-			}
-			partCount++;
+			initPart(part,measureMapping);
 		}
-		return musicString.toString();
 	}
-	public void initPartList(){
-		List<ScorePart> list = score.getPartList().getScoreParts();
-		for (ScorePart scorePart:list){
-			scorePartMap.put(scorePart.getId(),scorePart);
-		}
-	}private int measures=0;boolean partOfRepeat = false;
-	public String getPart(Part part,int measureID, int duration){
-		StringBuilder musicString = new StringBuilder(); 
-		List<Measure> repeats = new ArrayList<>(); 				
-		
-			int measureCount = 0; 								measures=part.getMeasures().size();
+	private int measures=0;boolean partOfRepeat = false;
+	public void initPart(Part part,List<String> measureMapping){
+			List<Measure> repeats = new ArrayList<>();
+			measures=part.getMeasures().size();
 			for (Measure measure:part.getMeasures()){	scoreMeasure.add(measure);
-				if (measureCount>measureID){
-					musicString.append(getMeasure(measure,part.getId(),-1));
-					musicString.append(getRepeats(part, measure, -1,repeats));
-				}else if (measureCount==measureID){
-					musicString.append(getMeasure(measure,part.getId(),duration));
-					musicString.append(getRepeats(part, measure, duration,repeats));
-				}
-				measureCount++;
+				StringBuilder musicString = new StringBuilder();
+				musicString.append(getMeasure(measure));
+				musicString.append(getRepeats(measure,repeats));
+				measureMapping.add(musicString.toString());
 			}
-
-		return musicString.toString();
 	}private int m_count = 0;
-	public String getMeasure(Measure measure,String partID,int duration){
+	public String getMeasure(Measure measure){
 		StringBuilder musicString = new StringBuilder();
-		int durationCount = 0;
 		if (measure.getNotesBeforeBackup()!=null){m_count++;
-			for(Note note: measure.getNotesBeforeBackup()) {if(m_count<=measures) {notes.add(note);}
-				if (durationCount < duration) {
-					durationCount += note.getDuration();
-				} else {
+			for(Note note: measure.getNotesBeforeBackup()) {
+				if(m_count<=measures) {notes.add(note);}
 					if (note.getChord() == null && musicString.length() > 0 && musicString.charAt(musicString.length() - 1) == '+') {
 						musicString.deleteCharAt(musicString.length() - 1);
 						musicString.append(" ");
@@ -161,7 +118,7 @@ public class MXLPlayer{
 						}
 					}
 				}			
-			}
+
 
 		}
 		return musicString.toString();
@@ -271,7 +228,7 @@ public class MXLPlayer{
 			
 		}
 	}
-	private String getRepeats(Part part,Measure measure, int duration, List<Measure> repeats) {
+	private String getRepeats(Measure measure, List<Measure> repeats) {
 		/* Method checks whether the measure or group of measures is repeated then 
 		 * appends the repeats to the musicString
 		 */
@@ -303,7 +260,7 @@ public class MXLPlayer{
 						int times = Integer.parseInt(barline.getRepeat().getTimes());
 						for(int i = 1; i < times; i++) {
 							for(Measure currentMeasure: repeats) {measures++;
-								musicString.append(getMeasure(currentMeasure,part.getId(),duration));
+								musicString.append(getMeasure(currentMeasure));
 							}
 						}
 						

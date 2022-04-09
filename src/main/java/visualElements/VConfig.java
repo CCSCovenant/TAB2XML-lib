@@ -29,6 +29,7 @@ public class VConfig {
 		globalConfig.put("MinNoteDistance",20d);
 		globalConfig.put("MeasureDistance",150d);
 		globalConfig.put("defaultControlPoint",10d);
+		globalConfig.put("tempo",60d);
 
 	}
 

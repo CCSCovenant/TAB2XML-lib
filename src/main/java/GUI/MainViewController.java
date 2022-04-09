@@ -16,7 +16,6 @@ import javafx.stage.*;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
-import player.ThreadPlayer;
 import utility.Range;
 import utility.Settings;
 
@@ -324,10 +323,6 @@ public class MainViewController extends Application {
 			convertWindow.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				@Override
 				public void handle(WindowEvent event) {
-					if (PreviewViewController.thp!=null){
-						PreviewViewController.thp = new ThreadPlayer("0");
-						PreviewViewController.thp.start("");
-					}
 					System.out.println("close");
 				}
 			});

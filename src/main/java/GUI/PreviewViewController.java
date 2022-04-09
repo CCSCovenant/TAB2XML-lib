@@ -34,8 +34,8 @@ import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
-import player.MXLPlayer;
-import player.ThreadPlayer;
+import player.LinkedPlayer;
+import player.MXLParser;
 import utility.SwingFXUtils;
 import visualElements.GUISelector;
 import visualElements.VConfig;
@@ -44,6 +44,8 @@ import visualizer.ImageResourceHandler;
 import visualizer.Visualizer;
 
 import javax.imageio.ImageIO;
+import javax.sound.midi.InvalidMidiDataException;
+import javax.sound.midi.MidiUnavailableException;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -66,10 +68,10 @@ public class PreviewViewController extends Application {
 	private MainViewController mvc;
 	private int pageNumber = 0;
 	private Visualizer visualizer;
-	private MXLPlayer player;
+	private MXLParser player;
 	HashMap<Integer, Pair<Integer,Integer>> measureMapping;
 
-	public static ThreadPlayer thp;
+	public LinkedPlayer linkedPlayer;
 	public Scene scene;
 	public ArrayList<Group> groups;
 	public void setMainViewController(MainViewController mvcInput) {
@@ -80,10 +82,11 @@ public class PreviewViewController extends Application {
 	}
 	public void update() throws TXMLException, FileNotFoundException, URISyntaxException {
 		this.visualizer = new Visualizer(mvc.converter.getScore());
+		this.linkedPlayer = new LinkedPlayer(mvc.converter.getScore());
 		groups = visualizer.getElementGroups();
 		measureMapping = visualizer.getMeasureMapping();
 		sidebar = new Sidebar(this);
-
+		player = new MXLParser(mvc.converter.getScore());
 		sidebar.initialize(drawer, hamburger);
 		GUISelector.getInstance().setSidebar(sidebar);
 		goToPage(0);
@@ -236,10 +239,9 @@ public class PreviewViewController extends Application {
 		}
 	}
 	@FXML
-	private void playHandler(){
-		String s = player.getString(-1,-1,-1);
-		thp = new ThreadPlayer("music-thread");thp.addXMLPlayer(player);
-		thp.start(s);
+	private void playHandler() throws InvalidMidiDataException, MidiUnavailableException, InterruptedException {
+		linkedPlayer.play(0);
+
 	}
 	private void goToPage(int page)  {
 		if (0<=page&&page<groups.size()){
