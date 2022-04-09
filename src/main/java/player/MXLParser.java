@@ -120,7 +120,7 @@ public class MXLParser {
 		}
 		List<Double> durationM = new ArrayList<>();
 		for (List<Note> noteGroup:Notes){
-			Pair<String,Double> notePair = getNoteDetails(noteGroup,clef,time);
+			Pair<String,Double> notePair = getNoteDetails(noteGroup,clef);
 			musicString.append(notePair.getKey());
 			durationM.add(notePair.getValue());
 		}
@@ -128,7 +128,8 @@ public class MXLParser {
 		return musicString.toString();
 	}
 	
-	public static Pair<String,Double> getNoteDetails(List<Note> notes, String clef, Time time) {
+	public static Pair<String,Double> getNoteDetails(List<Note> notes, String clef) {
+		Time time = new Time(4,4);
 		StringBuilder musicString = new StringBuilder();
 		String voice = "";
 		String chord = "";
@@ -195,7 +196,57 @@ public class MXLParser {
 		musicString.append(" ");
 		return new Pair<String,Double>(musicString.toString(),Duration_Total);
 	}
-	
+
+	public static String getSingleNote(Note note, String clef) {
+		StringBuilder musicString = new StringBuilder();
+		String voice = "";
+		String chord = "";
+		String instrument = "";
+		String startTie = "";
+		String Duration = "";
+		String Alter = "";
+		String Dots = "";
+		String endTie = "";
+
+		//unpitched notes are generally used in music that contain a percussion clef
+		//We need to use the appropriate voice for percussive notes (V9)
+		if (clef.equals("TAB")){
+			voice = "V1 I25";
+		}else {
+			voice = "V9";
+		}
+		musicString.append(voice+" ");
+
+			if (note.getRest()!=null){
+				Duration = "R"+getNoteDurationType(note)+"";
+			}else {
+				if (clef.equals("TAB")){
+					Duration = note.getPitch().getStep();
+					if(note.getPitch().getAlter() != null) {
+						if(note.getPitch().getAlter() == 1){ Duration += "#";}
+						else if(note.getPitch().getAlter() == -1) {Duration += "#";}
+					}
+					Duration += note.getPitch().getOctave();
+					Duration += getNoteDurationType(note)+"";
+				}else {
+					Duration = getNoteDurationType(note)+"";
+				}
+				if(note.getInstrument() == null || note.getInstrument().getId().equals("")) {
+
+				}//instruments for percussive notes are in the form '[name_of_instrument]'
+				else { instrument = "[" + getInstrument(note.getInstrument().getId()) + "]";
+				}
+			}
+			//add dots;
+			if (note.getDots()!=null){
+				for (Dot dot:note.getDots()){
+					Dots +=".";
+				}
+			}
+			musicString.append(chord+""+instrument+""+startTie+""+Duration+Alter+Dots+""+endTie);
+		musicString.append(" ");
+		return musicString.toString();
+	}
 
 	public static char getNoteDurationType(Note note) {
 		if (note.getType()!=null){

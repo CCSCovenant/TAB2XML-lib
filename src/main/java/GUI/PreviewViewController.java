@@ -14,10 +14,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.SnapshotParameters;
-import javafx.scene.control.Button;
-import javafx.scene.control.ScrollPane;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.SpinnerValueFactory;
+import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.image.WritableImage;
 import javafx.scene.input.KeyCode;
@@ -59,6 +56,9 @@ public class PreviewViewController extends Application {
 	@FXML Button refresh;
 	@FXML private JFXHamburger hamburger;
 	@FXML private JFXDrawer drawer;
+	@FXML ToggleButton playButton;
+	@FXML ToggleButton repeatButton;
+	@FXML Spinner tempoAdjust;
 	Sidebar sidebar;
 	private static Window convertWindow = new Stage();
 
@@ -80,6 +80,11 @@ public class PreviewViewController extends Application {
 		this.scene = scene;
 		this.stage =stage;
 	}
+
+	public LinkedPlayer getLinkedPlayer() {
+		return linkedPlayer;
+	}
+
 	public void update() throws TXMLException, FileNotFoundException, URISyntaxException {
 		reset();
 		sidebar = new Sidebar(this);
@@ -91,6 +96,8 @@ public class PreviewViewController extends Application {
 		initPageHandler(groups.size());
 		initMeasureHandler(visualizer.getMeasureCounter());
 		initRefresh();
+		initToggleIcon();
+		initTempoSpinner();
 		//goToPage(pageNumber);
 	}
 	private void initRefresh(){
@@ -111,6 +118,32 @@ public class PreviewViewController extends Application {
 		refresh.setOnMouseExited(e->rotate.pause());
 		refresh.setOnMouseClicked(e->fade.play());
 	}
+	private void initToggleIcon(){
+		ImageView playIcon = new ImageView(ImageResourceHandler.getInstance().getImage("play"));
+		playIcon.setFitWidth(30);
+		playIcon.setFitHeight(30);
+		Tooltip playTooltip = new Tooltip("Select to play music, unselect to stop music");
+		ImageView repeatIcon = new ImageView(ImageResourceHandler.getInstance().getImage("enableRepeat"));
+		repeatIcon.setFitWidth(30);
+		repeatIcon.setFitHeight(30);
+		Tooltip repeatTooltip = new Tooltip("Select to enable repeat, unselect to disable repeat");
+
+		playButton.setGraphic(playIcon);
+		playButton.setTooltip(playTooltip);
+		repeatButton.setGraphic(repeatIcon);
+		repeatButton.setTooltip(repeatTooltip);
+	}
+	private void initTempoSpinner(){
+		tempoAdjust.setEditable(true);
+		tempoAdjust.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(0, 240, 120));
+		tempoAdjust.valueProperty().addListener(new ChangeListener<Integer>() {
+			@Override
+			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
+				VConfig.getInstance().updateConfig("tempo",newValue);
+			}
+		});
+
+	}
 	private void initPageHandler(int max_page){
 		pageSpinner.setEditable(true);
 		pageSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, max_page, 1));
@@ -128,14 +161,13 @@ public class PreviewViewController extends Application {
 		measureSpinner.valueProperty().addListener(new ChangeListener<Integer>() {
 			@Override
 			public void changed(ObservableValue<? extends Integer> observable, Integer oldValue, Integer newValue) {
-				goToMeasure(newValue);
+				GUISelector.getInstance().setSElement(goToMeasure(newValue));
 			}
 		});
 	}
-	private void goToMeasure(int measureNumber){
+	public VMeasure goToMeasure(int measureNumber){
 		Pair<Integer,Integer> localPart = measureMapping.get(measureNumber);
 		VMeasure measure = visualizer.getVMeasures().get(measureNumber-1);
-		GUISelector.getInstance().setSElement(measure);
 		double YPos = measure.getVLine().getShapeGroups().getLayoutY() - VConfig.getInstance().getGlobalConfig("MeasureDistance");
 		double XPos = measure.getShapeGroups().getLayoutX();
 		double PageX = VConfig.getInstance().getGlobalConfig("PageX");
@@ -156,7 +188,7 @@ public class PreviewViewController extends Application {
 		goToPage(pageNumber);
 		scrollView.setVvalue(scrollView.getVmax()*factorY);
 		scrollView.setHvalue(scrollView.getHmax()*factorX);
-
+		return measure;
 	}
 	private void initEvents(AnchorPane anchorPane){
 		KeyCombination zoomOut = new KeyCodeCombination(KeyCode.PAGE_DOWN,KeyCombination.CONTROL_DOWN);
@@ -215,11 +247,15 @@ public class PreviewViewController extends Application {
 		VConfig.getInstance().initDefaultConfig();
 		this.visualizer = new Visualizer(mvc.converter.getScore());
 		this.linkedPlayer = new LinkedPlayer(mvc.converter.getScore());
+		linkedPlayer.setController(this);
 		groups = visualizer.getElementGroups();
 		measureMapping = visualizer.getMeasureMapping();
 		linkedPlayer.setVMeasures(visualizer.getVMeasures());
 		goToPage(pageNumber);
 		initPageHandler(groups.size());
+	}
+	public void RestPlayButton(){
+		playButton.setSelected(false);
 	}
 	public void apply() {
 		try {
@@ -239,20 +275,28 @@ public class PreviewViewController extends Application {
 		}
 	}
 	@FXML
+	private void setRepeat(){
+		VConfig.getInstance().setEnableRepeat(repeatButton.isSelected());
+	}
+	@FXML
 	private void playHandler() throws InvalidMidiDataException, MidiUnavailableException, InterruptedException {
-		if (GUISelector.getInstance().getSElement()==null){
-			linkedPlayer.play(0);
-		}else {
-			VElement vElement = GUISelector.getInstance().getSElement();
-			int measureNumber = 0;
-			if (vElement instanceof VMeasure){
-				measureNumber = ((VMeasure) vElement).getNumber()-1;
-			}else if (vElement instanceof VNote){
-				measureNumber = ((VNote) vElement).getParentMeasure().getNumber()-1;
-			}else if (vElement instanceof VNoteHead){
-				measureNumber = ((VNoteHead) vElement).getParentNote().getParentMeasure().getNumber()-1;
+		if (playButton.isSelected()){
+			if (GUISelector.getInstance().getSElement()==null){
+				linkedPlayer.play(0);
+			}else {
+				VElement vElement = GUISelector.getInstance().getSElement();
+				int measureNumber = 0;
+				if (vElement instanceof VMeasure){
+					measureNumber = ((VMeasure) vElement).getNumber()-1;
+				}else if (vElement instanceof VNote){
+					measureNumber = ((VNote) vElement).getParentMeasure().getNumber()-1;
+				}else if (vElement instanceof VNoteHead){
+					measureNumber = ((VNoteHead) vElement).getParentNote().getParentMeasure().getNumber()-1;
+				}
+				linkedPlayer.play(measureNumber);
 			}
-			linkedPlayer.play(measureNumber);
+		}else {
+			linkedPlayer.stop();
 		}
 	}
 	private void goToPage(int page)  {

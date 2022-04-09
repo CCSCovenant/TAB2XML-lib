@@ -164,5 +164,15 @@
     "name": "refresh",
     "url": "graphic/Refresh_icon.png",
     "id": "refresh"
+  },
+  {
+    "name": "play_icon",
+    "url": "graphic/play.png",
+    "id": "play"
+  },
+  {
+    "name": "repeat_icon",
+    "url": "graphic/enableRepeat.png",
+    "id": "enableRepeat"
   }
 ]

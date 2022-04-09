@@ -323,6 +323,7 @@ public class MainViewController extends Application {
 			convertWindow.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				@Override
 				public void handle(WindowEvent event) {
+					previewViewController.getLinkedPlayer().stop();
 					System.out.println("close");
 				}
 			});

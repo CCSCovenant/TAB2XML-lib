@@ -1,5 +1,7 @@
 package player;
 
+import GUI.PreviewViewController;
+import javafx.application.Platform;
 import javafx.util.Pair;
 import visualElements.PlayingSelector;
 import visualElements.VMeasure;
@@ -16,14 +18,22 @@ public class PlayMonitor extends Thread{
 	List<List<Double>> durations;
 	int measure = 0;
 	int note = -1;
+	boolean shouldPlay = true;
+	PreviewViewController controller;
 	public PlayMonitor(String name) {
 		this.threadName = name;
+	}
+
+	public void setController(PreviewViewController controller) {
+		this.controller = controller;
 	}
 
 	public void setDurations(List<List<Double>> durations) {
 		this.durations = durations;
 	}
-
+	public void stopPlaying(){
+		shouldPlay = false;
+	}
 	public void setMeasure(int measure) {
 		this.measure = measure;
 	}
@@ -50,7 +60,7 @@ public class PlayMonitor extends Thread{
 	public void run(){
 		long last = System.currentTimeMillis();
 		long GDuration =0;
-		while (true){
+		while (shouldPlay){
 			if (playNextNote()){
 				try {
 					double duration = durations.get(measure).get(note);
@@ -67,6 +77,7 @@ public class PlayMonitor extends Thread{
 				break;
 			}
 		}
+		controller.RestPlayButton();
 		PlayingSelector.getInstance().setPlayingElement(null);
 	}
 	public boolean playNextNote(){
@@ -78,11 +89,18 @@ public class PlayMonitor extends Thread{
 			}else {
 				note = 0;
 				VNote vNote = measures.get(MusicStrings.get(measure).getKey()-1).getNotes().get(note);
+				Platform.runLater(() -> {
+					controller.goToMeasure(MusicStrings.get(measure).getKey());
+				});
 				PlayingSelector.getInstance().setPlayingElement(vNote);
 				return true;
 			}
 		}else {
 			VNote vNote = measures.get(MusicStrings.get(measure).getKey()-1).getNotes().get(note);
+
+			Platform.runLater(() -> {
+				controller.goToMeasure(MusicStrings.get(measure).getKey());
+			});
 			PlayingSelector.getInstance().setPlayingElement(vNote);
 			return true;
 		}

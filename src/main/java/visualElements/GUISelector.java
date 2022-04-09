@@ -1,6 +1,8 @@
 package visualElements;
 
 import GUI.Sidebar;
+import org.jfugue.player.Player;
+import player.MXLParser;
 
 /**
  * this class is a singleton class
@@ -45,6 +47,11 @@ public class GUISelector {
 			}
 			vElement = sElement;
 			sidebar.update(vElement);
+			if (vElement instanceof VNoteHead){
+				Player player = new Player();
+
+				player.delayPlay(0, MXLParser.getSingleNote(((VNoteHead) vElement).getNote(),VConfig.getInstance().instrument));
+			}
 			if (vElement!=null){
 				if (vElement.getConfigAbleList().size()>0){
 					sidebar.openDrawer();

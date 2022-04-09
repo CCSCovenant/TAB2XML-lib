@@ -1,5 +1,6 @@
 package player;
 
+import GUI.PreviewViewController;
 import converter.Score;
 import custom_exceptions.TXMLException;
 import javafx.util.Pair;
@@ -18,6 +19,9 @@ public class LinkedPlayer {
 	List<Pair<Integer,String>> fullMusicWithRepeat;
 	List<Integer> firstPosition;
 	List<VMeasure> measures;
+	Player player;
+	PreviewViewController controller;
+
 	public LinkedPlayer(Score score) throws TXMLException {
 		MXLParser parser = new MXLParser(score);
 		partMusicWithOutRepeat = parser.getMeasureMapping();
@@ -26,6 +30,11 @@ public class LinkedPlayer {
 		fullDurationsWithRepeat =parser.getFullDurationsWithRepeat();
 		firstPosition = parser.getFirstPosition();
 	}
+
+	public void setController(PreviewViewController controller) {
+		this.controller = controller;
+	}
+
 	public void setVMeasures(List<VMeasure> measures){
 		this.measures = measures;
 	}
@@ -34,9 +43,11 @@ public class LinkedPlayer {
 		boolean shouldRepeat = VConfig.getInstance().getEnableRepeat();
 		List<Pair<Integer,String>> musicStringData;
 		List<List<Double>> durationData;
+		int startPos = measureNumber;
 		if (shouldRepeat){
 			musicStringData = fullMusicWithRepeat;
 			durationData = fullDurationsWithRepeat;
+			startPos = firstPosition.get(measureNumber);
 		}else {
 			musicStringData = partMusicWithOutRepeat;
 			durationData = durations;
@@ -46,8 +57,7 @@ public class LinkedPlayer {
 		playMonitor.setTempo(tempo);
 		playMonitor.setDurations(durationData);
 		playMonitor.setMusicStrings(musicStringData);
-
-		int startPos = firstPosition.get(measureNumber);
+		playMonitor.setController(controller);
 
 		Pattern pattern = new Pattern();
 		for (int i=startPos;i<musicStringData.size();i++){
@@ -56,11 +66,13 @@ public class LinkedPlayer {
 		pattern.setTempo(tempo);
 
 		playMonitor.setMeasure(startPos);
-
-		Player player = new Player();
+		player = new Player();
 
 		playMonitor.start();
 		player.delayPlay(0,pattern);
-
+	}
+	public void stop(){
+		player.getManagedPlayer().finish();
+		playMonitor.stopPlaying();
 	}
 }

@@ -36,10 +36,10 @@
                             </padding>
                             <children>
                         <HBox prefHeight="29.0" prefWidth="4.0" />
-                        <ToggleButton mnemonicParsing="false" text="ToggleButton" />
-                        <ToggleButton mnemonicParsing="false" text="ToggleButton" />
+                        <ToggleButton fx:id="playButton" mnemonicParsing="false" onAction="#playHandler" text="ToggleButton" />
+                        <ToggleButton fx:id="repeatButton" mnemonicParsing="false" onAction="#setRepeat" text="ToggleButton" />
                         <Label text="Label" />
-                        <Spinner />
+                        <Spinner fx:id="tempoAdjust" />
                                 <Button fx:id="saveMXLButton" disable="false" mnemonicParsing="false" onAction="#exportPDFHandler" prefHeight="28.0" prefWidth="88.0" text="Export PDF">
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
