@@ -7,6 +7,7 @@ import models.ScorePartwise;
 import models.measure.Measure;
 import models.measure.barline.BarLine;
 import models.measure.note.Note;
+import models.measure.note.notations.Tied;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -110,9 +111,14 @@ public class MXLParser {
 	
 	public static String getNoteDetails(List<Note> notes,String clef) {
 		StringBuilder musicString = new StringBuilder();
-		String voice;
-		String chord="";
-		String instrument;
+		String voice = "";
+		String chord = "";
+		String instrument = "";
+		String startTie = "";
+		String Duration = "";
+		String Alter = "";
+		String endTie = "";
+
 		
 		//unpitched notes are generally used in music that contain a percussion clef
 		//We need to use the appropriate voice for percussive notes (V9）
@@ -125,24 +131,37 @@ public class MXLParser {
 		musicString.append(voice+" ");
 
 		for (Note note:notes){
-			if (note.getChord()!=null){
-				chord = "+";
+			if (note.getRest()!=null){
+				Duration = "R"+getNoteDuration(note)+"";
+			}else {
+				if (note.getChord()!=null){
+					chord = "+";
+				}
+				Duration = getNoteDuration(note)+"";
+				if (note.getNotations()!=null){
+					for (Tied tied:note.getNotations().getTieds()){
+						if (tied.getType().equals("start")){
+							endTie = "-";
+						}
+						if (tied.getType().equals("stop")){
+							startTie = "-";
+						}
+					}
+				}
+				if(note.getInstrument() == null || note.getInstrument().getId().equals("")) {
+					instrument = "I25";
+				}//instruments for percussive notes are in the form '[name_of_instrument]'
+				else { instrument = "[" + getInstrument(note.getInstrument().getId()) + "]";
+				}
 			}
-
-			if(note.getInstrument() == null || note.getInstrument().getId().equals("")) {
-				instrument = "I25";
-			}//instruments for percussive notes are in the form '[name_of_instrument]'
-			else { instrument = "[" + getInstrument(note.getInstrument().getId()) + "]";
-			}
-
-			musicString.append(voice + " " + instrument + " ");
+			musicString.append(chord+""+instrument+""+startTie+""+Duration+Alter+""+endTie+" ");
 		}
 		
 		return musicString.toString();
 	}
 	
 
-	public char getNoteDuration(Note note) {
+	public static char getNoteDuration(Note note) {
 		if (note.getType()!=null){
 			if(note.getType().equals("whole")) { return 'w'; }
 			else if(note.getType().equals("half")) { return 'h'; }
