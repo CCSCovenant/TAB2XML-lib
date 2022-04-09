@@ -11,6 +11,7 @@ public class VConfig {
 	public Color highLightColor;
 	public Color defaultColor;
 	public Color backGroundColor;
+	public Color playColor;
 	public List<Integer> staffDetail;
 	public String instrument;
 	public boolean enableRepeat;
@@ -22,6 +23,7 @@ public class VConfig {
 		backGroundColor = Color.ALICEBLUE;
 		highLightColor = Color.BLUEVIOLET;
 		defaultColor = Color.BLACK;
+		playColor = Color.PALEVIOLETRED;
 		enableRepeat = true;
 		globalConfig.put("PageX",1224d);
 		globalConfig.put("PageY",1584d);
@@ -76,7 +78,7 @@ public class VConfig {
 	}
 
 	public Color getPlayColor(){
-		return highLightColor;
+		return playColor;
 	}
 
 	public void setHighLightColor(Color highLightColor) {

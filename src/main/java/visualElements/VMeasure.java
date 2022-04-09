@@ -285,7 +285,11 @@ public class VMeasure extends VElement{
 		for (VBarline vBarline:barlines){
 			vBarline.alignment();
 			if (vBarline.location.equals("right")){
-				vBarline.getShapeGroups().setLayoutX(W-vBarline.getConfigAbleList().get("distanceBetweenLine"));
+				if (!vBarline.getStyle().equals("default")){
+					vBarline.getShapeGroups().setLayoutX(W-vBarline.getConfigAbleList().get("distanceBetweenLine"));
+				}else {
+					vBarline.getShapeGroups().setLayoutX(W);
+				}
 			}else {
 				vBarline.getShapeGroups().setLayoutX(0);
 			}

@@ -35,6 +35,7 @@ public class VBarline extends VElement{
 				break;
 			default:
 				group.getChildren().add(Lightline);
+				break;
 		}
 		if (repeat!=null){
 			if (repeat.getTimes()!=null){
@@ -43,6 +44,10 @@ public class VBarline extends VElement{
 				group.getChildren().add(circle);
 				group.getChildren().add(circle1);
 		}
+	}
+
+	public String getStyle() {
+		return style;
 	}
 
 	public void initConfig(){
@@ -98,8 +103,12 @@ public class VBarline extends VElement{
 				Hevayline.setEndY(length);
 				break;
 			default:
-				Lightline = new Line(0,0,0,length);
+				Lightline.setStartX(0);
+				Lightline.setEndX(0);
+				Lightline.setStartY(0);
+				Lightline.setEndY(length);
 				Lightline.setStrokeWidth(1);
+				break;
 		};
 		if (repeat!=null){
 			if (repeat.getTimes()!=null){

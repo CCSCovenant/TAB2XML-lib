@@ -37,9 +37,7 @@ import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import player.LinkedPlayer;
 import player.MXLParser;
 import utility.SwingFXUtils;
-import visualElements.GUISelector;
-import visualElements.VConfig;
-import visualElements.VMeasure;
+import visualElements.*;
 import visualizer.ImageResourceHandler;
 import visualizer.Visualizer;
 
@@ -163,7 +161,6 @@ public class PreviewViewController extends Application {
 		scrollView.setHvalue(scrollView.getHmax()*factorX);
 
 	}
-
 	private void initEvents(AnchorPane anchorPane){
 		KeyCombination zoomOut = new KeyCodeCombination(KeyCode.PAGE_DOWN,KeyCombination.CONTROL_DOWN);
 		KeyCombination zoomIn = new KeyCodeCombination(KeyCode.PAGE_UP,KeyCombination.CONTROL_DOWN);
@@ -243,7 +240,20 @@ public class PreviewViewController extends Application {
 	}
 	@FXML
 	private void playHandler() throws InvalidMidiDataException, MidiUnavailableException, InterruptedException {
-		linkedPlayer.play(0);
+		if (GUISelector.getInstance().getSElement()==null){
+			linkedPlayer.play(0);
+		}else {
+			VElement vElement = GUISelector.getInstance().getSElement();
+			int measureNumber = 0;
+			if (vElement instanceof VMeasure){
+				measureNumber = ((VMeasure) vElement).getNumber()-1;
+			}else if (vElement instanceof VNote){
+				measureNumber = ((VNote) vElement).getParentMeasure().getNumber()-1;
+			}else if (vElement instanceof VNoteHead){
+				measureNumber = ((VNoteHead) vElement).getParentNote().getParentMeasure().getNumber()-1;
+			}
+			linkedPlayer.play(measureNumber);
+		}
 	}
 	private void goToPage(int page)  {
 		if (0<=page&&page<groups.size()){

@@ -6,6 +6,7 @@ import javafx.util.Pair;
 import models.Part;
 import models.ScorePartwise;
 import models.measure.Measure;
+import models.measure.attributes.Time;
 import models.measure.barline.BarLine;
 import models.measure.note.Dot;
 import models.measure.note.Note;
@@ -91,10 +92,13 @@ public class MXLParser {
 	public List<Pair<Integer,String>> getFullMusicWithRepeat() {
 		return fullMusicWithRepeat;
 	}
-
+	Time time = new Time(4,4);
 	public String getMeasure(Measure measure){
 		if (measure.getAttributes()!=null&&measure.getAttributes().getClef()!=null){
 			clef = measure.getAttributes().getClef().getSign();
+		}
+		if (measure.getAttributes()!=null&&measure.getAttributes().getTime()!=null){
+			time = measure.getAttributes().getTime();
 		}
 		StringBuilder musicString = new StringBuilder();
 		List<List<Note>> Notes = new ArrayList<>();
@@ -116,7 +120,7 @@ public class MXLParser {
 		}
 		List<Double> durationM = new ArrayList<>();
 		for (List<Note> noteGroup:Notes){
-			Pair<String,Double> notePair = getNoteDetails(noteGroup,clef);
+			Pair<String,Double> notePair = getNoteDetails(noteGroup,clef,time);
 			musicString.append(notePair.getKey());
 			durationM.add(notePair.getValue());
 		}
@@ -124,7 +128,7 @@ public class MXLParser {
 		return musicString.toString();
 	}
 	
-	public static Pair<String,Double> getNoteDetails(List<Note> notes, String clef) {
+	public static Pair<String,Double> getNoteDetails(List<Note> notes, String clef, Time time) {
 		StringBuilder musicString = new StringBuilder();
 		String voice = "";
 		String chord = "";
@@ -186,7 +190,7 @@ public class MXLParser {
 				}
 			}
 			musicString.append(chord+""+instrument+""+startTie+""+Duration+Alter+Dots+""+endTie);
-			Duration_Total = Math.max(getNoteDuration(note),Duration_Total);
+			Duration_Total = Math.max(getNoteDuration(note)*time.getBeatType(),Duration_Total);
 		}
 		musicString.append(" ");
 		return new Pair<String,Double>(musicString.toString(),Duration_Total);
@@ -213,10 +217,10 @@ public class MXLParser {
 			else if(note.getType().equals("half")) { duration = 0.5; }
 			else if(note.getType().equals("quarter")) { duration = 0.25; }
 			else if(note.getType().equals("eighth")) { duration = 0.125; }
-			else if(note.getType().equals("16th")) { duration = 0.75;}
-			else if(note.getType().equals("32nd")) { duration = 0.375; }
-			else if(note.getType().equals("64th")) { duration = 0.1875;; }
-			else if(note.getType().equals("128th")) { duration = 0.09375; }
+			else if(note.getType().equals("16th")) { duration = 0.0625;}
+			else if(note.getType().equals("32nd")) { duration = 0.03125; }
+			else if(note.getType().equals("64th")) { duration = 0.015625;; }
+			else if(note.getType().equals("128th")) { duration = 0.0078125; }
 			else { duration = 0.25; }
 		} else { duration = 0.25; }
 		if (note.getDots()!=null){
