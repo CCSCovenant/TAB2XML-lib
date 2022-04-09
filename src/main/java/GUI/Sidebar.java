@@ -7,13 +7,15 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.geometry.Insets;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 import javafx.util.Pair;
-import visualElements.VElement;
+import visualElements.VConfig;
+import visualElements.VConfigAble;
 import visualElements.VUtility;
 
 import java.util.HashMap;
@@ -25,7 +27,7 @@ public class Sidebar {
 	private PreviewViewController controller;
 	JFXDrawer drawer;
 	JFXHamburger hamburger;
-
+	HamburgerNextArrowBasicTransition burgerTask2;
 	public Sidebar(PreviewViewController controller) {
 		this.controller = controller;
 		this.hboxMain = new HBox();
@@ -42,11 +44,10 @@ public class Sidebar {
 		this.hamburger = hamburger;
 		drawer.setSidePane(this.hboxMain);
 		drawer.setOverLayVisible(false);
-		HamburgerNextArrowBasicTransition burgerTask2 = new HamburgerNextArrowBasicTransition(hamburger);
+		burgerTask2 = new HamburgerNextArrowBasicTransition(hamburger);
 		burgerTask2.setRate(-1);
 		hamburger.addEventHandler(MouseEvent.MOUSE_PRESSED,(e)->{
-			burgerTask2.setRate(burgerTask2.getRate()*-1);
-			burgerTask2.play();
+
 			if(drawer.isOpened()) {
 				closeDrawer();
 			} else {
@@ -55,7 +56,10 @@ public class Sidebar {
 		});
 	}
 	public void openDrawer(){
+
 		if (!drawer.isOpened()){
+			burgerTask2.setRate(burgerTask2.getRate()*-1);
+			burgerTask2.play();
 			controller.expendRight();
 			drawer.setDisable(false);
 			drawer.open();
@@ -64,6 +68,8 @@ public class Sidebar {
 	}
 	public void closeDrawer(){
 		if (drawer.isOpened()){
+			burgerTask2.setRate(burgerTask2.getRate()*-1);
+			burgerTask2.play();
 			controller.reduceLeft();
 			drawer.close();
 			drawer.setDisable(true);
@@ -71,16 +77,20 @@ public class Sidebar {
 		}
 	}
 
-	public void update(VElement vElement) {
+	public void update(VConfigAble vElement) {
+
+		scrollPane.setContent(null);
+		if (vElement == null){
+			update(VConfig.getInstance());
+			return;
+		}
 		HashMap<String,Double> configMap = vElement.getConfigAbleList();
 		HashMap<String,Boolean> configAble = vElement.getConfigAble();
 		HashMap<String,Pair<Double,Double>> limitMap = vElement.getLimits();
 		HashMap<String,Double> stepMap = vElement.getStepMap();
-		scrollPane.setContent(null);
-		if (configMap == null){
-			return;
-		}
+
 		VBox vBox = new VBox();
+		vBox.setBackground(new Background(new BackgroundFill(Color.rgb(50, 50, 50), CornerRadii.EMPTY, Insets.EMPTY)));
 		Button button = new Button();
 		Tooltip tooltip = new Tooltip("Click config option to see help docs");
 		tooltip.setShowDelay(new Duration(0));

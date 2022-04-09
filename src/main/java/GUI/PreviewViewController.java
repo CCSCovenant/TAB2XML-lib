@@ -90,6 +90,7 @@ public class PreviewViewController extends Application {
 		player = new MXLParser(mvc.converter.getScore());
 		sidebar.initialize(drawer, hamburger);
 		GUISelector.getInstance().setSidebar(sidebar);
+		GUISelector.getInstance().setSElement(null);
 		goToPage(0);
 		initPageHandler(groups.size());
 		initMeasureHandler(visualizer.getMeasureCounter());

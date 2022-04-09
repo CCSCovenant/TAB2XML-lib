@@ -76,6 +76,11 @@ public class VBarline extends VElement{
 			Hevayline.setStroke(color);
 		}
 	}
+
+	public void setLength(double length) {
+		this.length = length;
+	}
+
 	public void alignment(){
 		double offset = configMap.get("distanceBetweenLine");
 

@@ -24,6 +24,7 @@ public class VMeasure extends VElement{
 	private List<VBarline> barlines = new ArrayList<>();
 	private List<VNoteHead> tieNoteHead = new ArrayList<>();
 	private List<VNoteHead> slurNoteHead = new ArrayList<>();
+	List<Integer> staffInfo;
 	VLine line;
 	Rectangle background = new Rectangle();
 	String instrument = "";
@@ -42,7 +43,8 @@ public class VMeasure extends VElement{
 		this.instrument = instrument;
 		int i = 0;
 		Notes = new ArrayList<>();
-		initStaffLines(staffInfo);
+		this.staffInfo = staffInfo;
+		initStaffLines();
 		initBarlines(measure.getBarlines());
 		if (measure.getNotesBeforeBackup()!=null){
 			VNote vNote = null;
@@ -244,7 +246,7 @@ public class VMeasure extends VElement{
 		return gapCount;
 	}
 
-	public void initStaffLines(List<Integer> staffInfo){
+	public void initStaffLines(){
 		//staffInfo contain offset of each staff
 		for (Integer i:staffInfo){
 			Line line = new Line(0,0,0,0);
@@ -255,8 +257,10 @@ public class VMeasure extends VElement{
 		}
 	}
 	public void updateStaffLine(double W){
-		for (Line line:staffLines){
-			line.setEndX(W);
+		for (int i=0;i<staffLines.size();i++){
+			double gap = VConfig.getInstance().getGlobalConfig("Step");
+			staffLines.get(i).setEndX(W);
+			staffLines.get(i).setLayoutY(staffInfo.get(i)*gap);
 		}
 	}
 	public void setShowClef(boolean states){
@@ -283,6 +287,7 @@ public class VMeasure extends VElement{
 	}
 	public void alignmentBarlines(){
 		for (VBarline vBarline:barlines){
+			vBarline.setLength(staffInfo.get(staffInfo.size()-1)*VConfig.getInstance().getGlobalConfig("Step"));
 			vBarline.alignment();
 			if (vBarline.location.equals("right")){
 				if (!vBarline.getStyle().equals("default")){

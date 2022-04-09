@@ -55,9 +55,7 @@
 }
 .choice-box > .label
 { -fx-text-fill: white; }
-.scroll-pane > .viewport {
-    -fx-background-color: rgb(50,50,50);
-}
+
 .scroll-pane {
     -fx-background-color: rgb(50,50,50);
 }

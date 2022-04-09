@@ -41,14 +41,12 @@ public class GUISelector {
 				}
 			}
 			vElement = sElement;
+			sidebar.update(vElement);
 			if (vElement!=null){
-				sidebar.update(vElement);
 				if (vElement.getConfigAbleList().size()>0){
 					sidebar.openDrawer();
 				}else {
 					sidebar.closeDrawer();
-				}
-				if (vElement instanceof VNoteHead){
 				}
 				vElement.setHighLight(HighLight.SELECTED);
 			}
@@ -62,6 +60,7 @@ public class GUISelector {
 				sidebar.closeDrawer();
 			}
 			vElement = null;
+			sidebar.update(vElement);
 		}
 	}
 

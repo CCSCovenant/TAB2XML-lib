@@ -13,9 +13,9 @@ public class VDrumGNotation extends VGNotation{
 		initConfig();
 	}
 	public void initConfig(){
-		initConfigElement("GuitarNotationStartHeight",100d,0d, VConfig.getInstance().getGlobalConfig("PageX"),false);
-		initConfigElement("GuitarNotationEndHeight",120d,0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
-		initConfigElement("DrumNotationHeight",-30d,-50d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("GuitarNotationStartHeight",20d,0d, VConfig.getInstance().getGlobalConfig("PageX"),false);
+		initConfigElement("GuitarNotationEndHeight",24d,0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
+		initConfigElement("DrumNotationHeight",-6d,-50d,VConfig.getInstance().getGlobalConfig("PageX"));
 		initConfigElement("notationGap",10d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
 		initConfigElement("thickness",5d,1d,VConfig.getInstance().getGlobalConfig("PageX"));
 		initConfigElement("dotSize",2d,0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
@@ -23,7 +23,8 @@ public class VDrumGNotation extends VGNotation{
 	}
 	@Override
 	public void alignment(List<Double> HPosition, List<Double> VPosition){
-		double height = configMap.get("DrumNotationHeight");
+		double step = VConfig.getInstance().getGlobalConfig("Step");
+		double height = configMap.get("DrumNotationHeight")*step;
 		double gap = configMap.get("notationGap");
 		Stack<Line> lineStack = new Stack<>();
 		int globalHLineNum = 0;
