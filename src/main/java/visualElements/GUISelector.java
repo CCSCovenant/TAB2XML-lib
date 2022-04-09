@@ -32,6 +32,9 @@ public class GUISelector {
 	 *
 	 * */
 	public void setSElement(VElement sElement) {
+		if (sElement instanceof VPage||sElement instanceof VLine){
+			return;
+		}
 		if (sElement!=vElement){
 			if (vElement!=null){
 				if (vElement== PlayingSelector.getInstance().getSElement()){
@@ -45,8 +48,6 @@ public class GUISelector {
 			if (vElement!=null){
 				if (vElement.getConfigAbleList().size()>0){
 					sidebar.openDrawer();
-				}else {
-					sidebar.closeDrawer();
 				}
 				vElement.setHighLight(HighLight.SELECTED);
 			}
@@ -57,7 +58,6 @@ public class GUISelector {
 				}else {
 					sElement.setHighLight(HighLight.NULL);
 				}
-				sidebar.closeDrawer();
 			}
 			vElement = null;
 			sidebar.update(vElement);

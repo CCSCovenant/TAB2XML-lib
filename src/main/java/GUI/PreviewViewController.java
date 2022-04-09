@@ -81,11 +81,7 @@ public class PreviewViewController extends Application {
 		this.stage =stage;
 	}
 	public void update() throws TXMLException, FileNotFoundException, URISyntaxException {
-		this.visualizer = new Visualizer(mvc.converter.getScore());
-		this.linkedPlayer = new LinkedPlayer(mvc.converter.getScore());
-		groups = visualizer.getElementGroups();
-		measureMapping = visualizer.getMeasureMapping();
-		linkedPlayer.setVMeasures(visualizer.getVMeasures());
+		reset();
 		sidebar = new Sidebar(this);
 		player = new MXLParser(mvc.converter.getScore());
 		sidebar.initialize(drawer, hamburger);
@@ -216,9 +212,12 @@ public class PreviewViewController extends Application {
 	}
 	@FXML
 	public void reset() throws TXMLException {
+		VConfig.getInstance().initDefaultConfig();
 		this.visualizer = new Visualizer(mvc.converter.getScore());
+		this.linkedPlayer = new LinkedPlayer(mvc.converter.getScore());
 		groups = visualizer.getElementGroups();
 		measureMapping = visualizer.getMeasureMapping();
+		linkedPlayer.setVMeasures(visualizer.getVMeasures());
 		goToPage(pageNumber);
 		initPageHandler(groups.size());
 	}

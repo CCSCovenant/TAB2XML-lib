@@ -258,6 +258,7 @@ public class VNoteHead extends VElement{
 		if (dots.size()>0){
 			for (int i = 0; i < dots.size(); i++) {
 				W += dotGap;
+				dots.get(i).alignment();
 				dots.get(i).getShapeGroups().setLayoutX(W);
 				dots.get(i).getShapeGroups().setLayoutY(step-dots.size()/2);
 				W += dots.get(i).getW();

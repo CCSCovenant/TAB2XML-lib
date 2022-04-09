@@ -233,7 +233,6 @@ public class MXLParser {
 		return duration;
 	}
 
-
 	public List<List<Double>> getDurations() {
 		return Durations;
 	}

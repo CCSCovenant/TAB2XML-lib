@@ -23,7 +23,7 @@ public class VConfig implements VConfigAble {
 		initDefaultConfig();
 	}
 
-	private void initDefaultConfig(){
+	public void initDefaultConfig(){
 		backGroundColor = Color.ALICEBLUE;
 		highLightColor = Color.BLUEVIOLET;
 		defaultColor = Color.BLACK;

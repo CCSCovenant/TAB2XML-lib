@@ -12,9 +12,7 @@ public class VDot extends VElement{
 		group.getChildren().add(circle);
 	}
 	public void initConfig(){
-		initConfigElement("size",1.5d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
-		initConfigElement("gap_with_last_element",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
-
+		initConfigElement("size",1.5d,0d,5d,0.1,true);
 	}
 
 	@Override
@@ -35,6 +33,8 @@ public class VDot extends VElement{
 	}
 
 	public void alignment(){
+		double size = configMap.get("size");
+		circle.setRadius(size);
 		W = circle.getRadius()*2;
 		setHighLight(highLight);
 	}
