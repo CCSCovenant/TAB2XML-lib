@@ -44,7 +44,7 @@
                            <padding>
                               <Insets left="5.0" />
                            </padding></ToggleButton>
-                        <Label minWidth="100.0" text="Tempo" textFill="WHITE">
+                        <Label minWidth="55.0" text="Tempo" textFill="WHITE">
                            <HBox.margin>
                               <Insets top="3.0" />
                            </HBox.margin>
