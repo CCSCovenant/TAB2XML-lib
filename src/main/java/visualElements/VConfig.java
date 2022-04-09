@@ -13,6 +13,7 @@ public class VConfig {
 	public Color backGroundColor;
 	public List<Integer> staffDetail;
 	public String instrument;
+	public boolean enableRepeat;
 	private VConfig(){
 		initDefaultConfig();
 	}
@@ -21,6 +22,7 @@ public class VConfig {
 		backGroundColor = Color.ALICEBLUE;
 		highLightColor = Color.BLUEVIOLET;
 		defaultColor = Color.BLACK;
+		enableRepeat = true;
 		globalConfig.put("PageX",1224d);
 		globalConfig.put("PageY",1584d);
 		globalConfig.put("MarginX",20d);
@@ -31,6 +33,14 @@ public class VConfig {
 		globalConfig.put("defaultControlPoint",10d);
 		globalConfig.put("tempo",120d);
 
+	}
+
+	public void setEnableRepeat(boolean enableRepeat) {
+		this.enableRepeat = enableRepeat;
+	}
+
+	public boolean getEnableRepeat(){
+		return enableRepeat;
 	}
 
 	public static VConfig getInstance() {

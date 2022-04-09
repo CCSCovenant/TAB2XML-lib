@@ -85,6 +85,7 @@ public class PreviewViewController extends Application {
 		this.linkedPlayer = new LinkedPlayer(mvc.converter.getScore());
 		groups = visualizer.getElementGroups();
 		measureMapping = visualizer.getMeasureMapping();
+		linkedPlayer.setVMeasures(visualizer.getVMeasures());
 		sidebar = new Sidebar(this);
 		player = new MXLParser(mvc.converter.getScore());
 		sidebar.initialize(drawer, hamburger);

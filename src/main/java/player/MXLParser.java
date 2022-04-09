@@ -21,13 +21,15 @@ public class MXLParser {
 	List<List<Double>> Durations = new ArrayList<>();
 	List<List<Double>> FullDurationsWithRepeat = new ArrayList<>();
 
-	List<String> measureMapping = new ArrayList<>();
-	List<String> fullMusicWithRepeat = new ArrayList<>();
+	List<Pair<Integer,String>> measureMapping = new ArrayList<>();
+	List<Pair<Integer,String>> fullMusicWithRepeat = new ArrayList<>();
+
+	List<Integer> firstPosition = new ArrayList<>();
 	public MXLParser(Score score) throws TXMLException {
 		this.score = score.getModel();
 		initStrings();
 	}
-	public List<String> getMeasureMapping() {
+	public List<Pair<Integer,String>> getMeasureMapping() {
 		return measureMapping;
 	}
 	public void initStrings(){
@@ -37,21 +39,27 @@ public class MXLParser {
 			initPart(part,measureMapping,fullMusicWithRepeat);
 		}
 	}
-	public void initPart(Part part,List<String> measureMapping,List<String> fullMusicWithRepeat){
+	public void initPart(Part part,List<Pair<Integer,String>> measureMapping,List<Pair<Integer,String>> fullMusicWithRepeat){
 			for (Measure measure:part.getMeasures()){
 				StringBuilder musicString = new StringBuilder();
 				musicString.append(getMeasure(measure));
-				measureMapping.add(musicString.toString());
+				measureMapping.add(new Pair<>(measure.getNumber(),musicString.toString()));
 			}
 			processWithRepeat(part,fullMusicWithRepeat);
 	}
 
-	public void processWithRepeat(Part part,List<String> fullMusicWithRepeat){
+	public void processWithRepeat(Part part,List<Pair<Integer,String>> fullMusicWithRepeat){
 		int repeatStart = 0;
 		HashMap<Integer,Integer> repeatTime = new HashMap<>();
 		for (int i=0;i<part.getMeasures().size();i++){
 			Measure measure = part.getMeasures().get(i);
 			fullMusicWithRepeat.add(measureMapping.get(i));
+			FullDurationsWithRepeat.add(Durations.get(i));
+
+			if (!repeatTime.containsKey(measure.getNumber())){
+				firstPosition.add(fullMusicWithRepeat.size()-1);
+			}
+
 			if (measure.getBarlines()!=null){
 				for (BarLine barLine:measure.getBarlines()){
 					if (barLine.getRepeat()!=null){
@@ -80,7 +88,7 @@ public class MXLParser {
 		}
 	}
 
-	public List<String> getFullMusicWithRepeat() {
+	public List<Pair<Integer,String>> getFullMusicWithRepeat() {
 		return fullMusicWithRepeat;
 	}
 
@@ -228,6 +236,10 @@ public class MXLParser {
 
 	public List<List<Double>> getFullDurationsWithRepeat() {
 		return FullDurationsWithRepeat;
+	}
+
+	public List<Integer> getFirstPosition() {
+		return firstPosition;
 	}
 
 	public static String getInstrument(String InstrumentId) {

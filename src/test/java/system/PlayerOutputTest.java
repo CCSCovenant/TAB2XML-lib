@@ -2,6 +2,7 @@ package system;
 
 import converter.Score;
 import custom_exceptions.TXMLException;
+import javafx.util.Pair;
 import org.junit.jupiter.api.Test;
 import player.MXLParser;
 
@@ -38,8 +39,8 @@ public class PlayerOutputTest {
 			Score score = new Score(inputEdit.toString());
 			MXLParser player = new MXLParser(score);
 			StringBuilder musicString = new StringBuilder();
-			for (String s:player.getFullMusicWithRepeat()){
-				musicString.append(s+"\n");
+			for (Pair s:player.getFullMusicWithRepeat()){
+				musicString.append(s.getKey()+":"+s.getValue()+"\n");
 			}
 			Path outFile = outDirPath.resolve(input.getName());
 			Files.writeString(outFile,musicString);
