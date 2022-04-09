@@ -265,21 +265,27 @@ public class VMeasure extends VElement{
 	public void initBarlines(List<BarLine> barLine){
 		barlines = new ArrayList<>();
 		double length = staffLines.get(staffLines.size()-1).getLayoutY();
-		barlines.add(new VBarline(length,"default",null,"right"));
+		boolean hasRightEnd = false;
 		if (barLine!=null){
 			for (BarLine barLine1:barLine){
 				barlines.add(new VBarline(length,barLine1.barStyle,barLine1.repeat,barLine1.location));
+				if (barLine1.location.equals("right")){
+					hasRightEnd = true;
+				}
 			}
 		}
-
+		if (!hasRightEnd){
+			barlines.add(new VBarline(length,"default",null,"right"));
+		}
 		for (VBarline vBarline:barlines){
 			group.getChildren().add(vBarline.getShapeGroups());
 		}
 	}
 	public void alignmentBarlines(){
 		for (VBarline vBarline:barlines){
+			vBarline.alignment();
 			if (vBarline.location.equals("right")){
-				vBarline.getShapeGroups().setLayoutX(W);
+				vBarline.getShapeGroups().setLayoutX(W-vBarline.getConfigAbleList().get("distanceBetweenLine"));
 			}else {
 				vBarline.getShapeGroups().setLayoutX(0);
 			}

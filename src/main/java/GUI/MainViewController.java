@@ -317,7 +317,7 @@ public class MainViewController extends Application {
 
 			previewViewController = loader.getController();
 			previewViewController.setMainViewController(this);
-			previewViewController.setScene(scene);
+			previewViewController.setSceneAndStage(scene,stage);
 			previewViewController.update();
 			convertWindow = scene.getWindow();
 			convertWindow.setOnCloseRequest(new EventHandler<WindowEvent>() {

@@ -121,7 +121,46 @@ public class VUtility {
 	 * @return display name
 	 * */
 	public static String getDisplayName(String id){
+		if(id.equalsIgnoreCase("gapBetweenGrace")) {
+			return "Grace Spacing";
+		}
+		else if(id.equalsIgnoreCase("gapBeforeMeasure")) {
+			return "Measure Spacing (Before)";
+		}
+		else if(id.equalsIgnoreCase("MinNoteDistance")) {
+			return "Minimum Note Spacing";
+		}
+		else if (id.equalsIgnoreCase("offsetX")) {
+			return "Note Head Horizontal Offset";
+		}
+		else if (id.equalsIgnoreCase("scale")) {
+			return "Grace Note Size";
+		}
+		else if (id.equalsIgnoreCase("dotOffset")) {
+			return "Dot Offset";
+		}
+		else if (id.equalsIgnoreCase("DrumNotationHeight")) {
+			return "Drum Notation Height";
+		}
+		else if (id.equalsIgnoreCase("notationGap")) {
+			return "Notation Spacing";
+		}
+		else if (id.equalsIgnoreCase("thickness")) {
+			return "Guitar Notation Thickness";
+		}
+		else if (id.equalsIgnoreCase("GuitarNotationEndHeight")) {
+			return "Guitar Notation Height (End)";
+		}
+		else if (id.equalsIgnoreCase("GuitarNotationStartHeight")) {
+			return "Guitar Notation Height (Start)";
+		}
+		else if (id.equalsIgnoreCase("dotSize")) {
+			return "Dot Size";
+		}
 		return id;
+	}
+	public static String getHelpDocUrl(){
+		return "https://github.com/CCSCovenant/TAB2XML/blob/master/Documents/EECS2311_%20USER%20MANUAL.pdf";
 	}
 
 
