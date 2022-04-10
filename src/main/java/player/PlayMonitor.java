@@ -23,11 +23,9 @@ public class PlayMonitor extends Thread{
 	public PlayMonitor(String name) {
 		this.threadName = name;
 	}
-
 	public void setController(PreviewViewController controller) {
 		this.controller = controller;
 	}
-
 	public void setDurations(List<List<Double>> durations) {
 		this.durations = durations;
 	}
@@ -37,18 +35,15 @@ public class PlayMonitor extends Thread{
 	public void setMeasure(int measure) {
 		this.measure = measure;
 	}
-
 	public void setTempo(int tempo){
 		this.tempo = tempo;
 	}
 	public void setMusicStrings(List<Pair<Integer, String>> musicStrings) {
 		MusicStrings = musicStrings;
 	}
-
 	public void setMeasures(List<VMeasure> measures) {
 		this.measures = measures;
 	}
-
 	public void start(){
 		int priority = Thread.NORM_PRIORITY + ((Thread.MAX_PRIORITY - Thread.NORM_PRIORITY) * 3) / 4;
 		if (t==null){

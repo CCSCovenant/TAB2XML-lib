@@ -2,6 +2,11 @@ package system;
 
 import GUI.PreviewViewController;
 import GUI.Sidebar;
+import com.jfoenix.controls.JFXDrawer;
+import com.jfoenix.controls.JFXHamburger;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.stage.Stage;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -12,13 +17,25 @@ import visualElements.HighLight;
 import visualElements.PlayingSelector;
 import visualElements.VDot;
 
+import java.io.IOException;
+
 public class SelectorTest extends ApplicationTest {
 	static VDot dot_1 = new VDot();
 	static VDot dot_2 = new VDot();
+	static Sidebar sidebar;
 	static GUISelector guiSelector = GUISelector.getInstance();
 	static PlayingSelector playingSelector = PlayingSelector.getInstance();
-	public void start(Stage stage){
-		guiSelector.setSidebar(new Sidebar(new PreviewViewController()));
+	public void start(Stage stage) throws IOException {
+		FXMLLoader loader = new FXMLLoader(getClass().getClassLoader().getResource("GUI/previewMXL.fxml"));
+		Parent root = loader.load();
+		Stage stage1 = new Stage();
+		Scene scene = new Scene(root);
+		stage.setScene(scene);
+		PreviewViewController previewViewController = loader.getController();
+		previewViewController.setSceneAndStage(scene,stage1);
+		Sidebar sidebar = new Sidebar(previewViewController);
+		guiSelector.setSidebar(sidebar);
+		sidebar.initialize(new JFXDrawer(),new JFXHamburger());
 	}
 	@BeforeEach
 	void clear(){
