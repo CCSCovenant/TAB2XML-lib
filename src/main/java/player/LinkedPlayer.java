@@ -23,7 +23,7 @@ public class LinkedPlayer {
 	PreviewViewController controller;
 
 	public LinkedPlayer(Score score) throws TXMLException {
-		MXLParser parser = new MXLParser(score);
+		MXLParser parser = new MXLParser(score.getModel());
 		partMusicWithOutRepeat = parser.getMeasureMapping();
 		fullMusicWithRepeat = parser.getFullMusicWithRepeat();
 		durations = parser.getDurations();

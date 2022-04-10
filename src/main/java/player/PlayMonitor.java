@@ -59,7 +59,6 @@ public class PlayMonitor extends Thread{
 			if (playNextNote()){
 				try {
 					double duration = durations.get(measure).get(note);
-					System.out.println(duration);
 					GDuration += (long) (duration*(60000/tempo));
 					long current = System.currentTimeMillis();
 					long plan_to_sleep = last+GDuration-current;
@@ -82,6 +81,7 @@ public class PlayMonitor extends Thread{
 				return false;
 			}else {
 				note = 0;
+
 				VNote vNote = measures.get(MusicStrings.get(measure).getKey()-1).getNotes().get(note);
 				Platform.runLater(() -> {
 					controller.goToMeasure(MusicStrings.get(measure).getKey());

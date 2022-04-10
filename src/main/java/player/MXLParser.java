@@ -1,6 +1,5 @@
 package player;
 
-import converter.Score;
 import custom_exceptions.TXMLException;
 import javafx.util.Pair;
 import models.Part;
@@ -26,9 +25,25 @@ public class MXLParser {
 	List<Pair<Integer,String>> fullMusicWithRepeat = new ArrayList<>();
 
 	List<Integer> firstPosition = new ArrayList<>();
-	public MXLParser(Score score) throws TXMLException {
-		this.score = score.getModel();
+	public MXLParser(ScorePartwise score) throws TXMLException {
+		this.score = score;
+		removeEmptyMeasure(this.score);
 		initStrings();
+	}
+	public void removeEmptyMeasure(ScorePartwise scorePartwise){
+		for (Part part:scorePartwise.getParts()){
+			List<Measure> measures2remove = new ArrayList<>();
+			for (Measure measure:part.getMeasures()){
+				if (measure.getNotesBeforeBackup()==null){
+					measures2remove.add(measure);
+				}else if (measure.getNotesBeforeBackup().size()==0){
+					measures2remove.add(measure);
+				}
+			}
+			for (Measure measure:measures2remove){
+				part.getMeasures().remove(measure);
+			}
+		}
 	}
 	public List<Pair<Integer,String>> getMeasureMapping() {
 		return measureMapping;
@@ -152,21 +167,11 @@ public class MXLParser {
 
 		for (Note note:notes){
 			if (note.getRest()!=null){
-				Duration = "R"+getNoteDurationType(note)+"";
-			}else {
+				Duration = "R"+"/"+startTie+getNoteDuration(note)+"";
+			}
+			else {
 				if (note.getChord()!=null){
 					chord = "+";
-				}
-				if (clef.equals("TAB")){
-					Duration = note.getPitch().getStep();
-					if(note.getPitch().getAlter() != null) {
-						if(note.getPitch().getAlter() == 1){ Duration += "#";}
-						else if(note.getPitch().getAlter() == -1) {Duration += "#";}
-					}
-					Duration += note.getPitch().getOctave();
-					Duration += getNoteDurationType(note)+"";
-				}else {
-					Duration = getNoteDurationType(note)+"";
 				}
 				if (note.getNotations()!=null&&note.getNotations().getTieds()!=null){
 					for (Tied tied:note.getNotations().getTieds()){
@@ -178,6 +183,18 @@ public class MXLParser {
 						}
 					}
 				}
+				if (clef.equals("TAB")){
+					Duration = note.getPitch().getStep();
+					if(note.getPitch().getAlter() != null) {
+						if(note.getPitch().getAlter() == 1){ Duration += "#";}
+						else if(note.getPitch().getAlter() == -1) {Duration += "#";}
+					}
+					Duration += note.getPitch().getOctave();
+					Duration += "/"+startTie+getNoteDuration(note)+"";
+				}else {
+					Duration = "/"+startTie+getNoteDuration(note)+"";
+				}
+
 				if(note.getInstrument() == null || note.getInstrument().getId().equals("")) {
 
 				}//instruments for percussive notes are in the form '[name_of_instrument]'
@@ -185,12 +202,7 @@ public class MXLParser {
 				}
 			}
 			//add dots;
-			if (note.getDots()!=null){
-				for (Dot dot:note.getDots()){
-					Dots +=".";
-				}
-			}
-			musicString.append(chord+""+instrument+""+startTie+""+Duration+Alter+Dots+""+endTie);
+			musicString.append(chord+""+instrument+""+""+Duration+Alter+""+endTie);
 			Duration_Total = Math.max(getNoteDuration(note)*time.getBeatType(),Duration_Total);
 		}
 		musicString.append(" ");
@@ -218,8 +230,9 @@ public class MXLParser {
 		musicString.append(voice+" ");
 
 			if (note.getRest()!=null){
-				Duration = "R"+getNoteDurationType(note)+"";
-			}else {
+				Duration = "R"+"/"+startTie+getNoteDuration(note)+"";
+			}
+			else {
 				if (clef.equals("TAB")){
 					Duration = note.getPitch().getStep();
 					if(note.getPitch().getAlter() != null) {
@@ -227,9 +240,9 @@ public class MXLParser {
 						else if(note.getPitch().getAlter() == -1) {Duration += "#";}
 					}
 					Duration += note.getPitch().getOctave();
-					Duration += getNoteDurationType(note)+"";
+					Duration += "/"+startTie+getNoteDuration(note)+"";
 				}else {
-					Duration = getNoteDurationType(note)+"";
+					Duration = "/"+startTie+getNoteDuration(note)+"";
 				}
 				if(note.getInstrument() == null || note.getInstrument().getId().equals("")) {
 
@@ -243,31 +256,12 @@ public class MXLParser {
 					Dots +=".";
 				}
 			}
-			musicString.append(chord+""+instrument+""+startTie+""+Duration+Alter+Dots+""+endTie);
+			musicString.append(chord+""+instrument+""+""+Duration+Alter+Dots+""+endTie);
 		musicString.append(" ");
 		return musicString.toString();
 	}
 
-	public static char getNoteDurationType(Note note) {
-		if (note.getType()!=null){
-			boolean graceSlur = note.getGrace() != null && note.getNotations() != null && note.getNotations().getSlurs() != null;	
-			boolean noteSlur = note.getNotations() != null && note.getNotations().getSlurs() != null
-					&& note.getNotations().getSlurs().size() > 1 && note.getNotations().getSlurs().get(1).getType().equals("start");
-					
-			if(noteSlur || graceSlur) {return 'o';}
-
-			if(note.getType().equals("whole")) { return 'w'; }
-			else if(note.getType().equals("half")) { return 'h'; }
-			else if(note.getType().equals("quarter")) { return 'q'; }
-			else if(note.getType().equals("eighth")) { return 'i'; }
-			else if(note.getType().equals("16th")) { return 's'; }
-			else if(note.getType().equals("32nd")) { return 't'; }
-			else if(note.getType().equals("64th")) { return 'x'; }
-			else if(note.getType().equals("128th")) { return 'o'; }
-			else { return 'q'; }
-		} else { return 'q'; }
-	}
-	public  double getNoteDuration(Note note){
+	public static double getNoteDuration(Note note){
 		double duration = 1;
 		if (note.getType()!=null){
 			boolean graceSlur = note.getGrace() != null && note.getNotations() != null && note.getNotations().getSlurs() != null;	

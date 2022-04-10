@@ -92,7 +92,7 @@ public class PreviewViewController extends Application {
 	public void update() throws TXMLException, FileNotFoundException, URISyntaxException {
 		reset();
 		sidebar = new Sidebar(this);
-		player = new MXLParser(mvc.converter.getScore());
+		player = new MXLParser(mvc.converter.getScore().getModel());
 		sidebar.initialize(drawer, hamburger);
 		GUISelector.getInstance().setSidebar(sidebar);
 		GUISelector.getInstance().setSElement(null);
