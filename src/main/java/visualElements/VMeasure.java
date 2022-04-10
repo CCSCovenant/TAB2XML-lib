@@ -4,6 +4,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import models.measure.Measure;
 import models.measure.attributes.Time;
 import models.measure.barline.BarLine;
@@ -24,6 +25,7 @@ public class VMeasure extends VElement{
 	private List<VBarline> barlines = new ArrayList<>();
 	private List<VNoteHead> tieNoteHead = new ArrayList<>();
 	private List<VNoteHead> slurNoteHead = new ArrayList<>();
+	Text text = new Text();
 	List<Integer> staffInfo;
 	VLine line;
 	Rectangle background = new Rectangle();
@@ -65,7 +67,9 @@ public class VMeasure extends VElement{
 				Notes.add(vNote);
 			}
 		}
-
+		group.getChildren().add(text);
+		text.setText(""+number);
+		text.setLayoutY(-5);
 		initNoteGroups();
 		if (instrument.equals("TAB")){
 			initGuitarNotations();
