@@ -40,7 +40,12 @@ public class VDrumGNotation extends VGNotation{
 				int diff = localHline - globalHLineNum;
 				globalHLineNum = localHline;
 				if (notes.size()==1){
-					//TODO alignment notation with one note.
+					for (int j=0;j<diff;j++){
+						imageView.get(j).setFitWidth(step*1.5);
+						imageView.get(j).setPreserveRatio(true);
+						imageView.get(j).setLayoutX(HPosition.get(i));
+						imageView.get(j).setLayoutY(height+j*gap);
+					}
 				}else {
 				for (int j=0;j<diff;j++) {
 					lineStack.push(Hlines.get(HlinePointer));

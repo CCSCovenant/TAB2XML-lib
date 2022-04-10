@@ -1,5 +1,6 @@
 package visualElements.Notations;
 
+import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -64,7 +65,15 @@ public class VGuitarGNotation extends VGNotation{
 				int diff = localHline - globalHLineNum;
 				globalHLineNum = localHline;
 				if (notes.size()==1){
-					//TODO alignment notation with one note.
+					for (int j=0;j<diff;j++){
+						imageView.get(j).setFitWidth(step*1.5);
+						imageView.get(j).setPreserveRatio(true);
+						Bounds bounds = imageView.get(j).getBoundsInLocal();
+						imageView.get(j).setLayoutY(end+j*gap-bounds.getHeight());
+						imageView.get(j).setScaleY(-1);
+						imageView.get(j).setLayoutX(HPosition.get(i));
+
+					}
 				}else {
 					for (int j=0;j<diff;j++){
 						lineStack.push(Hlines.get(HlinePointer));

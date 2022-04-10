@@ -9,7 +9,7 @@ import java.util.HashMap;
 
 public class ImageResourceHandler {
 	private static ImageResourceHandler imageResourceHandler = new ImageResourceHandler();
-	String imageList = "./graphic/imageList.json";
+	String imageList = "graphic/imageList.json";
 	private Gson gson = new Gson();
 	public HashMap<String,Image> imageMap = new HashMap<>();
 	public HashMap<String,String> ImageResources;

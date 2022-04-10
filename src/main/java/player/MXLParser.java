@@ -128,7 +128,7 @@ public class MXLParser {
 		return musicString.toString();
 	}
 	
-	public static Pair<String,Double> getNoteDetails(List<Note> notes, String clef) {
+	public  Pair<String,Double> getNoteDetails(List<Note> notes, String clef) {
 		Time time = new Time(4,4);
 		StringBuilder musicString = new StringBuilder();
 		String voice = "";
@@ -267,7 +267,7 @@ public class MXLParser {
 			else { return 'q'; }
 		} else { return 'q'; }
 	}
-	public static double getNoteDuration(Note note){
+	public  double getNoteDuration(Note note){
 		double duration = 1;
 		if (note.getType()!=null){
 			boolean graceSlur = note.getGrace() != null && note.getNotations() != null && note.getNotations().getSlurs() != null;	
@@ -287,10 +287,12 @@ public class MXLParser {
 		} else { duration = 0.25; }
 		if (note.getDots()!=null){
 			double k = 2;
+			double extra = 0;
 			for (int i=0;i<note.getDots().size();i++){
-				duration += duration * 1/k;
+				extra += duration * 1/k;
 				k*=2;
 			}
+			duration += extra;
 		}
 		return duration;
 	}

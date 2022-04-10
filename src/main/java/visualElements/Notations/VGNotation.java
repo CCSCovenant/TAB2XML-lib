@@ -1,6 +1,12 @@
 package visualElements.Notations;
 
+import javafx.geometry.Bounds;
 import javafx.scene.Group;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorInput;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -9,6 +15,7 @@ import visualElements.HighLight;
 import visualElements.VConfig;
 import visualElements.VElement;
 import visualElements.VUtility;
+import visualizer.ImageResourceHandler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,6 +30,7 @@ public class VGNotation extends VElement {
 	List<Line> Vlines = new ArrayList<>();
 	List<Line> Hlines = new ArrayList<>();
 	List<Circle> circles = new ArrayList<>();
+	List<ImageView> imageView = new ArrayList<>();
 	public VGNotation(){
 	}
 
@@ -51,6 +59,14 @@ public class VGNotation extends VElement {
 		}
 		for (Line line:Hlines){
 			line.setStroke(color);
+		}
+		for (ImageView imageView:this.imageView){
+			Blend blend = new Blend();
+			Bounds bounds = imageView.getBoundsInLocal();
+			ColorInput colorinput = new ColorInput(bounds.getMinX(),bounds.getMinY(),bounds.getWidth(),bounds.getHeight(),color);
+			blend.setTopInput(colorinput);
+			blend.setMode(BlendMode.SRC_ATOP);
+			imageView.setEffect(blend);
 		}
 	}
 
@@ -85,6 +101,13 @@ public class VGNotation extends VElement {
 				int diff =  localHline - globalHLineNum;
 				globalHLineNum = localHline;
 				if (notes.size()==1){
+					for (int j=0;j<diff;j++){
+						ImageView imageView = new ImageView();
+						Image image = ImageResourceHandler.getInstance().getImage("eighthFlag");
+						imageView.setImage(image);
+						this.imageView.add(imageView);
+						group.getChildren().add(imageView);
+					}
 					//TODO add flag for only one note.
 				}else {
 					for (int j=0;j<diff;j++){

@@ -69,7 +69,7 @@ public class LinkedPlayer {
 		player = new Player();
 
 		playMonitor.start();
-		player.delayPlay(0,pattern);
+		player.delayPlay(200,pattern);
 	}
 	public void stop(){
 		if (player!=null){
