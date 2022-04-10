@@ -135,7 +135,7 @@ public class PreviewViewController extends Application {
 		ImageView exportIcon = new ImageView(ImageResourceHandler.getInstance().getImage("saveIcon"));
 		exportIcon.setFitWidth(30);
 		exportIcon.setFitHeight(30);
-		Tooltip exportTooltip = new Tooltip("Select to enable repeat, unselect to disable repeat");
+		Tooltip exportTooltip = new Tooltip("Select to save file");
 		saveMXLButton.setGraphic(exportIcon);
 		saveMXLButton.setTooltip(exportTooltip);
 		playButton.setGraphic(playIcon);

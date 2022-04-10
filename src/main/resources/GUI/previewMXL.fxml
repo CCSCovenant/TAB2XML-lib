@@ -14,13 +14,13 @@
                     <children>
                         <HBox layoutX="14.0" layoutY="8.0" spacing="5.0" AnchorPane.leftAnchor="14.0" AnchorPane.topAnchor="5.0">
                             <children>
-                                <Label text="Go-to-page">
+                                <Label text="Go-to-Page">
                                     <padding>
                                         <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                                     </padding>
                                 </Label>
                                 <Spinner fx:id="pageSpinner" prefHeight="23.0" prefWidth="71.0" />
-                                <Label text="go to measure">
+                                <Label text="Go-to-Measure">
                                     <padding>
                                         <Insets bottom="5.0" left="50.0" right="5.0" top="5.0" />
                                     </padding></Label>
@@ -44,7 +44,7 @@
                            <padding>
                               <Insets left="5.0" />
                            </padding></ToggleButton>
-                        <Label minWidth="100.0" text="TempSetting" textFill="WHITE">
+                        <Label minWidth="55.0" text="Tempo" textFill="WHITE">
                            <HBox.margin>
                               <Insets top="3.0" />
                            </HBox.margin>
