@@ -24,6 +24,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class ParserOutputTest {
 	static List<String> inputString = new ArrayList<>();
@@ -105,32 +106,36 @@ public class ParserOutputTest {
 
 	@Test
 	void DurationTest() throws URISyntaxException, IOException, TXMLException {
-		Score score = new Score(inputString.get(11));
-		ScorePartwise scorePartwise= score.getModel();
-		removeChord(scorePartwise);
-		MXLParser MXLparser = new MXLParser(scorePartwise);
-		Pattern pattern = new Pattern();
-		for (Pair<Integer,String> pair: MXLparser.getFullMusicWithRepeat()){
-			pattern.add(pair.getValue());
-		}
-		StaccatoParser parser = new StaccatoParser();
-		TemporalPLP plp = new TemporalPLP();
-		parser.addParserListener(plp);
-		parser.parse(pattern);
+		for (String s:inputString){
+			Score score = new Score(s);
+			ScorePartwise scorePartwise= score.getModel();
+			removeChord(scorePartwise);
+			MXLParser MXLparser = new MXLParser(scorePartwise);
+			Pattern pattern = new Pattern();
+			for (Pair<Integer,String> pair: MXLparser.getFullMusicWithRepeat()){
+				pattern.add(pair.getValue());
+			}
+			StaccatoParser parser = new StaccatoParser();
+			TemporalPLP plp = new TemporalPLP();
+			parser.addParserListener(plp);
+			parser.parse(pattern);
 
-
-		System.out.println(plp.getTimeToEventMap().keySet());
-		double start = 0;
-		int i = 0;
-		for (List<Double> doubles:MXLparser.getFullDurationsWithRepeat()){
-			for (Double d:doubles){
-				start += d*500;
-				System.out.print(i+":"+start+" ");
+			List<Double> FullDuration = new ArrayList<>();
+			for (List<Double> duration:MXLparser.getFullDurationsWithRepeat()){
+				for (Double d:duration){
+					FullDuration.add(d);
+				}
+			}
+			Double actualTiming = 0d;
+			int i =0;
+			Set<Long> timingSet = plp.getTimeToEventMap().keySet();
+			for (Long ExpectedTiming:timingSet){
+				Assertions.assertEquals(ExpectedTiming,(long)(actualTiming*500));
+				actualTiming += FullDuration.get(i);
 				i++;
 			}
-			System.out.println();
 		}
-		System.out.println();
+
 
 	}
 	public void removeChord(ScorePartwise scorePartwise){
