@@ -272,7 +272,6 @@ public class VNoteHead extends VElement{
 		}
 		if (GUISelector.getInstance().getSElement()==this){
 			setHighLight(HighLight.SELECTED);
-			System.out.println("true");
 		}
 	}
 	public VNote getParentNote() {

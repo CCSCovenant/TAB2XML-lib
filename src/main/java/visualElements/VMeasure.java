@@ -67,8 +67,10 @@ public class VMeasure extends VElement{
 				Notes.add(vNote);
 			}
 		}
+
 		group.getChildren().add(text);
-		text.setText(""+number);
+		text.setText("#"+number);
+		text.setFill(Color.RED);
 		text.setLayoutY(-5);
 		initNoteGroups();
 		if (instrument.equals("TAB")){
@@ -80,7 +82,7 @@ public class VMeasure extends VElement{
 	//  N / G G N C / N
 	public void initConfig(){
 		initConfigElement("MinNoteDistance",10d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
-		initConfigElement("gapBeforeMeasure",20d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("gapBeforeMeasure",40d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
 		initConfigElement("gapBetweenElement",VConfig.getInstance().getGlobalConfig("MinNoteDistance"),0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
 		initConfigElement("gapBetweenGrace",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
 	}
@@ -328,6 +330,10 @@ public class VMeasure extends VElement{
 	public void addGapBetweenElements(double width){
 		W += width;
 		gapCount++;
+	}
+	@Override
+	public double getW(){
+		return W;
 	}
 	public void alignment(){
 		setHighLight(highLight);

@@ -69,10 +69,12 @@ public class VGuitarGNotation extends VGNotation{
 						imageView.get(j).setFitWidth(step*1.5);
 						imageView.get(j).setPreserveRatio(true);
 						Bounds bounds = imageView.get(j).getBoundsInLocal();
-						imageView.get(j).setLayoutY(end+j*gap-bounds.getHeight());
+						double radio = bounds.getHeight()/bounds.getWidth();
+						double offset = radio*step*1.5;
+						imageView.get(j).setFitHeight(step*1.5*radio);
+						imageView.get(j).setLayoutY(end+j*gap-offset);
 						imageView.get(j).setScaleY(-1);
 						imageView.get(j).setLayoutX(HPosition.get(i));
-
 					}
 				}else {
 					for (int j=0;j<diff;j++){

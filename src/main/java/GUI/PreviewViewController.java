@@ -286,12 +286,11 @@ public class PreviewViewController extends Application {
 			measureMapping = visualizer.getMeasureMapping();
 			double vv = scrollView.getVvalue();
 			double hv = scrollView.getHvalue();
-			goToPage(pageNumber);
+			int page = pageNumber;
+			initPageHandler(groups.size());
+			goToPage(page);
 			scrollView.setVvalue(vv);
 			scrollView.setHvalue(hv);
-			initPageHandler(groups.size());
-			pageSpinner.setValueFactory(new SpinnerValueFactory.IntegerSpinnerValueFactory(1, groups.size(), 1));
-
 		}catch (Exception e){
 
 		}
