@@ -1,6 +1,7 @@
 package visualElements.Notations;
 
 import javafx.geometry.Bounds;
+import javafx.scene.image.ImageView;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Line;
@@ -66,8 +67,9 @@ public class VGuitarGNotation extends VGNotation{
 				globalHLineNum = localHline;
 				if (notes.size()==1){
 					for (int j=0;j<diff;j++){
-						imageView.get(j).setFitWidth(step*1.5);
-						imageView.get(j).setPreserveRatio(true);
+						ImageView image = imageView.get(j);
+						image.setPreserveRatio(true);
+						image.setFitWidth(step*2);
 						Bounds bounds = imageView.get(j).getBoundsInLocal();
 						double radio = bounds.getHeight()/bounds.getWidth();
 						double offset = radio*step*1.5;
