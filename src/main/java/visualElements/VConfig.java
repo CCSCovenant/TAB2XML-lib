@@ -28,7 +28,7 @@ public class VConfig implements VConfigAble {
 		highLightColor = Color.BLUEVIOLET;
 		defaultColor = Color.BLACK;
 		playColor = Color.PALEVIOLETRED;
-		enableRepeat = true;
+		enableRepeat = false;
 		initConfig("PageX",1224d,0,10000,10,true);
 		initConfig("PageY",1584d,0,10000,10,true);
 		initConfig("MarginX",20d,0,500,1,true);
