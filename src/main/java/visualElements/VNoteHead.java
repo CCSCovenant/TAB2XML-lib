@@ -30,6 +30,7 @@ public class VNoteHead extends VElement{
 	int relative = 0;
 	String instrument = "";
 	boolean isGrace = false;
+	boolean flip = false;
 	double step = VConfig.getInstance().getGlobalConfig("Step");
 	List<Tied> tieds;
 	List<Slur> slurs;
@@ -128,6 +129,7 @@ public class VNoteHead extends VElement{
 	}
 
 	public void setFlip(){
+		this.flip = true;
 		imageView.setRotate(180);
 		imageView.setRotationAxis(new Point3D(0,1,0));
 	}
@@ -189,7 +191,11 @@ public class VNoteHead extends VElement{
 
 	public void alignment(){
 		step = VConfig.getInstance().getGlobalConfig("Step");
-		group.setLayoutX(configMap.get("offsetX"));
+		if (flip){
+			group.setLayoutX(configMap.get("offsetX")+2*step);
+		}else {
+			group.setLayoutX(configMap.get("offsetX"));
+		}
 		group.setLayoutY(relative*step);
 		double s = configMap.get("scale");
 		if (isGrace){

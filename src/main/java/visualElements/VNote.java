@@ -64,7 +64,7 @@ public class VNote extends VElement {
 	}
 
 	public void alignment(){
-		maxVPos = 0;
+		maxVPos = Double.NEGATIVE_INFINITY;
 		for(VNoteHead noteHead:noteHeads){
 			noteHead.alignment();
 			W = Math.max(W,noteHead.getW());
