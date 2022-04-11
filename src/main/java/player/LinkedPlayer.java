@@ -76,6 +76,7 @@ public class LinkedPlayer {
 			player.getManagedPlayer().finish();
 		}
 		if (playMonitor!=null){
+			controller.disablePlay();
 			playMonitor.stopPlaying();
 		}
 	}

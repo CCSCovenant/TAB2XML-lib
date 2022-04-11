@@ -71,6 +71,7 @@ public class PlayMonitor extends Thread{
 			}
 		}
 		controller.RestPlayButton();
+		controller.enablePlay();
 		PlayingSelector.getInstance().setPlayingElement(null);
 	}
 	public boolean playNextNote(){

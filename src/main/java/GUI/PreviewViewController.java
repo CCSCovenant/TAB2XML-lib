@@ -343,6 +343,7 @@ public class PreviewViewController extends Application {
 		}else {
 			isPlaying = false;
 			linkedPlayer.stop();
+
 		}
 	}
 	private void goToPage(int page)  {
@@ -380,6 +381,12 @@ public class PreviewViewController extends Application {
 	}
 	public void showURL(String url){
 		getHostServices().showDocument(url);
+	}
+	public void disablePlay(){
+		playButton.setDisable(true);
+	}
+	public void enablePlay(){
+		playButton.setDisable(false);
 	}
 
 }

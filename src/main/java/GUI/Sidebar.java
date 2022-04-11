@@ -96,6 +96,12 @@ public class Sidebar {
 		tooltip.setShowDelay(new Duration(0));
 		button.setTooltip(tooltip);
 		button.setText("?");
+		button.setOnMouseClicked(new EventHandler<MouseEvent>() {
+			@Override
+			public void handle(MouseEvent event) {
+				controller.showURL(VUtility.getHelpDocUrl());
+			}
+		});
 		vBox.getChildren().add(button);
 		for (String key:configMap.keySet()){
 			if (!configAble.get(key)){
