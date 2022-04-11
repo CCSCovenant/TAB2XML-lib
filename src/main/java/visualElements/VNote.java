@@ -64,6 +64,7 @@ public class VNote extends VElement {
 	}
 
 	public void alignment(){
+		setHighLight(highLight);
 		maxVPos = Double.NEGATIVE_INFINITY;
 		for(VNoteHead noteHead:noteHeads){
 			noteHead.alignment();
@@ -71,7 +72,6 @@ public class VNote extends VElement {
 			maxVPos = Math.max(maxVPos,noteHead.getShapeGroups().getLayoutY());
 		}
 		W = group.getBoundsInLocal().getWidth();
-		setHighLight(highLight);
 	}
 
 	public VMeasure getParentMeasure() {

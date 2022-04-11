@@ -49,7 +49,6 @@ public class GUISelector {
 			sidebar.update(vElement);
 			if (vElement instanceof VNoteHead){
 				Player player = new Player();
-
 				player.delayPlay(0, MXLParser.getSingleNote(((VNoteHead) vElement).getNote(),VConfig.getInstance().instrument));
 			}
 			if (vElement!=null){
