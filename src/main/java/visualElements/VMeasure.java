@@ -4,6 +4,7 @@ import javafx.geometry.Bounds;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Text;
 import models.measure.Measure;
 import models.measure.attributes.Time;
 import models.measure.barline.BarLine;
@@ -13,10 +14,9 @@ import visualElements.Notations.VGNotation;
 import visualElements.Notations.VGuitarGNotation;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
-public class VMeasure extends VElement implements VConfigAble {
+public class VMeasure extends VElement{
 	private int number;
 	private List<VNote> Notes;
 	private List<VGNotation> Notations = new ArrayList<>();
@@ -25,7 +25,9 @@ public class VMeasure extends VElement implements VConfigAble {
 	private List<VBarline> barlines = new ArrayList<>();
 	private List<VNoteHead> tieNoteHead = new ArrayList<>();
 	private List<VNoteHead> slurNoteHead = new ArrayList<>();
- 	private HashMap<String,Double> config = new HashMap<>();
+	Text text = new Text();
+	List<Integer> staffInfo;
+	VLine line;
 	Rectangle background = new Rectangle();
 	String instrument = "";
 	double gapCount = 0;
@@ -43,7 +45,8 @@ public class VMeasure extends VElement implements VConfigAble {
 		this.instrument = instrument;
 		int i = 0;
 		Notes = new ArrayList<>();
-		initStaffLines(staffInfo);
+		this.staffInfo = staffInfo;
+		initStaffLines();
 		initBarlines(measure.getBarlines());
 		if (measure.getNotesBeforeBackup()!=null){
 			VNote vNote = null;
@@ -53,7 +56,7 @@ public class VMeasure extends VElement implements VConfigAble {
 						if (vNote!=null){
 							Notes.add(vNote);
 						}
-						vNote = new VNote(i);
+						vNote = new VNote(i,this);
 						i++;
 						addNoteHead(note,vNote);
 					}else {
@@ -64,7 +67,9 @@ public class VMeasure extends VElement implements VConfigAble {
 				Notes.add(vNote);
 			}
 		}
-
+		group.getChildren().add(text);
+		text.setText(""+number);
+		text.setLayoutY(-5);
 		initNoteGroups();
 		if (instrument.equals("TAB")){
 			initGuitarNotations();
@@ -74,11 +79,12 @@ public class VMeasure extends VElement implements VConfigAble {
 	}
 	//  N / G G N C / N
 	public void initConfig(){
-		config.put("noteDistance",10d);
-		config.put("gapBeforeMeasure",20d);
-		config.put("gapBetweenElement",VConfig.getInstance().getGlobalConfig("MinNoteDistance"));
-		config.put("gapBetweenGrace",5d);
+		initConfigElement("MinNoteDistance",10d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("gapBeforeMeasure",20d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
+		initConfigElement("gapBetweenElement",VConfig.getInstance().getGlobalConfig("MinNoteDistance"),0d,VConfig.getInstance().getGlobalConfig("PageX"),false);
+		initConfigElement("gapBetweenGrace",5d,0d,VConfig.getInstance().getGlobalConfig("PageX"));
 	}
+
 	public void initDrumNotations(){
 		double durationCounter = 0;
 		VGNotation notation;
@@ -93,7 +99,7 @@ public class VMeasure extends VElement implements VConfigAble {
 
 			}else {
 				if (!note.isGrace&&!note.isRest){
-					notation.addNote(note.number, type);
+					notation.addNote(note.number, type, note.dots);
 				}
 			}
 			durationCounter += (1d/VUtility.NoteType2Integer(type));
@@ -113,7 +119,6 @@ public class VMeasure extends VElement implements VConfigAble {
 			group.getChildren().add(notationf.getShapeGroups());
 		}
 	}
-
 	public void initGuitarNotations(){
 		double durationCounter = 0;
 		VGNotation notation;
@@ -125,7 +130,7 @@ public class VMeasure extends VElement implements VConfigAble {
 				type = note.type;
 			}
 			if (!note.isGrace&&!note.isRest){
-				notation.addNote(note.number, type);
+				notation.addNote(note.number, type,note.dots);
 			}
 
 			durationCounter += (1d/VUtility.NoteType2Integer(type));
@@ -150,7 +155,16 @@ public class VMeasure extends VElement implements VConfigAble {
 			group.getChildren().add(vNote.getShapeGroups());
 		}
 	}
-	public void addNoteHead(Note note,VNote vNote){
+
+	public VLine getVLine() {
+		return line;
+	}
+
+	public void setVLine(VLine line) {
+		this.line = line;
+	}
+
+	public void addNoteHead(Note note, VNote vNote){
 		int dots = 0;
 		if (note.getDots()!=null){
 			dots = note.getDots().size();
@@ -162,29 +176,33 @@ public class VMeasure extends VElement implements VConfigAble {
 		int relative = 1;
 		//TODO set relative to default rest position. calculate based on the staffline.
 		if (note.getRest()!=null){
-
-			noteHead = new VNoteHead(VUtility.getDrumAssetName(note),0,relative,false);
+			noteHead = new VNoteHead(VUtility.getDrumAssetName(note),0,relative,false,vNote);
 			noteHead.updateConfig("scale",3);
 			vNote.setRest(true);
 		}else {
 			if (instrument.equals("TAB")){
 				if (note.getNotations()!=null&&note.getNotations().getTechnical()!=null){
 					relative = note.getNotations().getTechnical().getString()*3; // since tab staff is double-space\
-					noteHead = new VNoteHead(note.getNotations().getTechnical().getFret(),dots,relative,note.getGrace()!=null);
+					noteHead = new VNoteHead(note.getNotations().getTechnical().getFret(),dots,relative,note.getGrace()!=null,vNote);
+					if (note.getNotations().getTechnical().getBend()!=null){
+						noteHead.addBend(note.getNotations().getTechnical().getBend().getBendAlter());
+					}
 				}
 			}else {
 				String result = VUtility.getDrumAssetName(note);
 				step = note.getUnpitched().getDisplayStep();
 				octave = note.getUnpitched().getDisplayOctave();
 				relative = VUtility.getRelative(step,octave);
-				noteHead = new VNoteHead(result,dots,relative,note.getGrace()!=null);
+				noteHead = new VNoteHead(result,dots,relative,note.getGrace()!=null,vNote);
 			}
 		}
 		if (note.getNotations()!=null){
-			if (note.getNotations().getTieds()!=null){
+			if (note.getNotations().getTieds()!=null&&note.getRest()==null){
+				noteHead.setTieds(note.getNotations().getTieds());
 				tieNoteHead.add(noteHead);
 			}
-			if (note.getNotations().getSlurs()!=null){
+			if (note.getNotations().getSlurs()!=null&&note.getRest()==null){
+				noteHead.setSlurs(note.getNotations().getSlurs());
 				slurNoteHead.add(noteHead);
 			}
 		}
@@ -194,29 +212,21 @@ public class VMeasure extends VElement implements VConfigAble {
 		if (note.getType()!=null) {
 			vNote.setNoteType(note.getType());
 		}
+		noteHead.setNote(note);
 		vNote.addNoteHead(noteHead);
 	}
-	@Override
-	public HashMap<String, Double> getConfigAbleList() {
-		return config;
-	}
+
+
+
 
 	@Override
-	public void updateConfig(String id, double value) {
-		if (config.containsKey(id)){
-			config.put(id,value);
-		}
-	}
-
-	@Override
-	public void setHighLight(boolean states) {
-		Color color;
-		if (states){
-			color	= VConfig.getInstance().getHighLightColor();
-			//background.setStroke(color);
-		}else {
-			color = VConfig.getInstance().getDefaultColor();
-			//background.setStroke(Color.TRANSPARENT);
+	public void setHighLight(HighLight states) {
+		Color color = null;
+		highLight = states;
+		switch (states){
+			case NULL -> color = VConfig.getInstance().getDefaultColor();
+			case PLAY -> color = VConfig.getInstance().getPlayColor();
+			case SELECTED -> color = VConfig.getInstance().getHighLightColor();
 		}
 		for (VGNotation notation:Notations){
 			notation.setHighLight(states);
@@ -240,7 +250,7 @@ public class VMeasure extends VElement implements VConfigAble {
 		return gapCount;
 	}
 
-	public void initStaffLines(List<Integer> staffInfo){
+	public void initStaffLines(){
 		//staffInfo contain offset of each staff
 		for (Integer i:staffInfo){
 			Line line = new Line(0,0,0,0);
@@ -251,8 +261,10 @@ public class VMeasure extends VElement implements VConfigAble {
 		}
 	}
 	public void updateStaffLine(double W){
-		for (Line line:staffLines){
-			line.setEndX(W);
+		for (int i=0;i<staffLines.size();i++){
+			double gap = VConfig.getInstance().getGlobalConfig("Step");
+			staffLines.get(i).setEndX(W);
+			staffLines.get(i).setLayoutY(staffInfo.get(i)*gap);
 		}
 	}
 	public void setShowClef(boolean states){
@@ -261,21 +273,32 @@ public class VMeasure extends VElement implements VConfigAble {
 	public void initBarlines(List<BarLine> barLine){
 		barlines = new ArrayList<>();
 		double length = staffLines.get(staffLines.size()-1).getLayoutY();
-		barlines.add(new VBarline(length,"default",null,"right"));
+		boolean hasRightEnd = false;
 		if (barLine!=null){
 			for (BarLine barLine1:barLine){
 				barlines.add(new VBarline(length,barLine1.barStyle,barLine1.repeat,barLine1.location));
+				if (barLine1.location.equals("right")){
+					hasRightEnd = true;
+				}
 			}
 		}
-
+		if (!hasRightEnd){
+			barlines.add(new VBarline(length,"default",null,"right"));
+		}
 		for (VBarline vBarline:barlines){
 			group.getChildren().add(vBarline.getShapeGroups());
 		}
 	}
 	public void alignmentBarlines(){
 		for (VBarline vBarline:barlines){
+			vBarline.setLength(staffInfo.get(staffInfo.size()-1)*VConfig.getInstance().getGlobalConfig("Step"));
+			vBarline.alignment();
 			if (vBarline.location.equals("right")){
-				vBarline.getShapeGroups().setLayoutX(W);
+				if (!vBarline.getStyle().equals("default")){
+					vBarline.getShapeGroups().setLayoutX(W-vBarline.getConfigAbleList().get("distanceBetweenLine"));
+				}else {
+					vBarline.getShapeGroups().setLayoutX(W);
+				}
 			}else {
 				vBarline.getShapeGroups().setLayoutX(0);
 			}
@@ -308,10 +331,14 @@ public class VMeasure extends VElement implements VConfigAble {
 	}
 	public void alignment(){
 		W = 0;
-		W += config.get("gapBeforeMeasure");
+		background.setLayoutY(0);
+		background.setLayoutX(0);
+		background.setWidth(0);
+		background.setHeight(0);
+		W += configMap.get("gapBeforeMeasure");
 		gapCount = 0;
-		double gapBetweenElement = config.get("gapBetweenElement");
-		double gapBetweenGrace = config.get("gapBetweenGrace");
+		double gapBetweenElement = configMap.get("gapBetweenElement");
+		double gapBetweenGrace = configMap.get("gapBetweenGrace");
 
 		for (VSign sign:Signs){
 			sign.alignment();
@@ -337,10 +364,47 @@ public class VMeasure extends VElement implements VConfigAble {
 		background.setLayoutX(bounds.getMinX());
 		background.setLayoutY(bounds.getMinY());
 		background.setHeight(bounds.getHeight());
-		background.setWidth(bounds.getWidth());
+		background.setWidth(W);
 		background.setFill(Color.TRANSPARENT);
 		background.toBack();
 		alignmentBarlines();
 		alignmentNotations();
+		setHighLight(highLight);
+	}
+	public double getWInMinWidth(){
+		double minW = 0;
+		minW += configMap.get("gapBeforeMeasure");
+		double gapBetweenElement = configMap.get("MinNoteDistance");
+		double gapBetweenGrace = configMap.get("gapBetweenGrace");
+		for (VSign sign:Signs){
+			sign.alignment();
+			minW += sign.getW();
+			minW += gapBetweenElement;
+		}
+		for (VNote note:Notes){
+			note.alignment();
+			double offsetX = note.offsetX;
+			minW += note.getW()+offsetX;
+			if (note.isGrace){
+				minW += gapBetweenGrace;
+			}else {
+				minW += gapBetweenElement;
+			}
+		}
+		minW += gapBetweenElement;
+		return minW;
+	}
+	public List<VNoteHead> getTieNoteHead() {
+		return tieNoteHead;
+	}
+	public List<VNoteHead> getSlurNoteHead() {
+		return slurNoteHead;
+	}
+	public List<VNote> getNotes() {
+		return Notes;
+	}
+
+	public int getNumber() {
+		return number;
 	}
 }

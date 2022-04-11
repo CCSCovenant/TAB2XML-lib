@@ -4,10 +4,14 @@ package visualizer;
 import converter.Score;
 import custom_exceptions.TXMLException;
 import javafx.scene.Group;
+import javafx.util.Pair;
 import models.Part;
 import models.ScorePartwise;
 import models.measure.Measure;
-import visualElements.*;
+import visualElements.VConfig;
+import visualElements.VLine;
+import visualElements.VMeasure;
+import visualElements.VPage;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -15,22 +19,25 @@ import java.util.List;
 
 /**
  * This Class is use for visualize musicXML file.
+ * Visualizer will read score and output
  *
  * @author Kuimou
  * */
-public class Visualizer implements VConfigAble {
-	Score score;
-	ArrayList<Group> groups;
-	ArrayList<VPage> pages;
-	List<VMeasure> VMeasures;
-	String staffType;
+public class Visualizer {
+	public Score score;
+	public ArrayList<Group> groups;
+	public ArrayList<VPage> pages;
+	public List<VMeasure> VMeasures;
+	public String staffType;
+	int measureCounter = 0;
+
+	HashMap<Integer, Pair<Integer,Integer>> measureMapping = new HashMap<>();
  	public Visualizer(Score score) throws TXMLException {
 		this.score = score;
 		VMeasures = new ArrayList<>();
 		setUpInitStaffLine(5,2);
 		initMeasures();
 		alignment();
-		initGroups();
 	}
 
 	public ArrayList<Group> getElementGroups(){
@@ -47,27 +54,30 @@ public class Visualizer implements VConfigAble {
 					if (measure.getAttributes().getClef()!=null){
 						if (measure.getAttributes().getClef().getSign().equals("TAB")){
 							setUpInitStaffLine(measure.getAttributes().getStaffDetails().getStaffLines(),3);
-							VConfig.getInstance().setInstrument(staffType);
 							staffType = "TAB";
+							VConfig.getInstance().setInstrument(staffType);
 						}else {
 							setUpInitStaffLine(measure.getAttributes().getStaffDetails().getStaffLines(),2);
-							VConfig.getInstance().setInstrument(staffType);
 							staffType = "percussion";
+							VConfig.getInstance().setInstrument(staffType);
 						}
 					}
 				}
 				VMeasures.add(getVMeasure(measure));
 			}
 		}
+		measureCounter = VMeasures.size();
 	}
 	public void alignment() throws TXMLException {
 		pages = new ArrayList<>();
 		VPage tmpPage = new VPage();
 		VLine tmpLine = new VLine(staffType);
+
 		for (VMeasure measure:VMeasures){
 			if (tmpLine.addNewMeasure(measure)){ // if this measure can fit into this line, do nothing
 
 			}else {    //if this measure fail to fit into this line
+				tmpLine.initCurvedNotations();
 				if (tmpPage.addNewLine(tmpLine)){ //try to add this line into the page. if success, create a new line(in line 79)
 
 				}else { //else create a new page to add current line.
@@ -79,6 +89,7 @@ public class Visualizer implements VConfigAble {
 				tmpLine.addNewMeasure(measure);
 			}
 		}
+		tmpLine.initCurvedNotations();
 		if (tmpPage.addNewLine(tmpLine)){
 			pages.add(tmpPage);
 		}else {
@@ -87,7 +98,30 @@ public class Visualizer implements VConfigAble {
 			tmpPage.addNewLine(tmpLine);
 			pages.add(tmpPage);
 		}
+		createMapping();
+		initGroups();
 	}
+	public void createMapping(){
+		measureMapping = new HashMap<>();
+		for (int p=0;p<pages.size();p++){
+			List<VLine> lines = pages.get(p).getLines();
+			for (int l=0;l<lines.size();l++){
+				for (VMeasure measure:lines.get(l).getMeasures()){
+					int measureID = measure.getNumber();
+					measureMapping.put(measureID,new Pair<>(p,l));
+				}
+			}
+		}
+	}
+
+	public HashMap<Integer, Pair<Integer,Integer>> getMeasureMapping() {
+		return measureMapping;
+	}
+
+	public List<VMeasure> getVMeasures() {
+		return VMeasures;
+	}
+
 	public void initGroups(){
 		 groups = new ArrayList<>();
 		 for (VPage page:pages){
@@ -98,9 +132,6 @@ public class Visualizer implements VConfigAble {
 		VMeasure vMeasure = new VMeasure(measure,staffType,VConfig.getInstance().getStaffDetail());
 		return vMeasure;
 	}
-
-
-
 	public void setUpInitStaffLine(int lines,int gap){
 		List<Integer> list= new ArrayList<>();
 		for (int i=0;i<lines*gap;i+=gap){
@@ -108,13 +139,8 @@ public class Visualizer implements VConfigAble {
 		 }
 		VConfig.getInstance().setStaffDetail(list);
 	}
-	@Override
-	public HashMap<String, Double> getConfigAbleList() {
-		return null;
-	}
 
-	@Override
-	public void updateConfig(String id, double value) {
-
+	public int getMeasureCounter() {
+		return measureCounter;
 	}
 }

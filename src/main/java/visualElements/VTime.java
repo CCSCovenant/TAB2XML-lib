@@ -30,15 +30,17 @@ public class VTime extends VSign{
 		Bounds upperBoundsInLocal = upper.getBoundsInLocal();
 		Bounds lowerBoundsInLocal = lower.getBoundsInLocal();
 		W = Math.max(upperBoundsInLocal.getWidth(),lowerBoundsInLocal.getWidth());
+		setHighLight(highLight);
 	}
 
 	@Override
-	public void setHighLight(boolean states) {
-		Color color;
-		if (states){
-		 	color	= VConfig.getInstance().getHighLightColor();
-		}else {
-			color = VConfig.getInstance().getDefaultColor();
+	public void setHighLight(HighLight states) {
+		Color color = null;
+		highLight = states;
+		switch (states){
+			case NULL -> color = VConfig.getInstance().getDefaultColor();
+			case PLAY -> color = VConfig.getInstance().getPlayColor();
+			case SELECTED -> color = VConfig.getInstance().getHighLightColor();
 		}
 		upper.setFill(color);
 		lower.setFill(color);

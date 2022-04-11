@@ -92,7 +92,7 @@
   {
     "name": "grace_full",
     "url": "graphic/32th_full.png",
-    "id": "32th_full"
+    "id": "32nd_full"
   },
   {
     "name": "grace_full",
@@ -159,5 +159,25 @@
     "name": "arrow",
     "url": "graphic/arrow.png",
     "id": "arrow"
+  },
+  {
+    "name": "refresh",
+    "url": "graphic/Refresh_icon.png",
+    "id": "refresh"
+  },
+  {
+    "name": "play_icon",
+    "url": "graphic/play.png",
+    "id": "play"
+  },
+  {
+    "name": "repeat_icon",
+    "url": "graphic/enableRepeat.png",
+    "id": "enableRepeat"
+  },
+  {
+    "name": "save_icon",
+    "url": "graphic/save_icon.png",
+    "id": "saveIcon"
   }
 ]

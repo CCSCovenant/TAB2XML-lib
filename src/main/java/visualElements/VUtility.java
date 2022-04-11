@@ -1,8 +1,20 @@
 package visualElements;
 
 import models.measure.note.Note;
-
+/**
+ * this class contain help methods that help visualizer determine position/type/resource
+ * @author Kuimou Yu
+ * */
 public class VUtility {
+	/**
+	 * This method get relative position of given step and octave.
+	 * relate to E5
+	 *  for example. F5-E5 = -1
+	 *
+	 * @param octave input octave
+	 * @param step input step
+	 * @return relative position
+	 */
 	public static int getRelative(String step,int octave){
 		//center C is the baseline.
 		int centerOctave = 5;
@@ -19,7 +31,13 @@ public class VUtility {
 	}
 	// C4 A B3 C D2 E F1 G A0 B C D E F G
 
-
+	/**
+	 * This method get Asset name from given note.
+	 * asset name is a string that program can get image from imageResourceHandler
+	 *
+	 * @param note Note
+	 * @return asset id
+	 */
 	public static String getDrumAssetName(Note note){
 		if (note.getRest()!=null){
 			return note.getType()+"_rest";
@@ -36,7 +54,7 @@ public class VUtility {
 				case 16:
 					return "16th_full";
 				case 32:
-					return "32th_full";
+					return "32nd_full";
 				default:
 					return "64th_full";
 			}
@@ -62,6 +80,12 @@ public class VUtility {
 			}
 		}
 	}
+	/**
+	 * this method will covert note in string into int duration value.
+	 * only return denominator
+	 * @param type note type (e.g whole,half,quarter)
+	 * @return denominator of duration value
+	 * */
 	public static int NoteType2Integer(String type){
 		switch (type){
 			case "whole":
@@ -89,6 +113,54 @@ public class VUtility {
 			default:
 				return -1;
 		}
+	}
+	/**
+	 * this method will covert internal string id into display name
+	 *
+	 * @param id string id
+	 * @return display name
+	 * */
+	public static String getDisplayName(String id){
+		if(id.equalsIgnoreCase("gapBetweenGrace")) {
+			return "Grace Spacing";
+		}
+		else if(id.equalsIgnoreCase("gapBeforeMeasure")) {
+			return "Measure Spacing (Before)";
+		}
+		else if(id.equalsIgnoreCase("MinNoteDistance")) {
+			return "Minimum Note Spacing";
+		}
+		else if (id.equalsIgnoreCase("offsetX")) {
+			return "Note Head Horizontal Offset";
+		}
+		else if (id.equalsIgnoreCase("scale")) {
+			return "Note Size";
+		}
+		else if (id.equalsIgnoreCase("dotOffset")) {
+			return "Dot Offset";
+		}
+		else if (id.equalsIgnoreCase("DrumNotationHeight")) {
+			return "Drum Notation Height";
+		}
+		else if (id.equalsIgnoreCase("notationGap")) {
+			return "Notation Spacing";
+		}
+		else if (id.equalsIgnoreCase("thickness")) {
+			return "Guitar Notation Thickness";
+		}
+		else if (id.equalsIgnoreCase("GuitarNotationEndHeight")) {
+			return "Guitar Notation Height (End)";
+		}
+		else if (id.equalsIgnoreCase("GuitarNotationStartHeight")) {
+			return "Guitar Notation Height (Start)";
+		}
+		else if (id.equalsIgnoreCase("dotSize")) {
+			return "Dot Size";
+		}
+		return id;
+	}
+	public static String getHelpDocUrl(){
+		return "https://github.com/CCSCovenant/TAB2XML/blob/master/Documents/EECS2311_%20USER%20MANUAL.pdf";
 	}
 
 

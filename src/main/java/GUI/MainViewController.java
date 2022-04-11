@@ -16,7 +16,6 @@ import javafx.stage.*;
 import org.fxmisc.richtext.CodeArea;
 import org.fxmisc.richtext.LineNumberFactory;
 import org.fxmisc.richtext.model.StyleSpans;
-import player.ThreadPlayer;
 import utility.Range;
 import utility.Settings;
 
@@ -317,17 +316,14 @@ public class MainViewController extends Application {
 			stage.setMinHeight(700);
 
 			previewViewController = loader.getController();
-			previewViewController.setMainViewController(this);
-			previewViewController.setScene(scene);
+			previewViewController.updateScore(converter.getScore());
+			previewViewController.setSceneAndStage(scene,stage);
 			previewViewController.update();
 			convertWindow = scene.getWindow();
 			convertWindow.setOnCloseRequest(new EventHandler<WindowEvent>() {
 				@Override
 				public void handle(WindowEvent event) {
-					if (PreviewViewController.thp!=null){
-						PreviewViewController.thp = new ThreadPlayer("0");
-						PreviewViewController.thp.start("");
-					}
+					previewViewController.getLinkedPlayer().stop();
 					System.out.println("close");
 				}
 			});
@@ -391,7 +387,9 @@ public class MainViewController extends Application {
             @Override
             protected StyleSpans<Collection<String>> call() throws TXMLException, FileNotFoundException {
             	converter.update();
-
+				if (previewViewController!=null){
+					previewViewController.updateScore(converter.getScore());
+				}
                 if (converter.getScore().getTabSectionList().isEmpty()){
                 	saveMXLButton.setDisable(true);
                 	previewButton.setDisable(true);

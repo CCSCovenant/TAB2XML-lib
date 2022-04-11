@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VPage extends VElement{
-	VTitle vTitle;
 	List<VLine> lines = new ArrayList<>();
 	Rectangle background = new Rectangle();
 	double MarginY = VConfig.getInstance().getGlobalConfig("MarginY");
@@ -26,10 +25,8 @@ public class VPage extends VElement{
 	}
 
 	@Override
-	public void setHighLight(boolean states) {
-		for (VLine line:lines){
-			line.setHighLight(states);
-		}
+	public void setHighLight(HighLight states) {
+
 	}
 
 	@Override
@@ -39,21 +36,32 @@ public class VPage extends VElement{
 
 
 	public boolean addNewLine(VLine line){
-		if (H+measureDistance>PageY-MarginY){
+		line.alignment();
+		double lineH = line.getH();
+		if (H+lineH>PageY-MarginY){
+			if (lines.size()==0){
+				//TODO give user error while can't fit a single line into the page
+				//which should not happen :(  WHY SOME ONE CONFIG LIKE THIS
+				line.getShapeGroups().setLayoutY(H);
+				line.getShapeGroups().setLayoutX(MarginX);
+				lines.add(line);
+				group.getChildren().add(line.getShapeGroups());
+				H += line.getH()+measureDistance;
+				return true;
+			}
 			return false;
 		}else {
 			line.getShapeGroups().setLayoutY(H);
 			line.getShapeGroups().setLayoutX(MarginX);
 			lines.add(line);
-			line.alignment();
 			group.getChildren().add(line.getShapeGroups());
 			H += line.getH()+measureDistance;
 			return true;
 		}
 	}
-	// must be called before add line
-	public void addVTitle(VTitle vTitle){
-		this.vTitle = vTitle;
-		H += vTitle.getH();
+
+
+	public List<VLine> getLines() {
+		return lines;
 	}
 }

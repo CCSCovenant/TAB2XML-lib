@@ -4,19 +4,20 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-public class VNote extends VElement implements VConfigAble {
+public class VNote extends VElement {
 	int number;
 	int noteHeadCount = 1;
-
+	int dots = 0;
 	double maxVPos = 0;
-	HashMap<String,Double> configMap = new HashMap<>();
 	double offsetX = 0;
 	HashMap<Integer,Boolean> blockedPos = new HashMap<>();
 	List<VNoteHead> noteHeads = new ArrayList<>();
 	boolean isGrace = false;
 	boolean isRest = false;
+	VMeasure parentMeasure;
 	String type;
-	public VNote(int i){
+	public VNote(int i,VMeasure parentMeasure){
+		this.parentMeasure = parentMeasure;
 		this.number = i;
 		initConfig();
 	}
@@ -32,10 +33,11 @@ public class VNote extends VElement implements VConfigAble {
 
 		noteHeads.add(noteHead);
 		noteHead.alignment();
+		dots = noteHead.getDotC();
 		group.getChildren().add(noteHead.getShapeGroups());
 	}
 	public void initConfig(){
-		configMap.put("graceOffset",5d);
+		initConfigElement("graceOffset",5,0,10,false);
 	}
 	public void setNoteType(String type){
 		if (type==null){
@@ -46,7 +48,8 @@ public class VNote extends VElement implements VConfigAble {
 
 	}
 	@Override
-	public void setHighLight(boolean states) {
+	public void setHighLight(HighLight states) {
+		highLight = states;
 		for (VNoteHead noteHead:noteHeads){
 			noteHead.setHighLight(states);
 		}
@@ -61,22 +64,17 @@ public class VNote extends VElement implements VConfigAble {
 	}
 
 	public void alignment(){
-
+		maxVPos = 0;
 		for(VNoteHead noteHead:noteHeads){
 			noteHead.alignment();
 			W = Math.max(W,noteHead.getW());
 			maxVPos = Math.max(maxVPos,noteHead.getShapeGroups().getLayoutY());
 		}
 		W = group.getBoundsInLocal().getWidth();
+		setHighLight(highLight);
 	}
 
-	@Override
-	public HashMap<String, Double> getConfigAbleList() {
-		return configMap;
-	}
-
-	@Override
-	public void updateConfig(String id, double value) {
-		configMap.put("id",value);
+	public VMeasure getParentMeasure() {
+		return parentMeasure;
 	}
 }

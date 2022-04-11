@@ -1,7 +1,11 @@
 package visualElements;
 
-import javafx.scene.image.Image;
+import javafx.geometry.Bounds;
+import javafx.scene.effect.Blend;
+import javafx.scene.effect.BlendMode;
+import javafx.scene.effect.ColorInput;
 import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import visualizer.ImageResourceHandler;
 
@@ -16,7 +20,7 @@ public class VClef extends VSign {
 	public VClef(String instrument){
 		group.getChildren().add(imageView);
 		initStaffLines(VConfig.getInstance().getStaffDetail());
-		imageView.setImage(new Image(imageResourceHandler.getImage(instrument)));
+		imageView.setImage(imageResourceHandler.getImage(instrument));
 	}
 	public void initStaffLines(List<Integer> staffInfo){
 		//staffInfo contain offset of each staff
@@ -27,6 +31,22 @@ public class VClef extends VSign {
 			staffLines.add(line);
 			group.getChildren().add(line);
 		}
+
+	}
+	public void setHighLight(HighLight states) {
+		Color color = null;
+		highLight = states;
+		switch (states){
+			case NULL -> color = VConfig.getInstance().getDefaultColor();
+			case PLAY -> color = VConfig.getInstance().getPlayColor();
+			case SELECTED -> color = VConfig.getInstance().getHighLightColor();
+		}
+		Blend blend = new Blend();
+		Bounds bounds = group.getBoundsInLocal();
+		ColorInput colorinput = new ColorInput(bounds.getMinX(),bounds.getMinY(),bounds.getWidth(),bounds.getHeight(),color);
+		blend.setTopInput(colorinput);
+		blend.setMode(BlendMode.SRC_ATOP);
+		group.setEffect(blend);
 	}
 	public void alignment(){
 		List<Integer> staffDetail = VConfig.getInstance().getStaffDetail();
@@ -40,6 +60,7 @@ public class VClef extends VSign {
 		imageView.setLayoutX(min);
 		W = imageView.getFitWidth()+min*2;
 		updateStaffLine(W);
+		setHighLight(highLight);
 	}
 	public void updateStaffLine(double W){
 		for (Line line:staffLines){
