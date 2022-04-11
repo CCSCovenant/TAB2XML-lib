@@ -10,6 +10,7 @@ import models.measure.note.*;
 import models.measure.note.notations.Notations;
 import models.measure.note.notations.Tied;
 import org.jfugue.pattern.Pattern;
+import org.jfugue.player.Player;
 import org.jfugue.temporal.TemporalPLP;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
@@ -169,6 +170,8 @@ public class ParserOutputTest {
 		}
 		String expected = "V9 [BASS_DRUM]/0.25+[BASS_DRUM]/0.25+[BASS_DRUM]/0.25 ";
 		Assertions.assertEquals(expected,parser.getNoteDetails(notes,"percussion").getKey());
+		Player player=  new Player();
+		player.play(parser.getNoteDetails(notes,"percussion").getKey());
 	}
 	@Test
 	void ChordTestTab() throws TXMLException {
