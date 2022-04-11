@@ -140,19 +140,19 @@ public class VUtility {
 			return "Dot Offset";
 		}
 		else if (id.equalsIgnoreCase("DrumNotationHeight")) {
-			return "Drum Notation Height";
+			return "Drum Stem  Height";
 		}
 		else if (id.equalsIgnoreCase("notationGap")) {
-			return "Notation Spacing";
+			return "Beam Spacing";
 		}
 		else if (id.equalsIgnoreCase("thickness")) {
-			return "Guitar Notation Thickness";
+			return "Beam Thickness";
 		}
 		else if (id.equalsIgnoreCase("GuitarNotationEndHeight")) {
-			return "Guitar Notation Height (End)";
+			return "Guitar Stem  Height (End)";
 		}
 		else if (id.equalsIgnoreCase("GuitarNotationStartHeight")) {
-			return "Guitar Notation Height (Start)";
+			return "Guitar Stem  Height (Start)";
 		}
 		else if (id.equalsIgnoreCase("dotSize")) {
 			return "Dot Size";
@@ -162,12 +162,6 @@ public class VUtility {
 		}
 		else if(id.equalsIgnoreCase("PageY")) {
 			return "Page Height";
-		}
-		else if(id.equalsIgnoreCase("MarginX")) {
-			return "Width Compression";
-		}
-		else if(id.equalsIgnoreCase("MarginY")) {
-			return "Offset from Top";
 		}
 		else if(id.equalsIgnoreCase("MeasureDistance")) {
 			return "Distance b/w Measures";
