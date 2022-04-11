@@ -24,10 +24,6 @@ The steps to getting the software on your computer are as follows:
 3) Download the zip folder onto your computer and extract the zip file into the desired folder.
    ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/master/src/main/resources/readme/g2.png)
 4) Double click the .jar file to run the application.
-   ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/master/src/main/resources/readme/g3.png)
-  
-   You can also write ‘java -jar xxx.jar’ in the command line to run the application as shown below. 
-   ![Image text](https://github.com/CCSCovenant/TAB2XML/blob/master/src/main/resources/readme/g4.png)
 
 
 # How to use
