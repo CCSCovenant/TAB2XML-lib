@@ -80,6 +80,17 @@ public class PlayMonitor extends Thread{
 			if (measure>=durations.size()){
 				return false;
 			}else {
+				if (durations.get(measure).size()==0){
+					while (measure<durations.size()-1&&durations.get(measure).size()==0){
+						measure++;
+					}
+					if (measure>=durations.size()){
+						return false;
+					}
+					if (durations.get(measure).size()==0){
+						return false;
+					}
+				}
 				note = 0;
 
 				VNote vNote = measures.get(MusicStrings.get(measure).getKey()-1).getNotes().get(note);

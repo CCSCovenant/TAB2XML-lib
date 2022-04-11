@@ -316,7 +316,7 @@ public class MainViewController extends Application {
 			stage.setMinHeight(700);
 
 			previewViewController = loader.getController();
-			previewViewController.setMainViewController(this);
+			previewViewController.updateScore(converter.getScore());
 			previewViewController.setSceneAndStage(scene,stage);
 			previewViewController.update();
 			convertWindow = scene.getWindow();
@@ -387,7 +387,9 @@ public class MainViewController extends Application {
             @Override
             protected StyleSpans<Collection<String>> call() throws TXMLException, FileNotFoundException {
             	converter.update();
-
+				if (previewViewController!=null){
+					previewViewController.updateScore(converter.getScore());
+				}
                 if (converter.getScore().getTabSectionList().isEmpty()){
                 	saveMXLButton.setDisable(true);
                 	previewButton.setDisable(true);

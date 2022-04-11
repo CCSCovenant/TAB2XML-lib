@@ -7,7 +7,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VPage extends VElement{
-	VTitle vTitle;
 	List<VLine> lines = new ArrayList<>();
 	Rectangle background = new Rectangle();
 	double MarginY = VConfig.getInstance().getGlobalConfig("MarginY");
@@ -60,11 +59,7 @@ public class VPage extends VElement{
 			return true;
 		}
 	}
-	// must be called before add line
-	public void addVTitle(VTitle vTitle){
-		this.vTitle = vTitle;
-		H += vTitle.getH();
-	}
+
 
 	public List<VLine> getLines() {
 		return lines;

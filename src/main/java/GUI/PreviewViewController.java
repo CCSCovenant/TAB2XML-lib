@@ -2,6 +2,7 @@ package GUI;
 
 import com.jfoenix.controls.JFXDrawer;
 import com.jfoenix.controls.JFXHamburger;
+import converter.Score;
 import custom_exceptions.TXMLException;
 import javafx.animation.Animation;
 import javafx.animation.FadeTransition;
@@ -36,7 +37,6 @@ import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
 import org.apache.pdfbox.pdmodel.graphics.image.PDImageXObject;
 import player.LinkedPlayer;
-import player.MXLParser;
 import utility.SwingFXUtils;
 import visualElements.*;
 import visualizer.ImageResourceHandler;
@@ -66,20 +66,21 @@ public class PreviewViewController extends Application {
 	Sidebar sidebar;
 	private static Window convertWindow = new Stage();
 
+	Score score;
 	private double scale = 1.0;
-	private MainViewController mvc;
 	private int pageNumber = 0;
 	private Visualizer visualizer;
-	private MXLParser player;
 	HashMap<Integer, Pair<Integer,Integer>> measureMapping;
-
+	public boolean isPlaying;
 	public LinkedPlayer linkedPlayer;
 	public Scene scene;
 	public Stage stage;
 	public ArrayList<Group> groups;
-	public void setMainViewController(MainViewController mvcInput) {
-		mvc = mvcInput;
+
+	public void updateScore(Score score){
+		this.score = score;
 	}
+
 	public void setSceneAndStage(Scene scene,Stage stage){
 		this.scene = scene;
 		this.stage =stage;
@@ -92,7 +93,6 @@ public class PreviewViewController extends Application {
 	public void update() throws TXMLException, FileNotFoundException, URISyntaxException {
 		reset();
 		sidebar = new Sidebar(this);
-		player = new MXLParser(mvc.converter.getScore().getModel());
 		sidebar.initialize(drawer, hamburger);
 		GUISelector.getInstance().setSidebar(sidebar);
 		GUISelector.getInstance().setSElement(null);
@@ -259,8 +259,8 @@ public class PreviewViewController extends Application {
 		}
 		playButton.setSelected(false);
 		VConfig.getInstance().initDefaultConfig();
-		this.visualizer = new Visualizer(mvc.converter.getScore());
-		this.linkedPlayer = new LinkedPlayer(mvc.converter.getScore());
+		this.visualizer = new Visualizer(score);
+		this.linkedPlayer = new LinkedPlayer(score);
 		linkedPlayer.setController(this);
 		groups = visualizer.getElementGroups();
 		measureMapping = visualizer.getMeasureMapping();
@@ -270,6 +270,14 @@ public class PreviewViewController extends Application {
 	}
 	public void RestPlayButton(){
 		playButton.setSelected(false);
+		isPlaying = false;
+		Color color = VConfig.getInstance().defaultColor;
+		Blend blend = new Blend();
+		Bounds bounds = ((ImageView)playButton.getGraphic()).getBoundsInLocal();
+		ColorInput colorinput = new ColorInput(bounds.getMinX(),bounds.getMinY(),bounds.getWidth(),bounds.getHeight(),color);
+		blend.setTopInput(colorinput);
+		blend.setMode(BlendMode.SRC_ATOP);
+		playButton.getGraphic().setEffect(blend);
 	}
 	public void apply() {
 		try {
@@ -317,6 +325,7 @@ public class PreviewViewController extends Application {
 
 		if (playButton.isSelected()){
 			if (GUISelector.getInstance().getSElement()==null){
+				isPlaying = true;
 				linkedPlayer.play(0);
 			}else {
 				VElement vElement = GUISelector.getInstance().getSElement();
@@ -328,9 +337,11 @@ public class PreviewViewController extends Application {
 				}else if (vElement instanceof VNoteHead){
 					measureNumber = ((VNoteHead) vElement).getParentNote().getParentMeasure().getNumber()-1;
 				}
+				isPlaying = true;
 				linkedPlayer.play(measureNumber);
 			}
 		}else {
+			isPlaying = false;
 			linkedPlayer.stop();
 		}
 	}

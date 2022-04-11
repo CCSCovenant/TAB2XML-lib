@@ -35,6 +35,9 @@ public class VElement implements VConfigAble {
 	public Group getShapeGroups(){
 		return group;
 	}
+	public void alignment(){
+
+	}
 	public double getH(){
 		return group.getBoundsInLocal().getHeight();
 	}

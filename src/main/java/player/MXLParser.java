@@ -7,7 +7,6 @@ import models.ScorePartwise;
 import models.measure.Measure;
 import models.measure.attributes.Time;
 import models.measure.barline.BarLine;
-import models.measure.note.Dot;
 import models.measure.note.Note;
 import models.measure.note.notations.Tied;
 
@@ -21,38 +20,24 @@ public class MXLParser {
 	List<List<Double>> Durations = new ArrayList<>();
 	List<List<Double>> FullDurationsWithRepeat = new ArrayList<>();
 
-	List<Pair<Integer,String>> measureMapping = new ArrayList<>();
+	List<Pair<Integer,String>> musicWithoutReapeat = new ArrayList<>();
 	List<Pair<Integer,String>> fullMusicWithRepeat = new ArrayList<>();
 
 	List<Integer> firstPosition = new ArrayList<>();
 	public MXLParser(ScorePartwise score) throws TXMLException {
 		this.score = score;
-		removeEmptyMeasure(this.score);
+		//removeEmptyMeasure(this.score);
 		initStrings();
 	}
-	public void removeEmptyMeasure(ScorePartwise scorePartwise){
-		for (Part part:scorePartwise.getParts()){
-			List<Measure> measures2remove = new ArrayList<>();
-			for (Measure measure:part.getMeasures()){
-				if (measure.getNotesBeforeBackup()==null){
-					measures2remove.add(measure);
-				}else if (measure.getNotesBeforeBackup().size()==0){
-					measures2remove.add(measure);
-				}
-			}
-			for (Measure measure:measures2remove){
-				part.getMeasures().remove(measure);
-			}
-		}
-	}
-	public List<Pair<Integer,String>> getMeasureMapping() {
-		return measureMapping;
+
+	public List<Pair<Integer,String>> getMusicWithoutReapeat() {
+		return musicWithoutReapeat;
 	}
 	public void initStrings(){
-		measureMapping = new ArrayList<>();
+		musicWithoutReapeat = new ArrayList<>();
 		fullMusicWithRepeat = new ArrayList<>();
 		for (Part part:score.getParts()){
-			initPart(part,measureMapping,fullMusicWithRepeat);
+			initPart(part, musicWithoutReapeat,fullMusicWithRepeat);
 		}
 	}
 	public void initPart(Part part,List<Pair<Integer,String>> measureMapping,List<Pair<Integer,String>> fullMusicWithRepeat){
@@ -69,7 +54,7 @@ public class MXLParser {
 		HashMap<Integer,Integer> repeatTime = new HashMap<>();
 		for (int i=0;i<part.getMeasures().size();i++){
 			Measure measure = part.getMeasures().get(i);
-			fullMusicWithRepeat.add(measureMapping.get(i));
+			fullMusicWithRepeat.add(musicWithoutReapeat.get(i));
 			FullDurationsWithRepeat.add(Durations.get(i));
 
 			if (!repeatTime.containsKey(measure.getNumber())){
@@ -143,19 +128,12 @@ public class MXLParser {
 		return musicString.toString();
 	}
 	
-	public  Pair<String,Double> getNoteDetails(List<Note> notes, String clef) {
+	public Pair<String,Double> getNoteDetails(List<Note> notes, String clef) {
 		Time time = new Time(4,4);
 		StringBuilder musicString = new StringBuilder();
 		String voice = "";
-		String chord = "";
-		String instrument = "";
-		String startTie = "";
-		String Duration = "";
-		String Alter = "";
-		String Dots = "";
-		String endTie = "";
 		Double Duration_Total = 0d;
-		
+
 		//unpitched notes are generally used in music that contain a percussion clef
 		//We need to use the appropriate voice for percussive notes (V9)
 		if (clef.equals("TAB")){
@@ -166,6 +144,14 @@ public class MXLParser {
 		musicString.append(voice+" ");
 
 		for (Note note:notes){
+			String chord = "";
+			String instrument = "";
+			String startTie = "";
+			String Duration = "";
+			String Alter = "";
+			String Dots = "";
+			String endTie = "";
+
 			if (note.getRest()!=null){
 				Duration = "R"+"/"+startTie+getNoteDuration(note)+"";
 			}
@@ -248,12 +234,6 @@ public class MXLParser {
 
 				}//instruments for percussive notes are in the form '[name_of_instrument]'
 				else { instrument = "[" + getInstrument(note.getInstrument().getId()) + "]";
-				}
-			}
-			//add dots;
-			if (note.getDots()!=null){
-				for (Dot dot:note.getDots()){
-					Dots +=".";
 				}
 			}
 			musicString.append(chord+""+instrument+""+""+Duration+Alter+Dots+""+endTie);

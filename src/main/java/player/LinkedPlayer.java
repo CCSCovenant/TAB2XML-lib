@@ -24,7 +24,7 @@ public class LinkedPlayer {
 
 	public LinkedPlayer(Score score) throws TXMLException {
 		MXLParser parser = new MXLParser(score.getModel());
-		partMusicWithOutRepeat = parser.getMeasureMapping();
+		partMusicWithOutRepeat = parser.getMusicWithoutReapeat();
 		fullMusicWithRepeat = parser.getFullMusicWithRepeat();
 		durations = parser.getDurations();
 		fullDurationsWithRepeat =parser.getFullDurationsWithRepeat();
