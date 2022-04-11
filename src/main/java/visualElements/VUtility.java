@@ -157,6 +157,21 @@ public class VUtility {
 		else if (id.equalsIgnoreCase("dotSize")) {
 			return "Dot Size";
 		}
+		else if(id.equalsIgnoreCase("PageX")) {
+			return "Page Width";
+		}
+		else if(id.equalsIgnoreCase("PageY")) {
+			return "Page Height";
+		}
+		else if(id.equalsIgnoreCase("MarginX")) {
+			return "Width Compression";
+		}
+		else if(id.equalsIgnoreCase("MarginY")) {
+			return "Offset from Top";
+		}
+		else if(id.equalsIgnoreCase("MeasureDistance")) {
+			return "Distance b/w Measures";
+		}
 		return id;
 	}
 	public static String getHelpDocUrl(){
