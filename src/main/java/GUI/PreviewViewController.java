@@ -243,10 +243,9 @@ public class PreviewViewController extends Application {
 				double factor = Math.min(box.getWidth() / w, box.getHeight() / h);
 				contentStream.drawImage(pdfimage,  0,0,(float)(w*factor),(float)(h*factor));
 				contentStream.close();
-
-				document.save(file);
-				document.close();
 			}
+			document.save(file);
+			document.close();
 		}catch (Exception e){
 			System.out.println("E");
 
