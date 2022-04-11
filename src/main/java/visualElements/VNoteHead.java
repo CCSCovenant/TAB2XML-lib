@@ -136,8 +136,12 @@ public class VNoteHead extends VElement{
 	@Override
 	public void setHighLight(HighLight states) {
 		Color color = null;
-		highLight = states;
-		switch (states){
+		if (GUISelector.getInstance().getSElement()==this){
+			highLight = HighLight.SELECTED;
+		}else {
+			highLight = states;
+		}
+		switch (highLight){
 			case NULL -> color = VConfig.getInstance().getDefaultColor();
 			case PLAY -> color = VConfig.getInstance().getPlayColor();
 			case SELECTED -> color = VConfig.getInstance().getHighLightColor();

@@ -336,7 +336,6 @@ public class VMeasure extends VElement{
 		return W;
 	}
 	public void alignment(){
-		setHighLight(highLight);
 		W = 0;
 		background.setLayoutY(0);
 		background.setLayoutX(0);
@@ -376,6 +375,7 @@ public class VMeasure extends VElement{
 		background.toBack();
 		alignmentBarlines();
 		alignmentNotations();
+		setHighLight(highLight);
 	}
 	public double getWInMinWidth(){
 		double minW = 0;
