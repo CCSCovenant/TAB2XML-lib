@@ -1,5 +1,5 @@
 plugins {
-    id 'java-library'
+    id 'java-library-distribution'
     id 'application'
     id 'jacoco'
 }
@@ -65,8 +65,19 @@ task testDebug {
     finalizedBy test
 }
 
+ distTar{
+     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+ }
 
+distZip{
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
 
+distributions {
+    main{
+        distributionBaseName  = 'tab2xml'
+    }
+}
 run {
 	enableAssertions = true
 }
