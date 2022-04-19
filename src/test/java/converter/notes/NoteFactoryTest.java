@@ -1,17 +1,16 @@
 package converter.notes;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
+import com.tab2xml.converter.InstrumentSetting;
+import com.tab2xml.converter.Score;
+import com.tab2xml.converter.measure.TabMeasure;
+import com.tab2xml.converter.note.TabNote;
+import com.tab2xml.utility.Settings;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import converter.InstrumentSetting;
-import converter.Score;
-import converter.measure.TabMeasure;
-import converter.note.TabNote;
-import utility.Settings;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class NoteFactoryTest {
 	

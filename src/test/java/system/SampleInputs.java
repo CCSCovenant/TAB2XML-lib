@@ -1,10 +1,10 @@
 package system;
 
-import converter.InstrumentSetting;
-import converter.Score;
+import com.tab2xml.converter.InstrumentSetting;
+import com.tab2xml.converter.Score;
+import com.tab2xml.utility.MusicXMLCreator;
+import com.tab2xml.utility.Settings;
 import org.junit.jupiter.api.*;
-import utility.MusicXMLCreator;
-import utility.Settings;
 
 import java.io.File;
 import java.io.IOException;

@@ -1,18 +1,19 @@
 package converter;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import com.tab2xml.converter.InstrumentSetting;
+import com.tab2xml.converter.TabRow;
+import com.tab2xml.utility.AnchoredText;
+import com.tab2xml.utility.Settings;
+import com.tab2xml.utility.ValidationError;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
-import utility.AnchoredText;
-import utility.Settings;
-import utility.ValidationError;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class TabRowTest {
     public TabRow tabRowInstance;

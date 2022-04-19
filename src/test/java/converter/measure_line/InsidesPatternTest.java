@@ -1,9 +1,8 @@
 package converter.measure_line;
 
+import com.tab2xml.utility.Patterns;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-
-import utility.Patterns;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

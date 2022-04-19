@@ -1,17 +1,15 @@
 plugins {
-    id 'java'
+    id 'java-library'
     id 'application'
-    id 'org.openjfx.javafxplugin' version '0.0.8'
     id 'jacoco'
 }
 
-group 'GUI'
-version '2.0-release'
+group 'com.tab2xml'
+version '1.0-snapshot'
 
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
-    jcenter()
 }
 
 jacoco {
@@ -26,22 +24,13 @@ dependencies {
     testImplementation 'org.junit.jupiter:junit-jupiter-api:5.6.0'
     testRuntimeOnly 'org.junit.jupiter:junit-jupiter-engine'
 
-    implementation group: 'org.fxmisc.richtext', name: 'richtextfx', version: '0.10.5'
-
     implementation 'org.apache.commons:commons-csv:1.8'
 
     implementation "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.12.5"
 
-    testImplementation "org.testfx:testfx-core:4.0.16-alpha"
-    testImplementation "org.testfx:testfx-junit5:4.0.16-alpha"
-
     implementation 'com.github.JensPiegsa:jfugue:5.0.9'
     implementation 'com.jfoenix:jfoenix:9.0.10'
-    implementation 'com.itextpdf:itext7-core:7.2.1'
-    implementation 'com.google.code.gson:gson:2.9.0'
-    implementation 'org.apache.pdfbox:pdfbox:2.0.25'
-    implementation 'org.openjfx:javafx:17'
-    implementation 'org.openjfx:javafx-swing:17-ea+17'
+
 
 }
 
@@ -76,31 +65,8 @@ task testDebug {
     finalizedBy test
 }
 
-javafx {
-    version = "17.0.1"
-    modules = [ 'javafx.controls', 'javafx.fxml' ]
-}
+
 
 run {
 	enableAssertions = true
-    if (javafx.platform.classifier == 'win') {
-        // Temporal fix for Eclipse with JDK 1.8 and Windows
-        systemProperty "java.library.path", "C:\\tmp"
-    }
-}
-
-mainClassName = 'GUI.MainApp'
-
-task fatJar(type: Jar) {
-    duplicatesStrategy = DuplicatesStrategy.INCLUDE
-
-    manifest {
-        attributes 'Implementation-Title': 'Gradle Jar File Example',
-                'Implementation-Version': version,
-                'Main-Class': 'GUI.TAB2XML'
-    }
-    baseName = 'TAB2XML'
-    from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
-    exclude 'META-INF/*.RSA', 'META-INF/*.SF','META-INF/*.DSA'
-    with jar
 }

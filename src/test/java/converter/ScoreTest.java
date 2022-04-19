@@ -1,21 +1,22 @@
 package converter;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import com.tab2xml.converter.InstrumentSetting;
+import com.tab2xml.converter.Score;
+import com.tab2xml.converter.measure.TabMeasure;
+import com.tab2xml.converter.note.TabNote;
+import com.tab2xml.utility.Settings;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.Test;
-
-import converter.measure.TabMeasure;
-import converter.note.TabNote;
-import utility.Settings;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ScoreTest {
 
