@@ -12,8 +12,7 @@ This work is licensed under a
 [cc-by-sa-shield]: https://img.shields.io/badge/License-CC%20BY--SA%204.0-lightgrey.svg
 
 #About the project
-   this repo is the backend of TAB2XML project and it will handle translate tablture to the musicXML
+   this repo is lib TAB2XML project and it will handle translate tablture to the musicXML
 #TODO LIST
-  - build the server []
-  - determine front end/back end communication []
-  - refactor visualizer to return rendered pdf file/(tex?) []
+  - convert this application as a lib 
+  - 
