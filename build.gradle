@@ -1,16 +1,20 @@
 plugins {
-    id 'java-library-distribution'
+    id 'java-library'
+    id 'maven-publish'
+    id 'signing'
     id 'application'
     id 'jacoco'
 }
 
-group 'com.tab2xml'
-version '1.0-snapshot'
+group = 'io.github.CCSCovenant'
+archivesBaseName = "JTab"
+version = '1.0-snapshot'
 
 repositories {
     mavenCentral()
     maven { url 'https://jitpack.io' }
 }
+
 
 jacoco {
     toolVersion = "0.8.7"
@@ -65,19 +69,77 @@ task testDebug {
     finalizedBy test
 }
 
- distTar{
-     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
- }
 
-distZip{
-    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
-}
-
-distributions {
-    main{
-        distributionBaseName  = 'tab2xml'
-    }
-}
 run {
 	enableAssertions = true
+}
+task sourceJar(type:Jar){
+    from sourceSets.main.allJava
+    archiveClassifier = 'sources'
+}
+task javadocJar(type:Jar){
+    from javadoc
+    archiveClassifier = 'javadoc'
+}
+
+artifacts {
+    archives jar
+    archives sourceJar
+    archives javadocJar
+}
+
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId = 'io.github.CCSCovenant'
+            artifactId = 'tab2xml'
+            version = "1.0-released"
+            from components.java
+            artifact(sourceJar) {
+                classifier = 'sources'
+            }
+            artifact(javadocJar) {
+                classifier = 'javadoc'
+            }
+            pom {
+                name = 'tab2xml'
+                description = 'A lib that convert tablature to music xml'
+                url = 'https://github.com/CCSCovenant/TAB2XML-lib'
+                licenses {
+                    license {
+                        name = ' Creative Commons Attribution-ShareAlike 4.0 International License.'
+                        url = 'https://creativecommons.org/licenses/by-sa/4.0/'
+                    }
+                }
+                developers {
+                    developer {
+                        id = 'ccs'
+                        name = 'kuimou'
+                        email = 'pzeugen@gmail.com'
+                    }
+                }
+                scm {
+                    connection = 'scm:git://github.com/CCSCovenant/TAB2XML-lib.git'
+                    developerConnection = 'scm:git://github.com/CCSCovenant/TAB2XML-lib.git'
+                    url = 'https://github.com/CCSCovenant/TAB2XML-lib'
+                }
+
+            }
+        }
+    }
+    repositories {
+        maven {
+            credentials {
+                username = "$ossrhUsername"
+                password = "$ossrhPassword"
+            }
+
+            url = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+        }
+    }
+}
+
+signing {
+    sign publishing.publications.mavenJava
 }

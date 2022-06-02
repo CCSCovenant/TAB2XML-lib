@@ -88,7 +88,7 @@ public abstract class TabString extends ScoreComponent {
 	
 	/**
 	 * Provides a warning for whitespace in the tab
-	 * @return a List<ValidationError> for all locations that contain whitespaces
+	 * @return a List of ValidationError  for all locations that contain whitespaces
 	 */
 	public List<ValidationError> validate() {
 	

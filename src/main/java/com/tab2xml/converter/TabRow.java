@@ -20,7 +20,7 @@ public class TabRow extends ScoreComponent {
     
     /**
      * Creates a TabRow object from a List of AnchoredText which represent the lines in the tablature row
-     * @param data a List<AnchoredText> containing the lines which are meant to represent a tablature row. 
+     * @param inputData a List of AnchoredText containing the lines which are meant to represent a tablature row.
      */
     public TabRow(List<AnchoredText> inputData) {
     	data = inputData;
